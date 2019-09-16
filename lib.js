@@ -1,6 +1,33 @@
 import { findPlugin } from './plugins'
+import conf from './conf'
 
 const endpoints = {}
+
+/**
+ * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
+ * It is called each time a new endpoint is created
+ */
+function clean () {
+  const values = Object.values(endpoints)
+
+  if (values.length < conf.CACHE_SIZE) {
+    return
+  }
+
+  values.forEach(endpoint => {
+    if (!endpoint.clean) {
+      if (Object.keys(endpoint.callbacks).length === 0) {
+        endpoint.clean = true
+      }
+      return
+    }
+    if (endpoint.plugin.clean && endpoint.plugin.clean(endpoint)) {
+      return
+    }
+    clearTimeout(endpoints[endpoint.url].timeout)
+    delete endpoints[endpoint.url]
+  })
+}
 
 /**
  * Creates if needed and returns the object that stores the callbacks, configuration and state of an endpoint
@@ -12,7 +39,7 @@ function getEndpoint (url, firstValue) {
   if (endpoints[url]) {
     return endpoints[url]
   }
-
+  setTimeout(clean)
   const plugin = findPlugin(url)
   if (!plugin) {
     throw new Error(`No plugin for ${url}`)
@@ -38,7 +65,6 @@ function getEndpoint (url, firstValue) {
   }
 
   endpoints[url] = endpoint
-
   return endpoints[url]
 }
 
@@ -91,5 +117,5 @@ function createUnsuscribe (endpoint, sk) {
 }
 
 export {
-  getEndpoint, addNewSuscription, createUnsuscribe, endpoints
+  getEndpoint, addNewSuscription, createUnsuscribe, endpoints, clean
 }

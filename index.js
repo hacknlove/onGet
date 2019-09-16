@@ -1,27 +1,6 @@
 import isDifferent from 'isdifferent'
 import { findPlugin, registerPlugin } from './plugins'
-import { endpoints } from './lib'
-
-function clean () {
-  Object.values(endpoints)
-    .filter(endpoint => endpoint.clean)
-    .forEach(endpoint => {
-      clearTimeout(endpoints[endpoint.url].timeout)
-      if (endpoint.plugin.clean && endpoint.plugin.clean(endpoint)) {
-        return
-      }
-      delete endpoints[endpoint.url]
-    })
-  Object.values(endpoints)
-    .filter(endpoint => Object.keys(endpoint.callbacks).length)
-    .forEach(endpoint => {
-      if (endpoint.plugin.preClean && endpoint.plugin.preClean(endpoint)) {
-        return
-      }
-      endpoint.clean = true
-    })
-}
-setInterval(clean, 15000)
+import { endpoints, getEndpoint, addNewSuscription } from './lib'
 
 function onGet (url, cb, interval, first) {
   const endpoint = getEndpoint(url, first)
@@ -95,5 +74,5 @@ function get (url) {
 }
 
 export {
-  onGet, set, refresh, get, registerPlugin, clean
+  onGet, set, refresh, get, registerPlugin
 }
