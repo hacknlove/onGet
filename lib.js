@@ -26,6 +26,7 @@ function getEndpoint (url, firstValue) {
 
   if (plugin.checkInterval) {
     endpoint.intervals = {}
+    endpoint.minInterval = Infinity
   }
 
   if (plugin.threshold) {
@@ -58,7 +59,7 @@ function addNewSuscription (url, callback, interval) {
   endpoint.callbacks[sk] = callback
 
   if (endpoint.intervals) {
-    interval = (interval || endpoint.checkInterval)
+    interval = interval === undefined ? endpoint.plugin.checkInterval : interval
     endpoint.intervals[sk] = interval || Infinity
     endpoint.minInterval = Math.min(endpoint.minInterval, interval)
   }
