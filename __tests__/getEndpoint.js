@@ -67,7 +67,3 @@ test('the plugin`s getEndpoint can modify the endpoint', () => {
 
   expect(getEndpoint('test').modifyedByMe).toBe(true)
 })
-
-test('12+1 is bad number', () => {
-  expect(true).toBe(true)
-})
