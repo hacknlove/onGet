@@ -1,4 +1,5 @@
-import { endpoints, addNewSuscription } from '../lib'
+import { endpoints } from '../src/conf'
+import { addNewSuscription } from '../src/addNewSuscription'
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])
@@ -46,7 +47,6 @@ test('if interval not passed, uses plugin.checkInterval', () => {
 
   expect(Object.values(endpoints.test.intervals)[0]).toBe(23)
 })
-
 
 test('if interval is 0, it stores Infinity', () => {
   endpoints.test = {

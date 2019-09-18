@@ -1,4 +1,5 @@
-import { endpoints, createUnsuscribe } from '../lib'
+import { endpoints } from '../src/conf'
+import { createUnsuscribe } from '../src/createUnsuscribe'
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])

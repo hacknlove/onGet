@@ -1,13 +1,4 @@
-const plugins = []
-
-/**
- * Internal: Returns the first plugin whose regex matchs the url
- * @param {string} url endpoint's url
- * @return plugin object
- */
-function findPlugin (url) {
-  return plugins.find(plugin => url.match(plugin.regex))
-}
+import { plugins } from './conf'
 
 /**
  * Registers a plugin. Plugins are checked last registered first checked.
@@ -19,10 +10,6 @@ function findPlugin (url) {
  * @param {function} plugin.refresh function that is called to obtain the value
  * @returns {undefined} undefined
  */
-function registerPlugin (plugin) {
+export function registerPlugin (plugin) {
   plugins.unshift(plugin)
-}
-
-export {
-  findPlugin, registerPlugin, plugins
 }

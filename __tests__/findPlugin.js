@@ -1,4 +1,5 @@
-import { plugins, findPlugin } from '../plugins'
+import { plugins } from '../src/conf'
+import { findPlugin } from '../src/findPlugin'
 
 beforeEach(() => {
   plugins.length = 0
