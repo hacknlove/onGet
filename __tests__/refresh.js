@@ -12,7 +12,7 @@ beforeEach(() => {
 
 test('if the endpoint does not exists, it does nothing', () => {
   refresh('nothing')
-  expect(pospone).not.toHaveBeenCalled() 
+  expect(pospone).not.toHaveBeenCalled()
 })
 
 test('set clean to undefined', () => {
