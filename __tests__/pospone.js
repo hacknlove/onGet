@@ -8,7 +8,7 @@ jest.useFakeTimers()
 
 test('if the endpoint has not intervals, it does nothing', () => {
   pospone({})
-  expect(clearTimeout).not.toHaveBeenCalled()  
+  expect(clearTimeout).not.toHaveBeenCalled()
 })
 
 test('clears the timeout of the endpoint', () => {
