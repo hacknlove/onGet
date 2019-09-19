@@ -1,7 +1,11 @@
 import { endpoints } from './conf'
 import { refresh } from './refresh'
-
-export default function pospone (endpoint) {
+/**
+ * Pospone the refresh of the endpoint
+ * @param {object} endpoint endpoint whose refresh should be posponed, as returned by getEndpoint(url)
+ * @returns undefined
+ */
+export function pospone (endpoint) {
   if (!endpoint.intervals) {
     return
   }
