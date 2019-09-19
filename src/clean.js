@@ -2,7 +2,7 @@ import { conf, endpoints } from './conf'
 
 /**
  * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
- * It is called each time a new endpoint is created
+ * It is  intended to be called each time a new endpoint is created
  */
 export function clean () {
   const values = Object.values(endpoints)
