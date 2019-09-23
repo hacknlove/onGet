@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hacknlove/deepobject": "^1.0.0",
     "isdifferent": "^1.0.1"
   },
   "devDependencies": {

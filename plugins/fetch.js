@@ -21,5 +21,17 @@ export const plugin = {
     eventHandler({
       response: await response.json().catch(async () => response.text())
     })
+  },
+  clean () {
+
+  },
+  unsuscribe () {
+
+  },
+  getEndpoint () {
+
+  },
+  get () {
+    
   }
 }
