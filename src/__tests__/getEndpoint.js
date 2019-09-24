@@ -1,7 +1,7 @@
-import { endpoints } from '../src/conf'
-import { getEndpoint } from '../src/getEndpoint'
-import { findPlugin } from '../src/findPlugin'
-jest.mock('../src/findPlugin')
+import { endpoints } from '../conf'
+import { getEndpoint } from '../getEndpoint'
+import { findPlugin } from '../findPlugin'
+jest.mock('../findPlugin')
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])

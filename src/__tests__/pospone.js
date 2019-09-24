@@ -1,8 +1,8 @@
-import { endpoints } from '../src/conf'
-import { pospone } from '../src/pospone'
-import { refresh } from '../src/refresh'
+import { endpoints } from '../conf'
+import { pospone } from '../pospone'
+import { refresh } from '../refresh'
 
-jest.mock('../src/refresh')
+jest.mock('../refresh')
 
 jest.useFakeTimers()
 

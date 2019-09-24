@@ -1,14 +1,14 @@
 import { endpoints } from './conf'
-import { createUnsuscribe } from './createUnsuscribe'
+import { createUnsubscribe } from './createUnsubscribe'
 
 /**
- * Adds the callback to the endpoint, updates the min interval configuration, and returns the unsuscribe function
+ * Adds the callback to the endpoint, updates the min interval configuration, and returns the unsubscribe function
  * @param {string} url endpoint's url
  * @param {function} callback it will be called each time the value of the endpoint changes
  * @param {number} [interval] max interval (miliseconds) to check for a new value
- * @return {function} unsuscribe function
+ * @return {function} unsubscribe function
  */
-export function addNewSuscription (url, callback, interval) {
+export function addNewSubscription (url, callback, interval) {
   const endpoint = endpoints[url]
 
   var sk
@@ -23,5 +23,5 @@ export function addNewSuscription (url, callback, interval) {
     endpoint.minInterval = Math.min(endpoint.minInterval, interval)
   }
 
-  return createUnsuscribe(endpoint, sk)
+  return createUnsubscribe(endpoint, sk)
 }

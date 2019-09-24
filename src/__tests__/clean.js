@@ -1,5 +1,5 @@
-import { endpoints, conf } from '../src/conf'
-import { clean } from '../src/clean'
+import { endpoints, conf } from '../conf'
+import { clean } from '../clean'
 
 beforeEach(() => {
   conf.CACHE_SIZE = 3

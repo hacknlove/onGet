@@ -1,6 +1,6 @@
 /* global fetch */
 
-export const plugin = {
+export default {
   name: 'fetch',
   regex: /^./,
   checkInterval: 30,
@@ -25,13 +25,13 @@ export const plugin = {
   clean () {
 
   },
-  unsuscribe () {
+  unsubscribe () {
 
   },
   getEndpoint () {
 
   },
   get () {
-    
+
   }
 }

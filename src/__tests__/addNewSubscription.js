@@ -1,5 +1,5 @@
-import { endpoints } from '../src/conf'
-import { addNewSuscription } from '../src/addNewSuscription'
+import { endpoints } from '../conf'
+import { addNewSubscription } from '../addNewSubscription'
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])
@@ -10,7 +10,7 @@ test('inserts the callback in the endpoint', () => {
     callbacks: {}
   }
 
-  addNewSuscription('test', 'callback')
+  addNewSubscription('test', 'callback')
 
   expect(Object.values(endpoints.test.callbacks)).toEqual(['callback'])
 })
@@ -20,7 +20,7 @@ test('returns a function', () => {
     callbacks: {}
   }
 
-  expect(typeof addNewSuscription('test')).toBe('function')
+  expect(typeof addNewSubscription('test')).toBe('function')
 })
 
 test('insert the interval, if the endpoint has intervals', () => {
@@ -28,7 +28,7 @@ test('insert the interval, if the endpoint has intervals', () => {
     callbacks: {},
     intervals: {}
   }
-  addNewSuscription('test', 'callback', 45)
+  addNewSubscription('test', 'callback', 45)
 
   expect(Object.keys(endpoints.test.callbacks)[0]).toBe(Object.keys(endpoints.test.callbacks)[0])
 
@@ -43,7 +43,7 @@ test('if interval not passed, uses plugin.checkInterval', () => {
       checkInterval: 23
     }
   }
-  addNewSuscription('test', 'callback')
+  addNewSubscription('test', 'callback')
 
   expect(Object.values(endpoints.test.intervals)[0]).toBe(23)
 })
@@ -57,7 +57,7 @@ test('if interval is 0, it stores Infinity', () => {
       checkInterval: 23
     }
   }
-  addNewSuscription('test', 'callback', 0)
+  addNewSubscription('test', 'callback', 0)
 
   expect(Object.values(endpoints.test.intervals)[0]).toBe(Infinity)
 })
@@ -68,7 +68,7 @@ test('update minInterval, if the endpoint has intervals and new interval is the 
     intervals: {},
     minInterval: Infinity
   }
-  addNewSuscription('test', 'callback', 45)
+  addNewSubscription('test', 'callback', 45)
 
   expect(endpoints.test.minInterval).toBe(45)
 })
@@ -79,7 +79,7 @@ test('does not change minInterval, if the current minInterval is the minimum int
     intervals: {},
     minInterval: 10
   }
-  addNewSuscription('test', 'callback', 45)
+  addNewSubscription('test', 'callback', 45)
 
   expect(endpoints.test.minInterval).toBe(10)
 })

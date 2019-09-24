@@ -1,42 +1,42 @@
-import { endpoints } from '../src/conf'
-import { createUnsuscribe } from '../src/createUnsuscribe'
+import { endpoints } from '../conf'
+import { createUnsubscribe } from '../createUnsubscribe'
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])
 })
 
-test('does not crash if it has been unsuscribed before', () => {
-  expect(() => createUnsuscribe({ callbacks: {} }, 'test')()).not.toThrow()
+test('does not crash if it has been unsubscribed before', () => {
+  expect(() => createUnsubscribe({ callbacks: {} }, 'test')()).not.toThrow()
 })
 
-test('calls plugin.unsuscribe, if exists', () => {
-  const unsuscribe = jest.fn()
+test('calls plugin.unsubscribe, if exists', () => {
+  const unsubscribe = jest.fn()
 
-  createUnsuscribe({
+  createUnsubscribe({
     callbacks: {
       test: true
     },
     plugin: {
-      unsuscribe
+      unsubscribe
     }
   }, 'test')()
 
-  expect(unsuscribe).toHaveBeenCalled()
+  expect(unsubscribe).toHaveBeenCalled()
 })
 
-test('the parameter passed to plugin.unsuscribe is the endpoint', () => {
-  const unsuscribe = jest.fn()
+test('the parameter passed to plugin.unsubscribe is the endpoint', () => {
+  const unsubscribe = jest.fn()
   const endpoint = {
     callbacks: {
       test: true
     },
     plugin: {
-      unsuscribe
+      unsubscribe
     }
   }
-  createUnsuscribe(endpoint, 'test')()
+  createUnsubscribe(endpoint, 'test')()
 
-  expect(unsuscribe).toHaveBeenCalledWith(endpoint)
+  expect(unsubscribe).toHaveBeenCalledWith(endpoint)
 })
 
 test('deletes the subscription', () => {
@@ -46,7 +46,7 @@ test('deletes the subscription', () => {
     },
     plugin: {}
   }
-  createUnsuscribe(endpoint, 'test')()
+  createUnsubscribe(endpoint, 'test')()
 
   expect(endpoint.callbacks.test).toBeUndefined()
 })
@@ -61,7 +61,7 @@ test('deletes the interval, if has intervals', () => {
     },
     plugin: {}
   }
-  createUnsuscribe(endpoint, 'test')()
+  createUnsubscribe(endpoint, 'test')()
 
   expect(endpoint.intervals.test).toBeUndefined()
 })
@@ -77,7 +77,7 @@ test('Updates minInterval, if the removed interval is the minumum', () => {
     },
     plugin: {}
   }
-  createUnsuscribe(endpoint, 'test')()
+  createUnsubscribe(endpoint, 'test')()
 
   expect(endpoint.minInterval).toBe(45)
 })
@@ -93,7 +93,7 @@ test('Updates minInterval, if the removed interval is not the minumum', () => {
     },
     plugin: {}
   }
-  createUnsuscribe(endpoint, 'test')()
+  createUnsubscribe(endpoint, 'test')()
 
   expect(endpoint.minInterval).toBe(15)
 })

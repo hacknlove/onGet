@@ -1,5 +1,5 @@
-import { plugins } from '../src/conf'
-import { registerPlugin } from '../src/registerPlugin'
+import { plugins } from '../conf'
+import { registerPlugin } from '../registerPlugin'
 
 beforeEach(() => {
   plugins.length = 0

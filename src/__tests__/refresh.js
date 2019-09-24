@@ -1,10 +1,10 @@
-import { refresh } from '../src/refresh'
-import { set } from '../src/set'
-import { pospone } from '../src/pospone'
-import { endpoints } from '../src/conf'
+import { refresh } from '../refresh'
+import { set } from '../set'
+import { pospone } from '../pospone'
+import { endpoints } from '../conf'
 
-jest.mock('../src/set')
-jest.mock('../src/pospone')
+jest.mock('../set')
+jest.mock('../pospone')
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])

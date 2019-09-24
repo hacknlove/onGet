@@ -1,13 +1,13 @@
-import { set } from '../src/set'
+import { set } from '../set'
 import isdifferent from 'isdifferent'
-import { endpoints } from '../src/conf'
-import { getEndpoint } from '../src/getEndpoint'
-import { pospone } from '../src/pospone'
+import { endpoints } from '../conf'
+import { getEndpoint } from '../getEndpoint'
+import { pospone } from '../pospone'
 
 jest.mock('isdifferent')
-jest.mock('../src/getEndpoint')
-jest.mock('../src/pospone')
-
+jest.mock('../getEndpoint')
+jest.mock('../pospone')
+jest.useFakeTimers()
 test('If the endpoint does not exist, do nothing and return the endpoint created by getEndpoint', () => {
   getEndpoint.mockReturnValue('endpoint')
 
@@ -69,7 +69,8 @@ test('if value is not different do not set the new value', () => {
 test('if value is different do not set the new value', () => {
   endpoints.test = {
     value: 'old',
-    callbacks: {}
+    callbacks: {},
+    plugin: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
   isdifferent.mockReturnValue(true)
@@ -85,6 +86,26 @@ test('if value is different and there is callbacks, call the callbacks', () => {
     callbacks: {
       uno: jest.fn(),
       dos: jest.fn()
+    },
+    plugin: {}
+  }
+  getEndpoint.mockReturnValue(endpoints.test)
+  isdifferent.mockReturnValue(true)
+
+  set('test', 'new')
+  jest.runAllTimers()
+
+  expect(endpoints.test.callbacks.uno).toHaveBeenCalledWith('new')
+  expect(endpoints.test.callbacks.dos).toHaveBeenCalledWith('new')
+})
+
+test('if value is different and there is plugin.set, call plugin.set', () => {
+  endpoints.test = {
+    value: 'old',
+    callbacks: {
+    },
+    plugin: {
+      set: jest.fn()
     }
   }
   getEndpoint.mockReturnValue(endpoints.test)
@@ -92,6 +113,5 @@ test('if value is different and there is callbacks, call the callbacks', () => {
 
   set('test', 'new')
 
-  expect(endpoints.test.callbacks.uno).toHaveBeenCalledWith('new')
-  expect(endpoints.test.callbacks.dos).toHaveBeenCalledWith('new')
+  expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test)
 })
