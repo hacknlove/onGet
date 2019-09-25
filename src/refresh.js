@@ -13,6 +13,9 @@ export function refresh (url) {
     return false
   }
   endpoint.clean = undefined
+  if (endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
+    return
+  }
   pospone(endpoint)
   endpoint.plugin.refresh(endpoint, value => {
     set(url, value)
