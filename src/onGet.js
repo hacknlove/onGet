@@ -9,15 +9,20 @@ import { refresh } from './refresh'
  * @param {integer} interval seconds to refresh the value
  * @param {any} first first value to pass to the plugin
  */
-export function onGet (url, cb, interval, first) {
+export function onGet (url, cb, options = {}) {
+  const {
+    first,
+    interval
+  } = options
   const endpoint = getEndpoint(url, first)
+
   const unsubscribe = addNewSubscription(url, cb, interval)
   endpoint.clean = undefined
 
   if (endpoint.value !== undefined) {
     cb(endpoint.value)
   }
-  if (Date.now() - endpoint.last > endpoint.threshold) {
+  if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
     refresh(url)
   }
   return unsubscribe
