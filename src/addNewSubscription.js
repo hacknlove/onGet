@@ -5,7 +5,7 @@ import { createUnsubscribe } from './createUnsubscribe'
  * Adds the callback to the endpoint, updates the min interval configuration, and returns the unsubscribe function
  * @param {string} url endpoint's url
  * @param {function} callback it will be called each time the value of the endpoint changes
- * @param {number} [interval] max interval (miliseconds) to check for a new value
+ * @param {number} [interval] max interval (milliseconds) to check for a new value
  * @return {function} unsubscribe function
  */
 export function addNewSubscription (url, callback, interval) {
