@@ -205,8 +205,24 @@ describe('plugin', () => {
   })
 
   describe('clean', () => {
-    it.todo('does nothing if there is children')
-    it.todo('calls deleteValue if there is no children')
-    it.todo('propagateUp if there is no children')
+    it('does nothing if there is children', () => {
+      endpoints['state://some.deep.child'] = {}
+      plugin.clean({
+        url: 'state://some'
+      })
+      expect(deleteValue).not.toHaveBeenCalled()
+    })
+    it('calls deleteValue if there is no children', () => {
+      plugin.clean({
+        url: 'state://some'
+      })
+      expect(deleteValue).toHaveBeenCalledWith({}, 'state://some')
+    })
+    it('propagateUp if there is no children', () => {
+      plugin.clean({
+        url: 'state://some.deep.child'
+      })
+      expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'state://some.deep')
+    })
   })
 })
