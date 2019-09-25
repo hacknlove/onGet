@@ -23,20 +23,20 @@ export function getEndpoint (url, firstValue) {
     value: firstValue,
     callbacks: {}
   }
+  endpoints[url] = endpoint
 
   if (plugin.checkInterval) {
     endpoint.intervals = {}
     endpoint.minInterval = Infinity
   }
 
-  if (plugin.threshold) {
-    endpoint.last = 1
+  if (plugin.threshold !== undefined) {
+    endpoint.last = -Infinity
   }
 
   if (plugin.getEndpoint) {
     plugin.getEndpoint(endpoint)
   }
 
-  endpoints[url] = endpoint
-  return endpoints[url]
+  return endpoint
 }
