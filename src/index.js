@@ -7,7 +7,7 @@ import { registerPlugin } from './registerPlugin'
 
 import fetch from '../plugins/fetch'
 import localStorage from '../plugins/localstorage'
-import sessionStorate from '../plugins/sessionstorate'
+import sessionStorate from '../plugins/sessionstorage'
 import state from '../plugins/state'
 
 registerPlugin(state)
