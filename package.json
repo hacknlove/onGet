@@ -6,7 +6,9 @@
   "module": "src/index.js",
   "scripts": {
     "test": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "min": "MODE=production webpack --progress --colors",
+    "build": "MODE=development webpack --progress --colors"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +28,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
+    "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   }
 }
