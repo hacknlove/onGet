@@ -1,7 +1,7 @@
 {
   "name": "onget",
   "version": "1.0.0",
-  "description": "KISS",
+  "description": "The elegant plugin-extensible way to handle state.",
   "main": "build/onGet.min.js",
   "module": "src/index.js",
   "scripts": {
