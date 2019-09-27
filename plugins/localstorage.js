@@ -4,7 +4,7 @@ const PROTOCOLCUT = 'localStorage://'.length
 export default {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  checkInterval: 30,
+  checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(localStorage[endpoint.key])
