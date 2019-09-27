@@ -326,3 +326,7 @@ describe('sessionstorage', () => {
     })
   })
 })
+
+describe('fetch', () => {
+
+})
