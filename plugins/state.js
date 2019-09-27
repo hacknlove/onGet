@@ -83,7 +83,6 @@ export default {
    * @returns {object} the value
    */
   get (url) {
-    console.log(url)
     return getValue(state, url)
   },
 
