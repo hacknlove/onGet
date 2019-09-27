@@ -1,12 +1,9 @@
 /* global localStorage sessionStorage */
 // Integration
-import { onGet, set, get, refresh } from '../src'
-
-import { endpoints } from '../src/conf'
+import { onGet, set, get, refresh, endpoints } from '../'
 
 global.localStorage = {}
 global.sessionStorage = {}
-
 jest.useFakeTimers()
 var unsubscribes = []
 
@@ -138,7 +135,6 @@ describe('localstorage', () => {
 
   describe('onGet', () => {
     it('should not call cb if there is no initial value', () => {
-      console.log(localStorage)
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb))
 
@@ -204,12 +200,9 @@ describe('localstorage', () => {
     it('triggers the callbacks of the endpoint', () => {
       const cb = jest.fn()
       localStorage.key = 'earth'
-      localStorage.PUTU = 'ruu'
       unsubscribes.push(onGet('localStorage://key', cb))
 
       localStorage.key = 'mars'
-      localStorage.DE = 'FUA'
-
       endpoints['localStorage://key'].last = -Infinity
       refresh('localStorage://key')
       jest.runAllTimers()
@@ -238,7 +231,6 @@ describe('sessionstorage', () => {
 
   describe('onGet', () => {
     it('should not call cb if there is no initial value', () => {
-      console.log(sessionStorage)
       const cb = jest.fn()
       unsubscribes.push(onGet('sessionStorage://key', cb))
 
@@ -304,11 +296,9 @@ describe('sessionstorage', () => {
     it('triggers the callbacks of the endpoint', () => {
       const cb = jest.fn()
       sessionStorage.key = 'earth'
-      sessionStorage.PUTU = 'ruu'
       unsubscribes.push(onGet('sessionStorage://key', cb))
 
       sessionStorage.key = 'mars'
-      sessionStorage.DE = 'FUA'
 
       endpoints['sessionStorage://key'].last = -Infinity
       refresh('sessionStorage://key')
@@ -325,8 +315,4 @@ describe('sessionstorage', () => {
       expect(cb).not.toHaveBeenCalled()
     })
   })
-})
-
-describe('fetch', () => {
-
 })
