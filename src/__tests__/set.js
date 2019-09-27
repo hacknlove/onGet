@@ -54,14 +54,12 @@ test('if endpoint has no intervals, do no set last neither call pospone', () => 
   expect(pospone).not.toHaveBeenCalled()
 })
 
-test('it set last, and not call pospone', () => {
-  const now = Date.now()
+test('it not call pospone', () => {
   endpoints.test = {
     intervals: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
   set('test')
-  expect(endpoints.test.last >= now).toBe(true)
   expect(pospone).not.toHaveBeenCalled()
 })
 

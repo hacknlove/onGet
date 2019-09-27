@@ -23,11 +23,8 @@ export function set (url, value, doPospone) {
   }
 
   endpoint.clean = undefined
-  if (endpoint.intervals) {
-    endpoint.last = Date.now()
-    if (doPospone) {
-      pospone(endpoint)
-    }
+  if (endpoint.intervals && doPospone) {
+    pospone(endpoint)
   }
   if (!isDifferent(value, endpoint.value)) {
     return
@@ -37,6 +34,7 @@ export function set (url, value, doPospone) {
   if (endpoint.plugin.set) {
     endpoint.plugin.set(endpoint)
   }
+
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
 
   return endpoint
