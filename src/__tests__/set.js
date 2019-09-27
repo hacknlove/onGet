@@ -8,10 +8,29 @@ jest.mock('isdifferent')
 jest.mock('../getEndpoint')
 jest.mock('../pospone')
 jest.useFakeTimers()
-test('If the endpoint does not exist, do nothing and return the endpoint created by getEndpoint', () => {
-  getEndpoint.mockReturnValue('endpoint')
+test('If the endpoint does not exist, getEndPoint should be called', () => {
+  const endpoint = { plugin: {} }
+  getEndpoint.mockReturnValue(endpoint)
 
-  expect(set('test', 'value')).toBe('endpoint')
+  set('test', 'value')
+  expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
+  expect(isdifferent).not.toHaveBeenCalled()
+})
+
+test('If the plugin has the hook set, it is called', () => {
+  const endpoint = {
+    plugin: {
+      set: jest.fn()
+    }
+  }
+  getEndpoint.mockReturnValue(endpoint)
+
+  set('test', 'value')
+
+  expect(endpoint.value).toBe('value')
+
+  expect(endpoint.plugin.set).toHaveBeenCalledWith(endpoint)
+
   expect(isdifferent).not.toHaveBeenCalled()
 })
 
