@@ -331,7 +331,6 @@ function propagateDown (url) {
     if (Object.keys(_src_conf__WEBPACK_IMPORTED_MODULE_2__["endpoints"]).some(url => url.startsWith(prefix))) {
       return
     }
-    Object(_hacknlove_deepobject__WEBPACK_IMPORTED_MODULE_0__["deleteValue"])(state, endpoint.url)
     propagateUp(endpoint.url)
   }
 });
@@ -371,8 +370,8 @@ function addNewSubscription (url, callback, interval) {
   endpoint.callbacks[sk] = callback
 
   if (endpoint.intervals) {
-    interval = interval === undefined ? endpoint.plugin.checkInterval : interval
-    endpoint.intervals[sk] = interval || Infinity
+    interval = interval || endpoint.plugin.checkInterval
+    endpoint.intervals[sk] = interval
     endpoint.minInterval = Math.min(endpoint.minInterval, interval)
   }
 
@@ -464,10 +463,6 @@ function createUnsubscribe (endpoint, sk) {
   return () => {
     if (!endpoint.callbacks.hasOwnProperty(sk)) {
       return
-    }
-
-    if (endpoint.plugin.unsubscribe) {
-      endpoint.plugin.unsubscribe(endpoint)
     }
 
     delete endpoint.callbacks[sk]
@@ -606,7 +601,7 @@ function getEndpoint (url, firstValue) {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: onGet, set, refresh, get, registerPlugin, conf */
+/*! exports provided: onGet, set, refresh, get, registerPlugin, conf, endpoints, plugins */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -625,6 +620,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _conf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./conf */ "./src/conf.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "conf", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["conf"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "endpoints", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["endpoints"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "plugins", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["plugins"]; });
 
 /* harmony import */ var _registerPlugin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./registerPlugin */ "./src/registerPlugin.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "registerPlugin", function() { return _registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"]; });
@@ -676,8 +675,9 @@ __webpack_require__.r(__webpack_exports__);
  * Set a handler to be called each time the value of the url changes
  * @param {string} url The value to subscribe to
  * @param {function} cb handler to be called
- * @param {integer} interval seconds to refresh the value
- * @param {any} first first value to pass to the plugin
+ * @param {object} options Optional parameters
+ * @param {integer} options.interval seconds to refresh the value
+ * @param {any} options.first first value to pass to the plugin
  */
 function onGet (url, cb, options = {}) {
   const {
@@ -861,8 +861,6 @@ function set (url, value, doPospone) {
   }
 
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
-
-  return endpoint
 }
 
 
