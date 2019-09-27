@@ -6,8 +6,9 @@ import { refresh } from './refresh'
  * Set a handler to be called each time the value of the url changes
  * @param {string} url The value to subscribe to
  * @param {function} cb handler to be called
- * @param {integer} interval seconds to refresh the value
- * @param {any} first first value to pass to the plugin
+ * @param {object} options Optional parameters
+ * @param {integer} options.interval seconds to refresh the value
+ * @param {any} options.first first value to pass to the plugin
  */
 export function onGet (url, cb, options = {}) {
   const {

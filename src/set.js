@@ -36,6 +36,4 @@ export function set (url, value, doPospone) {
   }
 
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
-
-  return endpoint
 }

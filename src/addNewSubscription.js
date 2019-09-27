@@ -18,8 +18,8 @@ export function addNewSubscription (url, callback, interval) {
   endpoint.callbacks[sk] = callback
 
   if (endpoint.intervals) {
-    interval = interval === undefined ? endpoint.plugin.checkInterval : interval
-    endpoint.intervals[sk] = interval || Infinity
+    interval = interval || endpoint.plugin.checkInterval
+    endpoint.intervals[sk] = interval
     endpoint.minInterval = Math.min(endpoint.minInterval, interval)
   }
 

@@ -1,4 +1,4 @@
-import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
+import { getValue, setValue } from '@hacknlove/deepobject'
 import isDifferent from 'isdifferent'
 import { endpoints } from '../../src/conf'
 import plugin, { propagateUp, propagateDown } from '../state'
@@ -155,7 +155,6 @@ describe('plugin', () => {
 
   describe('set', () => {
     it('updates the state', () => {
-
       const endpoint = {
         url: 'state://some.new.key',
         value: 'newValue'
@@ -206,17 +205,11 @@ describe('plugin', () => {
 
   describe('clean', () => {
     it('does nothing if there is children', () => {
-      endpoints['state://some.deep.child'] = {}
+      endpoints['state://some.deep.child.foo.bar'] = {}
       plugin.clean({
-        url: 'state://some'
+        url: 'state://some.deep.child'
       })
-      expect(deleteValue).not.toHaveBeenCalled()
-    })
-    it('calls deleteValue if there is no children', () => {
-      plugin.clean({
-        url: 'state://some'
-      })
-      expect(deleteValue).toHaveBeenCalledWith({}, 'state://some')
+      expect(setTimeout).not.toHaveBeenCalled()
     })
     it('propagateUp if there is no children', () => {
       plugin.clean({
