@@ -110,7 +110,7 @@ __webpack_require__.r(__webpack_exports__);
 const plugin = {
   name: 'fetch',
   regex: /^./,
-  checkInterval: 30,
+  checkInterval: 30000,
   threshold: 500,
   async refresh (endpoint, eventHandler) {
     const response = await fetch(endpoint.url).catch(error => ({ error }))
@@ -142,7 +142,7 @@ const PROTOCOLCUT = 'localStorage://'.length
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  checkInterval: 30,
+  checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(localStorage[endpoint.key])
@@ -182,7 +182,7 @@ const PROTOCOLCUT = 'sessionStorage://'.length
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
-  checkInterval: 30,
+  checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(sessionStorage[endpoint.key])
@@ -331,7 +331,6 @@ function propagateDown (url) {
     if (Object.keys(_src_conf__WEBPACK_IMPORTED_MODULE_2__["endpoints"]).some(url => url.startsWith(prefix))) {
       return
     }
-    Object(_hacknlove_deepobject__WEBPACK_IMPORTED_MODULE_0__["deleteValue"])(state, endpoint.url)
     propagateUp(endpoint.url)
   }
 });
@@ -371,8 +370,8 @@ function addNewSubscription (url, callback, interval) {
   endpoint.callbacks[sk] = callback
 
   if (endpoint.intervals) {
-    interval = interval === undefined ? endpoint.plugin.checkInterval : interval
-    endpoint.intervals[sk] = interval || Infinity
+    interval = interval || endpoint.plugin.checkInterval
+    endpoint.intervals[sk] = interval
     endpoint.minInterval = Math.min(endpoint.minInterval, interval)
   }
 
@@ -464,10 +463,6 @@ function createUnsubscribe (endpoint, sk) {
   return () => {
     if (!endpoint.callbacks.hasOwnProperty(sk)) {
       return
-    }
-
-    if (endpoint.plugin.unsubscribe) {
-      endpoint.plugin.unsubscribe(endpoint)
     }
 
     delete endpoint.callbacks[sk]
@@ -679,8 +674,9 @@ __webpack_require__.r(__webpack_exports__);
  * Set a handler to be called each time the value of the url changes
  * @param {string} url The value to subscribe to
  * @param {function} cb handler to be called
- * @param {integer} interval seconds to refresh the value
- * @param {any} first first value to pass to the plugin
+ * @param {object} options Optional parameters
+ * @param {integer} options.interval seconds to refresh the value
+ * @param {any} options.first first value to pass to the plugin
  */
 function onGet (url, cb, options = {}) {
   const {
@@ -842,7 +838,7 @@ function set (url, value, doPospone) {
   const endpoint = Object(_getEndpoint__WEBPACK_IMPORTED_MODULE_2__["getEndpoint"])(url, value)
 
   if (isNew) {
-    return endpoint
+    return
   }
 
   endpoint.clean = undefined
@@ -861,8 +857,6 @@ function set (url, value, doPospone) {
     endpoint.plugin.set(endpoint)
   }
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
-
-  return endpoint
 }
 
 

@@ -1,4 +1,4 @@
-import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
+import { getValue, setValue } from '@hacknlove/deepobject'
 import isDifferent from 'isdifferent'
 import { endpoints } from '../src/conf'
 
@@ -106,7 +106,6 @@ export default {
     if (Object.keys(endpoints).some(url => url.startsWith(prefix))) {
       return
     }
-    deleteValue(state, endpoint.url)
     propagateUp(endpoint.url)
   }
 }

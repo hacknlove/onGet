@@ -9,10 +9,6 @@ export function createUnsubscribe (endpoint, sk) {
       return
     }
 
-    if (endpoint.plugin.unsubscribe) {
-      endpoint.plugin.unsubscribe(endpoint)
-    }
-
     delete endpoint.callbacks[sk]
     if (endpoint.intervals) {
       delete endpoint.intervals[sk]

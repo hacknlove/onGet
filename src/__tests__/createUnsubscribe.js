@@ -9,36 +9,6 @@ test('does not crash if it has been unsubscribed before', () => {
   expect(() => createUnsubscribe({ callbacks: {} }, 'test')()).not.toThrow()
 })
 
-test('calls plugin.unsubscribe, if exists', () => {
-  const unsubscribe = jest.fn()
-
-  createUnsubscribe({
-    callbacks: {
-      test: true
-    },
-    plugin: {
-      unsubscribe
-    }
-  }, 'test')()
-
-  expect(unsubscribe).toHaveBeenCalled()
-})
-
-test('the parameter passed to plugin.unsubscribe is the endpoint', () => {
-  const unsubscribe = jest.fn()
-  const endpoint = {
-    callbacks: {
-      test: true
-    },
-    plugin: {
-      unsubscribe
-    }
-  }
-  createUnsubscribe(endpoint, 'test')()
-
-  expect(unsubscribe).toHaveBeenCalledWith(endpoint)
-})
-
 test('deletes the subscription', () => {
   const endpoint = {
     callbacks: {

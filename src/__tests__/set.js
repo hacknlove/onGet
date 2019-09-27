@@ -8,10 +8,9 @@ jest.mock('isdifferent')
 jest.mock('../getEndpoint')
 jest.mock('../pospone')
 jest.useFakeTimers()
-test('If the endpoint does not exist, do nothing and return the endpoint created by getEndpoint', () => {
-  getEndpoint.mockReturnValue('endpoint')
-
-  expect(set('test', 'value')).toBe('endpoint')
+test('If the endpoint does not exist calls getEndpoint and exist', () => {
+  set('test', 'value')
+  expect(getEndpoint).toHaveBeenCalled()
   expect(isdifferent).not.toHaveBeenCalled()
 })
 

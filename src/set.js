@@ -15,7 +15,7 @@ export function set (url, value, doPospone) {
   const endpoint = getEndpoint(url, value)
 
   if (isNew) {
-    return endpoint
+    return
   }
 
   endpoint.clean = undefined
@@ -34,6 +34,4 @@ export function set (url, value, doPospone) {
     endpoint.plugin.set(endpoint)
   }
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
-
-  return endpoint
 }

@@ -48,20 +48,6 @@ test('if interval not passed, uses plugin.checkInterval', () => {
   expect(Object.values(endpoints.test.intervals)[0]).toBe(23)
 })
 
-test('if interval is 0, it stores Infinity', () => {
-  endpoints.test = {
-    callbacks: {},
-    intervals: {},
-    interval: 0,
-    plugin: {
-      checkInterval: 23
-    }
-  }
-  addNewSubscription('test', 'callback', 0)
-
-  expect(Object.values(endpoints.test.intervals)[0]).toBe(Infinity)
-})
-
 test('update minInterval, if the endpoint has intervals and new interval is the minimun one', () => {
   endpoints.test = {
     callbacks: {},

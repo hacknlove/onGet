@@ -4,7 +4,7 @@ const PROTOCOLCUT = 'sessionStorage://'.length
 export default {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
-  checkInterval: 30,
+  checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(sessionStorage[endpoint.key])
