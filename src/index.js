@@ -10,10 +10,10 @@ import localStorage from '../plugins/localstorage'
 import sessionStorate from '../plugins/sessionstorage'
 import state from '../plugins/state'
 
-registerPlugin(state)
+registerPlugin(fetch)
 registerPlugin(localStorage)
 registerPlugin(sessionStorate)
-registerPlugin(fetch)
+registerPlugin(state)
 
 export {
   onGet, set, refresh, get, registerPlugin, conf

@@ -70,6 +70,8 @@ export default {
     const actualValue = getValue(state, endpoint.url)
     if (actualValue === undefined) {
       state = setValue(state, endpoint.url, endpoint.value)
+      propagateUp(endpoint.url)
+      propagateDown(endpoint.url)
       return
     }
     endpoint.value = actualValue
@@ -81,6 +83,7 @@ export default {
    * @returns {object} the value
    */
   get (url) {
+    console.log(url)
     return getValue(state, url)
   },
 
@@ -91,7 +94,6 @@ export default {
    */
   set (endpoint) {
     state = setValue(state, endpoint.url, endpoint.value)
-
     propagateUp(endpoint.url)
     propagateDown(endpoint.url)
   },
