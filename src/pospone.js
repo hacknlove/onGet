@@ -13,6 +13,7 @@ export function pospone (endpoint) {
   if (!endpoints[endpoint.url]) {
     return
   }
+  endpoint.last = Date.now()
   endpoint.timeout = setTimeout(() => {
     refresh(endpoint.url)
   }, endpoint.minInterval)

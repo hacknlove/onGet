@@ -117,7 +117,6 @@ const plugin = {
     if (response.error) {
       return eventHandler(response.error)
     }
-
     eventHandler(await response.json().catch(async () => response.text()))
   }
 }
@@ -295,6 +294,8 @@ function propagateDown (url) {
     const actualValue = Object(_hacknlove_deepobject__WEBPACK_IMPORTED_MODULE_0__["getValue"])(state, endpoint.url)
     if (actualValue === undefined) {
       state = Object(_hacknlove_deepobject__WEBPACK_IMPORTED_MODULE_0__["setValue"])(state, endpoint.url, endpoint.value)
+      propagateUp(endpoint.url)
+      propagateDown(endpoint.url)
       return
     }
     endpoint.value = actualValue
@@ -316,7 +317,6 @@ function propagateDown (url) {
    */
   set (endpoint) {
     state = Object(_hacknlove_deepobject__WEBPACK_IMPORTED_MODULE_0__["setValue"])(state, endpoint.url, endpoint.value)
-
     propagateUp(endpoint.url)
     propagateDown(endpoint.url)
   },
@@ -522,18 +522,15 @@ __webpack_require__.r(__webpack_exports__);
  * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
  * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
  */
-function get (url, onlyCached = true) {
+function get (url) {
   const endpoint = _conf__WEBPACK_IMPORTED_MODULE_1__["endpoints"][url]
   if (endpoint) {
     endpoint.clean = undefined
     return _conf__WEBPACK_IMPORTED_MODULE_1__["endpoints"][url].value
   }
-  if (onlyCached) {
-    return undefined
-  }
   const plugin = Object(_findPlugin__WEBPACK_IMPORTED_MODULE_0__["findPlugin"])(url)
   if (!plugin.get) {
-    return
+    return undefined
   }
   return plugin.get(url)
 }
@@ -643,10 +640,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_state__WEBPACK_IMPORTED_MODULE_9__["default"])
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_fetch__WEBPACK_IMPORTED_MODULE_6__["default"])
 Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_localstorage__WEBPACK_IMPORTED_MODULE_7__["default"])
 Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_sessionstorage__WEBPACK_IMPORTED_MODULE_8__["default"])
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_fetch__WEBPACK_IMPORTED_MODULE_6__["default"])
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_state__WEBPACK_IMPORTED_MODULE_9__["default"])
 
 
 
@@ -727,6 +724,7 @@ function pospone (endpoint) {
   if (!_conf__WEBPACK_IMPORTED_MODULE_0__["endpoints"][endpoint.url]) {
     return
   }
+  endpoint.last = Date.now()
   endpoint.timeout = setTimeout(() => {
     Object(_refresh__WEBPACK_IMPORTED_MODULE_1__["refresh"])(endpoint.url)
   }, endpoint.minInterval)
@@ -832,30 +830,32 @@ __webpack_require__.r(__webpack_exports__);
  * @param {boolean} doPospone=true if false do not pospone the closest refresh
  * @return {object} endpoint
  */
+
 function set (url, value, doPospone) {
-  var isNew = !_conf__WEBPACK_IMPORTED_MODULE_1__["endpoints"].hasOwnProperty(url)
+  const endpoint = _conf__WEBPACK_IMPORTED_MODULE_1__["endpoints"][url]
 
-  const endpoint = Object(_getEndpoint__WEBPACK_IMPORTED_MODULE_2__["getEndpoint"])(url, value)
-
-  if (isNew) {
+  if (!endpoint) {
+    const endpoint = Object(_getEndpoint__WEBPACK_IMPORTED_MODULE_2__["getEndpoint"])(url, value)
+    if (endpoint.plugin.set) {
+      endpoint.value = value
+      endpoint.plugin.set(endpoint)
+    }
     return
   }
 
   endpoint.clean = undefined
-  if (endpoint.intervals) {
-    endpoint.last = Date.now()
-    if (doPospone) {
-      Object(_pospone__WEBPACK_IMPORTED_MODULE_3__["pospone"])(endpoint)
-    }
+  if (endpoint.intervals && doPospone) {
+    Object(_pospone__WEBPACK_IMPORTED_MODULE_3__["pospone"])(endpoint)
   }
-
   if (!isdifferent__WEBPACK_IMPORTED_MODULE_0___default()(value, endpoint.value)) {
     return
   }
+
   endpoint.value = value
   if (endpoint.plugin.set) {
     endpoint.plugin.set(endpoint)
   }
+
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
 }
 

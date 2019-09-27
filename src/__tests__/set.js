@@ -8,9 +8,29 @@ jest.mock('isdifferent')
 jest.mock('../getEndpoint')
 jest.mock('../pospone')
 jest.useFakeTimers()
-test('If the endpoint does not exist calls getEndpoint and exist', () => {
+test('If the endpoint does not exist, getEndPoint should be called', () => {
+  const endpoint = { plugin: {} }
+  getEndpoint.mockReturnValue(endpoint)
+
   set('test', 'value')
-  expect(getEndpoint).toHaveBeenCalled()
+  expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
+  expect(isdifferent).not.toHaveBeenCalled()
+})
+
+test('If the plugin has the hook set, it is called', () => {
+  const endpoint = {
+    plugin: {
+      set: jest.fn()
+    }
+  }
+  getEndpoint.mockReturnValue(endpoint)
+
+  set('test', 'value')
+
+  expect(endpoint.value).toBe('value')
+
+  expect(endpoint.plugin.set).toHaveBeenCalledWith(endpoint)
+
   expect(isdifferent).not.toHaveBeenCalled()
 })
 
@@ -34,14 +54,12 @@ test('if endpoint has no intervals, do no set last neither call pospone', () => 
   expect(pospone).not.toHaveBeenCalled()
 })
 
-test('it set last, and not call pospone', () => {
-  const now = Date.now()
+test('it not call pospone', () => {
   endpoints.test = {
     intervals: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
   set('test')
-  expect(endpoints.test.last >= now).toBe(true)
   expect(pospone).not.toHaveBeenCalled()
 })
 

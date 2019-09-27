@@ -10,7 +10,6 @@ const plugin = {
     if (response.error) {
       return eventHandler(response.error)
     }
-
     eventHandler(await response.json().catch(async () => response.text()))
   }
 }

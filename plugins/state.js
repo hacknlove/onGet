@@ -70,6 +70,8 @@ export default {
     const actualValue = getValue(state, endpoint.url)
     if (actualValue === undefined) {
       state = setValue(state, endpoint.url, endpoint.value)
+      propagateUp(endpoint.url)
+      propagateDown(endpoint.url)
       return
     }
     endpoint.value = actualValue
@@ -91,7 +93,6 @@ export default {
    */
   set (endpoint) {
     state = setValue(state, endpoint.url, endpoint.value)
-
     propagateUp(endpoint.url)
     propagateDown(endpoint.url)
   },

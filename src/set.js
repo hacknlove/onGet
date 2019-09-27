@@ -9,29 +9,31 @@ import { pospone } from './pospone'
  * @param {boolean} doPospone=true if false do not pospone the closest refresh
  * @return {object} endpoint
  */
+
 export function set (url, value, doPospone) {
-  var isNew = !endpoints.hasOwnProperty(url)
+  const endpoint = endpoints[url]
 
-  const endpoint = getEndpoint(url, value)
-
-  if (isNew) {
+  if (!endpoint) {
+    const endpoint = getEndpoint(url, value)
+    if (endpoint.plugin.set) {
+      endpoint.value = value
+      endpoint.plugin.set(endpoint)
+    }
     return
   }
 
   endpoint.clean = undefined
-  if (endpoint.intervals) {
-    endpoint.last = Date.now()
-    if (doPospone) {
-      pospone(endpoint)
-    }
+  if (endpoint.intervals && doPospone) {
+    pospone(endpoint)
   }
-
   if (!isDifferent(value, endpoint.value)) {
     return
   }
+
   endpoint.value = value
   if (endpoint.plugin.set) {
     endpoint.plugin.set(endpoint)
   }
+
   Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
 }
