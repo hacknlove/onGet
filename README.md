@@ -1,7 +1,13 @@
 # deepObject
 ![test coverage 100%](https://img.shields.io/badge/test_coverage-100%25-brightgreen)
-![dependencies 0](https://img.shields.io/badge/dependencies-0-brightgreen)
-![minified size 5.5k](https://img.shields.io/badge/minified_size-2k-brightgreen)
+![minified size 5.7k](https://img.shields.io/badge/minified_size-2k-brightgreen)
+
+## Developer Notes:
+This is the First published version, and It has been fully and deeply tested, thus it should be ready for production uses, so enjoy it.
+
+Please, do not hesitate to throw me an issue if you have some suggestions to improve the API, the implementation, the tests, or if you find a bug.
+
+Any help is welcome, for instance you can do a PR with TypeScript type definition, I will appreciate that.
 
 ## Install
 
@@ -55,17 +61,23 @@ It returns an `unsuscribe` function.
 The callback is called with the state of the url as the only parameter.
 
 #### options.interval
-The interval to re-check the `url`, in milliseconds
+The interval to re-check the `url`, in milliseconds.
 
-Only for external sources, like `fetch`, `localStorage` and `sessionStorage`
+Only for those plugins that periodically check the sources for value changes.
 
-You can pass Infinity to disable the periodical checks
+The actual interval is the minimum of all the intervals for the same url.
+If the minimum interval is Infinite, there will not be periodical checks.
 
 Be careful with passing too low values, because you can degrade the performance of the application.
 
 #### options.first
-The first value to initialize the state, if it has been initialized yet.
-On external sources, it could not change the actual value. See the plugin documentation.
+The first value to initialize the state, if it has been initialized yet. See the plugin documentation.
+
+### useOnGet(url, options) => value
+React hook that reloads the component when the state of url changes
+
+`options` are passed to `onGet`
+
 
 ### set(url, value, doPospone) => undefined
 It sets the state for the url.
