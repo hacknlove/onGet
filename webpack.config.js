@@ -19,6 +19,12 @@ var config = {
       amd: '@hacknlove/deepobject',
       root: 'deepObject'
     },
+    react: {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      root: 'React'
+    },
     isdifferent: {
       commonjs: 'isdifferent',
       commonjs2: 'isdifferent',
