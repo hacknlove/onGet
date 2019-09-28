@@ -1,4 +1,5 @@
 import { onGet } from './onGet'
+import { useOnGet } from './useOnGet'
 import { set } from './set'
 import { refresh } from './refresh'
 import { get } from './get'
@@ -16,5 +17,5 @@ registerPlugin(sessionStorate)
 registerPlugin(state)
 
 export {
-  onGet, set, refresh, get, registerPlugin, conf, endpoints, plugins
+  onGet, useOnGet, set, refresh, get, registerPlugin, conf, endpoints, plugins
 }
