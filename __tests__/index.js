@@ -5,7 +5,7 @@ import { onGet, set, get, refresh, endpoints } from '../'
 global.localStorage = {}
 global.sessionStorage = {}
 jest.useFakeTimers()
-var unsubscribes = []
+const unsubscribes = []
 
 describe('state', () => {
   beforeEach(() => {

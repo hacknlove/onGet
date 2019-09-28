@@ -3,7 +3,7 @@
 import { onGet, set, get, refresh, endpoints } from '../'
 
 global.fetch = jest.fn()
-var unsubscribes = []
+const unsubscribes = []
 
 describe('fetch', () => {
   beforeEach(() => {
