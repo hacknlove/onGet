@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("@hacknlove/deepobject"), require("isdifferent"));
+		module.exports = factory(require("@hacknlove/deepobject"), require("isdifferent"), require("react"));
 	else if(typeof define === 'function' && define.amd)
-		define("onGet", ["@hacknlove/deepobject", "isdifferent"], factory);
+		define("onGet", ["@hacknlove/deepobject", "isdifferent", "react"], factory);
 	else if(typeof exports === 'object')
-		exports["onGet"] = factory(require("@hacknlove/deepobject"), require("isdifferent"));
+		exports["onGet"] = factory(require("@hacknlove/deepobject"), require("isdifferent"), require("react"));
 	else
-		root["onGet"] = factory(root["deepObject"], root["isDifferent"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__hacknlove_deepobject__, __WEBPACK_EXTERNAL_MODULE_isdifferent__) {
+		root["onGet"] = factory(root["deepObject"], root["isDifferent"], root["React"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__hacknlove_deepobject__, __WEBPACK_EXTERNAL_MODULE_isdifferent__, __WEBPACK_EXTERNAL_MODULE_react__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -601,7 +601,7 @@ function getEndpoint (url, firstValue) {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: onGet, set, refresh, get, registerPlugin, conf, endpoints, plugins */
+/*! exports provided: onGet, useOnGet, set, refresh, get, registerPlugin, conf, endpoints, plugins */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -609,34 +609,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _onGet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./onGet */ "./src/onGet.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "onGet", function() { return _onGet__WEBPACK_IMPORTED_MODULE_0__["onGet"]; });
 
-/* harmony import */ var _set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./set */ "./src/set.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "set", function() { return _set__WEBPACK_IMPORTED_MODULE_1__["set"]; });
+/* harmony import */ var _useOnGet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useOnGet */ "./src/useOnGet.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "useOnGet", function() { return _useOnGet__WEBPACK_IMPORTED_MODULE_1__["useOnGet"]; });
 
-/* harmony import */ var _refresh__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./refresh */ "./src/refresh.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "refresh", function() { return _refresh__WEBPACK_IMPORTED_MODULE_2__["refresh"]; });
+/* harmony import */ var _set__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./set */ "./src/set.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "set", function() { return _set__WEBPACK_IMPORTED_MODULE_2__["set"]; });
 
-/* harmony import */ var _get__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./get */ "./src/get.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "get", function() { return _get__WEBPACK_IMPORTED_MODULE_3__["get"]; });
+/* harmony import */ var _refresh__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./refresh */ "./src/refresh.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "refresh", function() { return _refresh__WEBPACK_IMPORTED_MODULE_3__["refresh"]; });
 
-/* harmony import */ var _conf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./conf */ "./src/conf.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "conf", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["conf"]; });
+/* harmony import */ var _get__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./get */ "./src/get.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "get", function() { return _get__WEBPACK_IMPORTED_MODULE_4__["get"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "endpoints", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["endpoints"]; });
+/* harmony import */ var _conf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./conf */ "./src/conf.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "conf", function() { return _conf__WEBPACK_IMPORTED_MODULE_5__["conf"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "plugins", function() { return _conf__WEBPACK_IMPORTED_MODULE_4__["plugins"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "endpoints", function() { return _conf__WEBPACK_IMPORTED_MODULE_5__["endpoints"]; });
 
-/* harmony import */ var _registerPlugin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./registerPlugin */ "./src/registerPlugin.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "registerPlugin", function() { return _registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "plugins", function() { return _conf__WEBPACK_IMPORTED_MODULE_5__["plugins"]; });
 
-/* harmony import */ var _plugins_fetch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../plugins/fetch */ "./plugins/fetch.js");
-/* harmony import */ var _plugins_localstorage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../plugins/localstorage */ "./plugins/localstorage.js");
-/* harmony import */ var _plugins_sessionstorage__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../plugins/sessionstorage */ "./plugins/sessionstorage.js");
-/* harmony import */ var _plugins_state__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../plugins/state */ "./plugins/state.js");
+/* harmony import */ var _registerPlugin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./registerPlugin */ "./src/registerPlugin.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "registerPlugin", function() { return _registerPlugin__WEBPACK_IMPORTED_MODULE_6__["registerPlugin"]; });
 
-
-
-
-
+/* harmony import */ var _plugins_fetch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../plugins/fetch */ "./plugins/fetch.js");
+/* harmony import */ var _plugins_localstorage__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../plugins/localstorage */ "./plugins/localstorage.js");
+/* harmony import */ var _plugins_sessionstorage__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../plugins/sessionstorage */ "./plugins/sessionstorage.js");
+/* harmony import */ var _plugins_state__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../plugins/state */ "./plugins/state.js");
 
 
 
@@ -644,10 +642,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_fetch__WEBPACK_IMPORTED_MODULE_6__["default"])
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_localstorage__WEBPACK_IMPORTED_MODULE_7__["default"])
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_sessionstorage__WEBPACK_IMPORTED_MODULE_8__["default"])
-Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_5__["registerPlugin"])(_plugins_state__WEBPACK_IMPORTED_MODULE_9__["default"])
+
+
+
+
+
+
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_6__["registerPlugin"])(_plugins_fetch__WEBPACK_IMPORTED_MODULE_7__["default"])
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_6__["registerPlugin"])(_plugins_localstorage__WEBPACK_IMPORTED_MODULE_8__["default"])
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_6__["registerPlugin"])(_plugins_sessionstorage__WEBPACK_IMPORTED_MODULE_9__["default"])
+Object(_registerPlugin__WEBPACK_IMPORTED_MODULE_6__["registerPlugin"])(_plugins_state__WEBPACK_IMPORTED_MODULE_10__["default"])
 
 
 
@@ -866,6 +870,41 @@ function set (url, value, doPospone) {
 
 /***/ }),
 
+/***/ "./src/useOnGet.js":
+/*!*************************!*\
+  !*** ./src/useOnGet.js ***!
+  \*************************/
+/*! exports provided: useOnGet */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useOnGet", function() { return useOnGet; });
+/* harmony import */ var _onGet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./onGet */ "./src/onGet.js");
+/* harmony import */ var _get__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get */ "./src/get.js");
+
+
+
+const { useState, useEffect } = __webpack_require__(/*! react */ "react")
+
+/**
+ * React hook that reload the component when the url's state change
+ * @param {*} url the url to subscribe to
+ * @param {*} first the first value to use, before the real one arrives
+ */
+function useOnGet (url, options) {
+  const [value, set] = useState(() => Object(_get__WEBPACK_IMPORTED_MODULE_1__["get"])(url) || options.first)
+
+  useEffect(() => {
+    return Object(_onGet__WEBPACK_IMPORTED_MODULE_0__["onGet"])(url, set, options)
+  }, [url])
+
+  return value
+}
+
+
+/***/ }),
+
 /***/ "@hacknlove/deepobject":
 /*!*******************************************************************************************************************************************!*\
   !*** external {"commonjs":"@hacknlove/deepobject","commonjs2":"@hacknlove/deepobject","amd":"@hacknlove/deepobject","root":"deepObject"} ***!
@@ -885,6 +924,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__hacknlove_deepobject__;
 /***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE_isdifferent__;
+
+/***/ }),
+
+/***/ "react":
+/*!**************************************************************************************!*\
+  !*** external {"commonjs":"react","commonjs2":"react","amd":"react","root":"React"} ***!
+  \**************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_react__;
 
 /***/ })
 
