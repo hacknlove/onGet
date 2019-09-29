@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>onGet basic example</title>
+    <script src="https://cdn.jsdelivr.net/npm/isdifferent@1.0.2/build/isDifferent.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@hacknlove/deepobject@1.1.6/dist/deepObject.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/onget@1.0.4/dist/onGet.umd.min.js"></script>
+  </head>
+  <body>
+    <div>
+      <p>
+        Clicked: <span id="value">0</span> times
+        <button id="increment">+</button>
+        <button id="decrement">-</button>
+        <button id="incrementIfOdd">Increment if odd</button>
+        <button id="incrementAsync">Increment async</button>
+      </p>
+    </div>
+    <script>
+      const valueEl = document.getElementById('value')
+      function render(value) {
+        valueEl.innerHTML = value
+      }
+      function sum (x) {
+          const value = onGet.get('state://counter')
+          onGet.set('state://counter', value + x)
+      }
+      onGet.onGet('state://counter', render, { first: 0 })
+
+      document.getElementById('increment')
+        .addEventListener('click', function () {
+          sum(1)
+        })
+
+      document.getElementById('decrement')
+        .addEventListener('click', function () {
+          sum(-1)
+        })
+
+      document.getElementById('incrementIfOdd')
+        .addEventListener('click', function () {
+          if (onGet.get('state://counter') % 2 !== 0) {
+            sum(1)
+          }
+        })
+
+      document.getElementById('incrementAsync')
+        .addEventListener('click', function () {
+          setTimeout(function () {
+            sum(1)
+          }, 1000)
+        })
+    </script>
+  </body>
+</html>
