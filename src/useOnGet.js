@@ -1,7 +1,6 @@
+import { useState, useEffect } from 'react'
 import { onGet } from './onGet'
 import { get } from './get'
-
-const { useState, useEffect } = require('react')
 
 /**
  * React hook that reload the component when the url's state change

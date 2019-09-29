@@ -1,6 +1,6 @@
 {
   "name": "onget",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The elegant plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"
@@ -50,7 +50,9 @@
     "react-test-renderer": "^16.10.1",
     "rollup": "^1.22.0",
     "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.2"
-  }
+  },
+  "sideEffects": ["./src/conf"]
 }

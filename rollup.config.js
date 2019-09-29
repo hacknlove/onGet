@@ -1,6 +1,7 @@
 import nodeResolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import { terser } from 'rollup-plugin-terser'
+import commonjs from 'rollup-plugin-commonjs'
 
 import pkg from './package.json'
 
@@ -28,7 +29,8 @@ export default [
       ...Object.keys(pkg.peerDependencies || {})
     ],
     plugins: [
-      nodeResolve()
+      nodeResolve(),
+      commonjs()
     ]
   },
 
@@ -41,18 +43,26 @@ export default [
       ...Object.keys(pkg.peerDependencies || {})
     ],
     plugins: [
-      nodeResolve()
+      nodeResolve(),
+      commonjs()
     ]
   },
 
   // ES for Browsers
   {
     input: 'src/index.js',
-    output: { file: 'dist/onGet.es.min.js', format: 'es', indent: false },
+    output: {
+      file: 'dist/onGet.es.min.js',
+      format: 'es',
+      indent: false
+    },
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
+    ],
     plugins: [
-      nodeResolve({
-        extensions: ['.ts']
-      }),
+      nodeResolve(),
+      commonjs(),
       terser({
         compress: {
           pure_getters: true,
@@ -71,7 +81,10 @@ export default [
       file: 'dist/onGet.umd.js',
       format: 'umd',
       name: 'onGet',
-      indent: false
+      indent: false,
+      globals: {
+        '@hacknlove/deepobject': 'deepObject'
+      }
     },
     external: [
       ...Object.keys(pkg.dependencies || {}),
@@ -79,6 +92,7 @@ export default [
     ],
     plugins: [
       nodeResolve(),
+      commonjs(),
       babel(babelConfiguration)
     ]
   },
@@ -90,7 +104,10 @@ export default [
       file: 'dist/onGet.umd.min.js',
       format: 'umd',
       name: 'onGet',
-      indent: false
+      indent: false,
+      globals: {
+        '@hacknlove/deepobject': 'deepObject'
+      }
     },
     external: [
       ...Object.keys(pkg.dependencies || {}),
@@ -98,6 +115,7 @@ export default [
     ],
     plugins: [
       nodeResolve(),
+      commonjs(),
       babel(babelConfiguration),
       terser({
         compress: {
@@ -108,5 +126,5 @@ export default [
         }
       })
     ]
-  }
+  },
 ]
