@@ -1,54 +1,48 @@
-(function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('isdifferent'), require('@hacknlove/deepobject')) :
-typeof define === 'function' && define.amd ? define(['exports', 'isdifferent', '@hacknlove/deepobject'], factory) :
-(global = global || self, factory(global.onGet = {}, global.isDifferent, global.deepobject));
-}(this, function (exports, isDifferent, deepobject) { 'use strict';
+'use strict';
 
-isDifferent = isDifferent && isDifferent.hasOwnProperty('default') ? isDifferent['default'] : isDifferent;
+Object.defineProperty(exports, '__esModule', { value: true });
 
-var conf = {
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var isDifferent = _interopDefault(require('isdifferent'));
+var deepobject = require('@hacknlove/deepobject');
+
+const conf = {
   CACHE_SIZE: 100
 };
-var endpoints = {};
-var plugins = [];
+const endpoints = {};
+const plugins = [];
 
 /**
  * Internal: Returns the first plugin whose regex matchs the url
  * @param {string} url endpoint's url
  * @return plugin object
  */
-
-function findPlugin(url) {
-  return plugins.find(function (plugin) {
-    return url.match(plugin.regex);
-  });
+function findPlugin (url) {
+  return plugins.find(plugin => url.match(plugin.regex))
 }
 
 /**
  * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
  * It is  intended to be called each time a new endpoint is created
  */
-
-function clean() {
-  var values = Object.values(endpoints);
+function clean () {
+  const values = Object.values(endpoints);
 
   if (values.length < conf.CACHE_SIZE) {
-    return;
+    return
   }
 
-  values.forEach(function (endpoint) {
+  values.forEach(endpoint => {
     if (!endpoint.clean) {
       if (Object.keys(endpoint.callbacks).length === 0) {
         endpoint.clean = true;
       }
-
-      return;
+      return
     }
-
     if (endpoint.plugin.clean && endpoint.plugin.clean(endpoint)) {
-      return;
+      return
     }
-
     clearTimeout(endpoints[endpoint.url].timeout);
     delete endpoints[endpoint.url];
   });
@@ -60,22 +54,18 @@ function clean() {
  * @params {any} [firstValue] is used as a firstValue, before any action was performed by the plugin
  * @returns {object} the endpoint
  */
-
-function getEndpoint(url, firstValue) {
+function getEndpoint (url, firstValue) {
   if (endpoints[url]) {
-    return endpoints[url];
+    return endpoints[url]
   }
-
   setTimeout(clean);
-  var plugin = findPlugin(url);
-
+  const plugin = findPlugin(url);
   if (!plugin) {
-    throw new Error("No plugin for " + url);
+    throw new Error(`No plugin for ${url}`)
   }
-
-  var endpoint = {
-    url: url,
-    plugin: plugin,
+  const endpoint = {
+    url,
+    plugin,
     value: firstValue,
     callbacks: {}
   };
@@ -94,7 +84,7 @@ function getEndpoint(url, firstValue) {
     plugin.getEndpoint(endpoint);
   }
 
-  return endpoint;
+  return endpoint
 }
 
 /**
@@ -102,19 +92,18 @@ function getEndpoint(url, firstValue) {
  * @param {object} endpoint from which unsubscribe
  * @param {strink} sk key that identifies the subscription
  */
-function createUnsubscribe(endpoint, sk) {
-  return function () {
+function createUnsubscribe (endpoint, sk) {
+  return () => {
     if (!endpoint.callbacks.hasOwnProperty(sk)) {
-      return;
+      return
     }
 
     delete endpoint.callbacks[sk];
-
     if (endpoint.intervals) {
       delete endpoint.intervals[sk];
-      endpoint.minInterval = Math.min.apply(Math, Object.values(endpoint.intervals));
+      endpoint.minInterval = Math.min(...Object.values(endpoint.intervals));
     }
-  };
+  }
 }
 
 /**
@@ -124,15 +113,13 @@ function createUnsubscribe(endpoint, sk) {
  * @param {number} [interval] max interval (milliseconds) to check for a new value
  * @return {function} unsubscribe function
  */
+function addNewSubscription (url, callback, interval) {
+  const endpoint = endpoints[url];
 
-function addNewSubscription(url, callback, interval) {
-  var endpoint = endpoints[url];
   var sk;
-
   do {
     sk = Math.random().toString(36).substr(2) + (Date.now() % 1000).toString(36);
-  } while (endpoint.callbacks[sk]);
-
+  } while (endpoint.callbacks[sk])
   endpoint.callbacks[sk] = callback;
 
   if (endpoint.intervals) {
@@ -141,7 +128,7 @@ function addNewSubscription(url, callback, interval) {
     endpoint.minInterval = Math.min(endpoint.minInterval, interval);
   }
 
-  return createUnsubscribe(endpoint, sk);
+  return createUnsubscribe(endpoint, sk)
 }
 
 /**
@@ -149,20 +136,16 @@ function addNewSubscription(url, callback, interval) {
  * @param {object} endpoint endpoint whose refresh should be posponed, as returned by getEndpoint(url)
  * @returns undefined
  */
-
-function pospone(endpoint) {
+function pospone (endpoint) {
   if (!endpoint.intervals) {
-    return;
+    return
   }
-
   clearTimeout(endpoint.timeout);
-
   if (!endpoints[endpoint.url]) {
-    return;
+    return
   }
-
   endpoint.last = Date.now();
-  endpoint.timeout = setTimeout(function () {
+  endpoint.timeout = setTimeout(() => {
     refresh(endpoint.url);
   }, endpoint.minInterval);
 }
@@ -175,40 +158,32 @@ function pospone(endpoint) {
  * @return {object} endpoint
  */
 
-function set(url, value, doPospone) {
-  var endpoint = endpoints[url];
+function set (url, value, doPospone) {
+  const endpoint = endpoints[url];
 
   if (!endpoint) {
-    var _endpoint = getEndpoint(url, value);
-
-    if (_endpoint.plugin.set) {
-      _endpoint.value = value;
-
-      _endpoint.plugin.set(_endpoint);
+    const endpoint = getEndpoint(url, value);
+    if (endpoint.plugin.set) {
+      endpoint.value = value;
+      endpoint.plugin.set(endpoint);
     }
-
-    return;
+    return
   }
 
   endpoint.clean = undefined;
-
   if (endpoint.intervals && doPospone) {
     pospone(endpoint);
   }
-
   if (!isDifferent(value, endpoint.value)) {
-    return;
+    return
   }
 
   endpoint.value = value;
-
   if (endpoint.plugin.set) {
     endpoint.plugin.set(endpoint);
   }
 
-  Object.values(endpoint.callbacks).forEach(function (cb) {
-    return setTimeout(cb, 0, endpoint.value);
-  });
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
 }
 
 /**
@@ -216,25 +191,20 @@ function set(url, value, doPospone) {
  * @param {string} url of the endpoints to be refreshed
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
-
-function refresh(url) {
-  var endpoint = endpoints[url];
-
+function refresh (url) {
+  const endpoint = endpoints[url];
   if (!endpoint) {
-    return false;
+    return false
   }
-
   endpoint.clean = undefined;
-
   if (endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
-    return;
+    return
   }
-
   pospone(endpoint);
-  endpoint.plugin.refresh(endpoint, function (value) {
+  endpoint.plugin.refresh(endpoint, value => {
     set(url, value);
   });
-  return true;
+  return true
 }
 
 /**
@@ -245,28 +215,23 @@ function refresh(url) {
  * @param {integer} options.interval seconds to refresh the value
  * @param {any} options.first first value to pass to the plugin
  */
+function onGet (url, cb, options = {}) {
+  const {
+    first,
+    interval
+  } = options;
+  const endpoint = getEndpoint(url, first);
 
-function onGet(url, cb, options) {
-  if (options === void 0) {
-    options = {};
-  }
-
-  var _options = options,
-      first = _options.first,
-      interval = _options.interval;
-  var endpoint = getEndpoint(url, first);
-  var unsubscribe = addNewSubscription(url, cb, interval);
+  const unsubscribe = addNewSubscription(url, cb, interval);
   endpoint.clean = undefined;
 
   if (endpoint.value !== undefined) {
     cb(endpoint.value);
   }
-
   if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
     refresh(url);
   }
-
-  return unsubscribe;
+  return unsubscribe
 }
 
 /**
@@ -275,45 +240,34 @@ function onGet(url, cb, options) {
  * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
  * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
  */
-
-function get(url) {
-  var endpoint = endpoints[url];
-
+function get (url) {
+  const endpoint = endpoints[url];
   if (endpoint) {
     endpoint.clean = undefined;
-    return endpoints[url].value;
+    return endpoints[url].value
   }
-
-  var plugin = findPlugin(url);
-
+  const plugin = findPlugin(url);
   if (!plugin.get) {
-    return undefined;
+    return undefined
   }
-
-  return plugin.get(url);
+  return plugin.get(url)
 }
 
-var _require = require('react'),
-    useState = _require.useState,
-    useEffect = _require.useEffect;
+const { useState, useEffect } = require('react');
+
 /**
  * React hook that reload the component when the url's state change
  * @param {*} url the url to subscribe to
  * @param {*} first the first value to use, before the real one arrives
  */
+function useOnGet (url, options) {
+  const [value, set] = useState(() => get(url) || options.first);
 
-
-function useOnGet(url, options) {
-  var _useState = useState(function () {
-    return get(url) || options.first;
-  }),
-      value = _useState[0],
-      set = _useState[1];
-
-  useEffect(function () {
-    return onGet(url, set, options);
+  useEffect(() => {
+    return onGet(url, set, options)
   }, [url]);
-  return value;
+
+  return value
 }
 
 /**
@@ -326,83 +280,90 @@ function useOnGet(url, options) {
  * @param {function} plugin.refresh function that is called to obtain the value
  * @returns {undefined} undefined
  */
-
-function registerPlugin(plugin) {
+function registerPlugin (plugin) {
   plugins.unshift(plugin);
 }
 
 /* global fetch */
-var plugin = {
+
+const plugin = {
   name: 'fetch',
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  refresh: function refresh(endpoint, eventHandler) {
-    return fetch(endpoint.url).then(function (response) {
-      response.json().then(eventHandler).catch(function () {
-        response.text().then(eventHandler).catch(eventHandler);
-      });
-    }).catch(eventHandler);
+  refresh (endpoint, eventHandler) {
+    return fetch(endpoint.url)
+      .then(response => {
+        response.json()
+          .then(eventHandler)
+          .catch(() => {
+            response.text()
+              .then(eventHandler)
+              .catch(eventHandler);
+          });
+      })
+      .catch(eventHandler)
   }
 };
 
 /* global localStorage */
-var PROTOCOLCUT = 'localStorage://'.length;
+const PROTOCOLCUT = 'localStorage://'.length;
+
 var localStorage$1 = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
   checkInterval: 30000,
   threshold: 500,
-  refresh: function refresh(endpoint, eventHandler) {
+  refresh (endpoint, eventHandler) {
     eventHandler(localStorage[endpoint.key]);
   },
-  getEndpoint: function getEndpoint(endpoint) {
+  getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT);
 
     if (localStorage[endpoint.key] !== undefined) {
       endpoint.value = localStorage[endpoint.key];
-      return;
+      return
     }
-
     localStorage[endpoint.key] = endpoint.value;
   },
-  get: function get(url) {
-    return localStorage[url.substr(PROTOCOLCUT)];
+  get (url) {
+    return localStorage[url.substr(PROTOCOLCUT)]
   },
-  set: function set(endpoint) {
+  set (endpoint) {
     localStorage[endpoint.key] = endpoint.value;
   }
 };
 
 /* global sessionStorage */
-var PROTOCOLCUT$1 = 'sessionStorage://'.length;
+const PROTOCOLCUT$1 = 'sessionStorage://'.length;
+
 var sessionStorate = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
   checkInterval: 30000,
   threshold: 500,
-  refresh: function refresh(endpoint, eventHandler) {
+  refresh (endpoint, eventHandler) {
     eventHandler(sessionStorage[endpoint.key]);
   },
-  getEndpoint: function getEndpoint(endpoint) {
+  getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT$1);
 
     if (sessionStorage[endpoint.key] !== undefined) {
       endpoint.value = sessionStorage[endpoint.key];
-      return;
+      return
     }
-
     sessionStorage[endpoint.key] = endpoint.value;
   },
-  get: function get(url) {
-    return sessionStorage[url.substr(PROTOCOLCUT$1)];
+  get (url) {
+    return sessionStorage[url.substr(PROTOCOLCUT$1)]
   },
-  set: function set(endpoint) {
+  set (endpoint) {
     sessionStorage[endpoint.key] = endpoint.value;
   }
 };
 
 var state = {};
+
 /**
  * For each endpoint whose url is a parent of url, update his value and call his callbacks
  *
@@ -410,25 +371,20 @@ var state = {};
  * @param {string} url
  * @returns {undefined}
  */
-
-function propagateUp(url) {
-  var parentUrl = url.replace(/\.?[^.]*$/, '');
-
+function propagateUp (url) {
+  const parentUrl = url.replace(/\.?[^.]*$/, '');
   if (!parentUrl) {
-    return;
+    return
   }
-
-  var endpoint = endpoints[parentUrl];
+  const endpoint = endpoints[parentUrl];
 
   if (endpoint) {
     endpoint.value = deepobject.getValue(state, endpoint.url);
-    Object.values(endpoint.callbacks).forEach(function (cb) {
-      return setTimeout(cb, 0, endpoint.value);
-    });
+    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
   }
-
   setTimeout(propagateUp, 0, parentUrl);
 }
+
 /**
  * For each endpoint whose url is a child of url, if his value has changed, update it and call his callbacks
  *
@@ -436,26 +392,23 @@ function propagateUp(url) {
  * @param {string} url
  * @returns {undefined}
  */
-
-function propagateDown(url) {
-  var parent = endpoints[url];
-  var prefix = url + ".";
-  Object.keys(endpoints).forEach(function (childUrl) {
+function propagateDown (url) {
+  const parent = endpoints[url];
+  const prefix = `${url}.`;
+  Object.keys(endpoints).forEach(childUrl => {
     if (!childUrl.startsWith(prefix)) {
-      return;
+      return
     }
-
-    var child = endpoints[childUrl];
-    var newChildValue = deepobject.getValue(parent.value, childUrl.substr(url.length + 1));
+    const child = endpoints[childUrl];
+    const newChildValue = deepobject.getValue(parent.value, childUrl.substr(url.length + 1));
 
     if (isDifferent(newChildValue, child.value)) {
       child.value = newChildValue;
-      Object.values(child.callbacks).forEach(function (cb) {
-        return setTimeout(cb, 0, newChildValue);
-      });
+      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue));
     }
   });
 }
+
 var state$1 = {
   name: 'state',
   regex: /^state:\/\/./,
@@ -464,7 +417,7 @@ var state$1 = {
    * Nothing to refresh. shows a warning in the console
    * @returns {undefined}
    */
-  refresh: function refresh() {
+  refresh () {
     console.warn('the true source for this plugin is client side, so refresh does nothing');
   },
 
@@ -473,16 +426,14 @@ var state$1 = {
    * else, set endpoint.value according to the state
    * @param {object} endpoint
    */
-  getEndpoint: function getEndpoint(endpoint) {
-    var actualValue = deepobject.getValue(state, endpoint.url);
-
+  getEndpoint (endpoint) {
+    const actualValue = deepobject.getValue(state, endpoint.url);
     if (actualValue === undefined) {
       state = deepobject.setValue(state, endpoint.url, endpoint.value);
       propagateUp(endpoint.url);
       propagateDown(endpoint.url);
-      return;
+      return
     }
-
     endpoint.value = actualValue;
   },
 
@@ -491,8 +442,8 @@ var state$1 = {
    * @param {string} url
    * @returns {object} the value
    */
-  get: function get(url) {
-    return deepobject.getValue(state, url);
+  get (url) {
+    return deepobject.getValue(state, url)
   },
 
   /**
@@ -500,7 +451,7 @@ var state$1 = {
    * @params {object} endpoint
    * @returns {undefined}
    */
-  set: function set(endpoint) {
+  set (endpoint) {
     state = deepobject.setValue(state, endpoint.url, endpoint.value);
     propagateUp(endpoint.url);
     propagateDown(endpoint.url);
@@ -511,15 +462,11 @@ var state$1 = {
    * @param {object} endpoint
    * @returns {undefined}
    */
-  clean: function clean(endpoint) {
-    var prefix = endpoint.url + ".";
-
-    if (Object.keys(endpoints).some(function (url) {
-      return url.startsWith(prefix);
-    })) {
-      return;
+  clean (endpoint) {
+    const prefix = `${endpoint.url}.`;
+    if (Object.keys(endpoints).some(url => url.startsWith(prefix))) {
+      return
     }
-
     propagateUp(endpoint.url);
   }
 };
@@ -538,7 +485,3 @@ exports.refresh = refresh;
 exports.registerPlugin = registerPlugin;
 exports.set = set;
 exports.useOnGet = useOnGet;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-}));

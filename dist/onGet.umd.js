@@ -338,7 +338,7 @@ var plugin = {
   checkInterval: 30000,
   threshold: 500,
   refresh: function refresh(endpoint, eventHandler) {
-    fetch(endpoint.url).then(function (response) {
+    return fetch(endpoint.url).then(function (response) {
       response.json().then(eventHandler).catch(function () {
         response.text().then(eventHandler).catch(eventHandler);
       });

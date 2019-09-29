@@ -68,7 +68,7 @@ export default [
   {
     input: 'src/index.js',
     output: {
-      file: 'dist/onGet.cjs.js',
+      file: 'dist/onGet.umd.js',
       format: 'umd',
       name: 'onGet',
       indent: false
@@ -87,7 +87,7 @@ export default [
   {
     input: 'src/index.js',
     output: {
-      file: 'dist/onGet.cjs.min.js',
+      file: 'dist/onGet.umd.min.js',
       format: 'umd',
       name: 'onGet',
       indent: false
