@@ -9,9 +9,6 @@
             "node": "current"
           }
         }]]
-    },
-    "production": {
-      "presets": [["env", { "modules": false }]]
     }
   }
 }

@@ -5,12 +5,18 @@ const plugin = {
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  async refresh (endpoint, eventHandler) {
-    const response = await fetch(endpoint.url).catch(error => ({ error }))
-    if (response.error) {
-      return eventHandler(response.error)
-    }
-    eventHandler(await response.json().catch(async () => response.text()))
+  refresh (endpoint, eventHandler) {
+    return fetch(endpoint.url)
+      .then(response => {
+        response.json()
+          .then(eventHandler)
+          .catch(() => {
+            response.text()
+              .then(eventHandler)
+              .catch(eventHandler)
+          })
+      })
+      .catch(eventHandler)
   }
 }
 
