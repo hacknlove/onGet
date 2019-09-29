@@ -7,7 +7,7 @@ import { get } from './get'
  * @param {*} url the url to subscribe to
  * @param {*} first the first value to use, before the real one arrives
  */
-export function useOnGet (url, options) {
+export function useOnGet (url, options = {}) {
   const [value, set] = useState(() => get(url) || options.first)
 
   useEffect(() => {

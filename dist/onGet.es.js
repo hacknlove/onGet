@@ -253,7 +253,7 @@ function get (url) {
  * @param {*} url the url to subscribe to
  * @param {*} first the first value to use, before the real one arrives
  */
-function useOnGet (url, options) {
+function useOnGet (url, options = {}) {
   const [value, set] = useState(() => get(url) || options.first);
 
   useEffect(() => {

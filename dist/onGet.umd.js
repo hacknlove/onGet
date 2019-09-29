@@ -300,6 +300,10 @@ function get(url) {
  */
 
 function useOnGet(url, options) {
+  if (options === void 0) {
+    options = {};
+  }
+
   var _useState = react.useState(function () {
     return get(url) || options.first;
   }),
