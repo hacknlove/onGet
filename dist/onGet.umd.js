@@ -1,8 +1,8 @@
 (function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('isdifferent'), require('@hacknlove/deepobject')) :
-typeof define === 'function' && define.amd ? define(['exports', 'isdifferent', '@hacknlove/deepobject'], factory) :
-(global = global || self, factory(global.onGet = {}, global.isDifferent, global.deepobject));
-}(this, function (exports, isDifferent, deepobject) { 'use strict';
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('isdifferent'), require('react'), require('@hacknlove/deepobject')) :
+typeof define === 'function' && define.amd ? define(['exports', 'isdifferent', 'react', '@hacknlove/deepobject'], factory) :
+(global = global || self, factory(global.onGet = {}, global.isDifferent, global.react, global.deepobject));
+}(this, function (exports, isDifferent, react, deepobject) { 'use strict';
 
 isDifferent = isDifferent && isDifferent.hasOwnProperty('default') ? isDifferent['default'] : isDifferent;
 
@@ -293,24 +293,20 @@ function get(url) {
   return plugin.get(url);
 }
 
-var _require = require('react'),
-    useState = _require.useState,
-    useEffect = _require.useEffect;
 /**
  * React hook that reload the component when the url's state change
  * @param {*} url the url to subscribe to
  * @param {*} first the first value to use, before the real one arrives
  */
 
-
 function useOnGet(url, options) {
-  var _useState = useState(function () {
+  var _useState = react.useState(function () {
     return get(url) || options.first;
   }),
       value = _useState[0],
       set = _useState[1];
 
-  useEffect(function () {
+  react.useEffect(function () {
     return onGet(url, set, options);
   }, [url]);
   return value;

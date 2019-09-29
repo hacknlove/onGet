@@ -1,4 +1,5 @@
 import isDifferent from 'isdifferent';
+import { useState, useEffect } from 'react';
 import { getValue, setValue } from '@hacknlove/deepobject';
 
 const conf = {
@@ -246,8 +247,6 @@ function get (url) {
   }
   return plugin.get(url)
 }
-
-const { useState, useEffect } = require('react');
 
 /**
  * React hook that reload the component when the url's state change

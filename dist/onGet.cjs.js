@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var isDifferent = _interopDefault(require('isdifferent'));
+var react = require('react');
 var deepobject = require('@hacknlove/deepobject');
 
 const conf = {
@@ -253,17 +254,15 @@ function get (url) {
   return plugin.get(url)
 }
 
-const { useState, useEffect } = require('react');
-
 /**
  * React hook that reload the component when the url's state change
  * @param {*} url the url to subscribe to
  * @param {*} first the first value to use, before the real one arrives
  */
 function useOnGet (url, options) {
-  const [value, set] = useState(() => get(url) || options.first);
+  const [value, set] = react.useState(() => get(url) || options.first);
 
-  useEffect(() => {
+  react.useEffect(() => {
     return onGet(url, set, options)
   }, [url]);
 
