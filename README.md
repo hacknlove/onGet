@@ -19,7 +19,7 @@ npm i onget
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/isdifferent@1.0.2/build/isDifferent.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/onget/@1.0.0/build/onGet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onget/@1.0.1/build/onGet.min.js"></script>
 ```
 
 And if you plan to use `state://deep.dot.key` in memory state, you must include too
