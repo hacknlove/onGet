@@ -1,7 +1,7 @@
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('isdifferent'), require('react'), require('@hacknlove/deepobject')) :
 typeof define === 'function' && define.amd ? define(['exports', 'isdifferent', 'react', '@hacknlove/deepobject'], factory) :
-(global = global || self, factory(global.onGet = {}, global.isDifferent, global.react, global.deepobject));
+(global = global || self, factory(global.onGet = {}, global.isDifferent, global.react, global.deepObject));
 }(this, function (exports, isDifferent, react, deepobject) { 'use strict';
 
 isDifferent = isDifferent && isDifferent.hasOwnProperty('default') ? isDifferent['default'] : isDifferent;
