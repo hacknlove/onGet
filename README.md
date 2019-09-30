@@ -23,7 +23,7 @@ npm i onget
 <!-- -->
 ```
 
-And if you plan to use `state://deep.dot.key` in memory state, you must include too
+And if you plan to use `dotted://deep.dot.key` in memory state, you must include too
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@hacknlove/deepobject@1.1.6/dist/deepObject.umd.min.js"></script>
 ```
@@ -38,7 +38,7 @@ For instance:
 * The url `http://example.com/some/path` maps to the response of fetch a GET to that url
 * The url `localstorage://foo` maps to the value `foo` at `localStorage`
 * The url `sessionstorage://foo` maps to the value `foo` at `sessionStorage`
-* The url `state://some.deep.dotted.key` maps to `VALUE` in an in-memory state similar to `{..., some: {..., deep: {..., dotted: {.., key: VALUE }}}}`
+* The url `dotted://some.deep.dotted.key` maps to `VALUE` in an in-memory state similar to `{..., some: {..., deep: {..., dotted: {.., key: VALUE }}}}`
 
 ### Subscriptions
 
@@ -97,39 +97,82 @@ If the plugin supports periodical checks and refresh is called to close a period
 
 It returns `true`, otherwise.
 
-### get(url, onlyCached=true)
+### get(url) => value
 Returns the state for the url.
 
-If there is no subscription for the url and `onlyCached=false`, it could be return the actual value at the source. See the plugin documentation.
+If there is no subscription for the url, it depends on the plugin. See the plugin documentation.
 
-### registerPlugin
+### registerPlugin(plugin) => undefined
 Allows you to register a new plugin, to deal with other urls, like `foo://...`
 
 [See Plugin Authoring](#plugin-authoring)
 
+### command(url, command, ...params) => undefined
+**next versión  (1.0.6)**
 
+Execute a plugin comand. See the available commands for each plugin in the documentation.
 
 ## Included Plugins
 
-### state `state://some.dotted.key`
+### history `history://someKey`
+A convenient way to store (undo-redo)able states.
+
+#### Notes
+* `set` push a new state in the history, and clear the redo states if any.
+* there are no periodical checks
+* `refresh` does nothing
+* the `interval` optional parameter at `onGet` does nothing
+
+#### Commands
+
+* `command('history://someKey', 'replace', newValue)` replace the current value with a newOne. Do not push it in the history, but clear the redo steps, if any.
+* `command('history://someKey', 'undo', n = 1)` go back n step
+* `command('history://someKey', 'redo', n = 1)` go forward n step
+* `command('history://someKey', 'goto', n)` go to the n-th step (0 based)
+* `command('history://someKey', 'first')` go to the first state
+* `command('history://someKey', 'last')` go to the last state
+* `command('history://someKey', 'length')` returns the history length
+* `command('history://someKey', 'undoLength')` amount of steps that can be undone
+* `command('history://someKey', 'redoLength')` amount of steps that can be redone
+
+** Execute command in all histories **
+The catch all histories url, `history://`, can be used with commands, to execute any command, but `length`, `undoLength` and `redoLength`, with every histories.
+
+For instance `command('history://', 'undo'), undoes one step in every history.
+
+If use `history://` in `useOnGet`, `onGet`, `get` or `set`, this catch all behavior will stop working, and the commands executed in the url `history://` will affect only the sole history referenced by this url.
+
+
+#### Relative URL `history://someKey#n`
+
+With `onGet`, `useOnGet` and `get` points to previous n state.
+
+So `history://someKey#1` is the previos one, and `history://someKey#2` is two steps before now, and `history://someKey#-1` is the next step (if exists)
+
+With `set` it does not push a new state in the history, but overwrites the pointed state.
+
+**Commands and relative URL**
+`command('history://someKey#n', command, ...params)` is like `command('history://someKey', command, ...params)`
+
+
+### dotted `dotted://some.dotted.key`
 
 It is a way very fast, and very convenient to reactively share state across your application.
 
-The urls are `deep.dotted.keys`, so if the state of `state://some.dotted.key` is `{foo: 'bar}` the state of `state://some.dotted.key.foo` is `bar`
+The urls are `deep.dotted.keys`, so if the state of `dotted://some.dotted.key` is `{foo: 'bar}` the state of `dotted://some.dotted.key.foo` is `bar`
 
-The changes are propagated efficiently up and down, so if you call `set('state://some.dotted.key', {foo: 'buz'})` the next subscriptions callbacks are called (if the subscriptions exist)
+The changes are propagated efficiently up and down, so if you call `set('dotted://some.dotted.key', {foo: 'buz'})` the next subscriptions callbacks are called (if the subscriptions exist)
 
-* `state://some.dotted.key`
-* `state://some.dotted`
-* `state://some`
-* `state://some.dotted.key.foo`
+* `dotted://some.dotted.key`
+* `dotted://some.dotted`
+* `dotted://some`
+* `dotted://some.dotted.key.foo`
 
 #### Notes
 * `set` changes the value at the source, and could affects the values or child and parent other urls.
 * there are no periodical checks
 * `refresh` does nothing
 * the `interval` optional parameter at `onGet` does nothing
-
 
 ### localStorage `localStorage://someKey`
 
@@ -214,7 +257,7 @@ After you get the new value, you should execute `eventHandler(newValue)` and nev
 #### plugin.set(endpoint) => undefined
 When `set(url, value)` determines that the new value is different from the current one, it stablish the new `endpoint.value` and then executes the `plugin.set(endpoint)`
 
-You can use `plugin.set` to update the source, if your source can be updated by the plugin, like localStorage, sessionStorage, or state, but unlike fetch.
+You can use `plugin.set` to update the source, if your source can be updated by the plugin, like localStorage, sessionStorage, or dotted, but unlike fetch.
 
 #### plugin.get(url) => any
 `get(url)` returns the cached value, if exists.

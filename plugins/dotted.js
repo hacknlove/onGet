@@ -7,7 +7,7 @@ var state = {}
 /**
  * For each endpoint whose url is a parent of url, update his value and call his callbacks
  *
- * state://foo.bar is a parent of state://foo.bar.buz
+ * dotted://foo.bar is a parent of dotted://foo.bar.buz
  * @param {string} url
  * @returns {undefined}
  */
@@ -28,7 +28,7 @@ export function propagateUp (url) {
 /**
  * For each endpoint whose url is a child of url, if his value has changed, update it and call his callbacks
  *
- * state://foo.bar.buz is a parent of state://foo.bar
+ * dotted://foo.bar.buz is a parent of dotted://foo.bar
  * @param {string} url
  * @returns {undefined}
  */
@@ -51,7 +51,7 @@ export function propagateDown (url) {
 
 export default {
   name: 'state',
-  regex: /^state:\/\/./,
+  regex: /^dotted:\/\/./,
 
   /**
    * Nothing to refresh. shows a warning in the console

@@ -1,7 +1,7 @@
 import { getValue, setValue } from '@hacknlove/deepobject'
 import isDifferent from 'isdifferent'
 import { endpoints } from '../../src/conf'
-import plugin, { propagateUp, propagateDown } from '../state'
+import plugin, { propagateUp, propagateDown } from '../dotted'
 
 jest.useFakeTimers()
 
@@ -104,14 +104,14 @@ describe('propagateDown', () => {
 
 describe('plugin', () => {
   describe('regex', () => {
-    it('match the state:// url', () => {
-      expect('state://foo/bar').toMatch(plugin.regex)
+    it('match the dotted:// url', () => {
+      expect('dotted://foo/bar').toMatch(plugin.regex)
     })
     it('not match other url', () => {
       expect('file://foo/bar').not.toMatch(plugin.regex)
       expect('/foo/bar').not.toMatch(plugin.regex)
-      expect('State:/foo/bar').not.toMatch(plugin.regex)
-      expect('State://foo/bar').not.toMatch(plugin.regex)
+      expect('dotted:/foo/bar').not.toMatch(plugin.regex)
+      expect('state://foo/bar').not.toMatch(plugin.regex)
     })
   })
 
@@ -128,16 +128,16 @@ describe('plugin', () => {
       getValue.mockReturnValue(undefined)
       setValue.mockReturnValue({}) // To not break other tests
       plugin.getEndpoint({
-        url: 'state://some.new.key',
+        url: 'dotted://some.new.key',
         value: 'newValue'
       })
-      expect(setValue).toHaveBeenCalledWith({}, 'state://some.new.key', 'newValue')
+      expect(setValue).toHaveBeenCalledWith({}, 'dotted://some.new.key', 'newValue')
     })
 
     it('updates the value if there is one in the state', () => {
       getValue.mockReturnValue('oldValue')
       const endpoint = {
-        url: 'state://some.new.key',
+        url: 'dotted://some.new.key',
         value: 'newValue'
       }
       plugin.getEndpoint(endpoint)
@@ -156,66 +156,66 @@ describe('plugin', () => {
   describe('set', () => {
     it('updates the state', () => {
       const endpoint = {
-        url: 'state://some.new.key',
+        url: 'dotted://some.new.key',
         value: 'newValue'
       }
       setValue.mockReturnValue({})
       plugin.set(endpoint)
-      expect(setValue).toHaveBeenCalledWith({}, 'state://some.new.key', 'newValue')
+      expect(setValue).toHaveBeenCalledWith({}, 'dotted://some.new.key', 'newValue')
     })
 
     it('propagates up', () => {
-      endpoints['state://some.new.key.foo.fii'] = {
-        url: 'state://some.new.key.foo.fii',
+      endpoints['dotted://some.new.key.foo.fii'] = {
+        url: 'dotted://some.new.key.foo.fii',
         value: 'newValue'
       }
-      endpoints['state://some'] = {
-        url: 'state://some',
+      endpoints['dotted://some'] = {
+        url: 'dotted://some',
         callbacks: {
           one: jest.fn()
         },
         value: 'oldValue'
       }
-      plugin.set(endpoints['state://some.new.key.foo.fii'])
+      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
       getValue.mockReturnValue('newValue')
       setValue.mockReturnValue({})
       jest.runAllTimers()
-      expect(endpoints['state://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
+      expect(endpoints['dotted://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
     })
 
     it('propagates down', () => {
-      endpoints['state://some'] = {
-        url: 'state://some',
+      endpoints['dotted://some'] = {
+        url: 'dotted://some',
         value: 'newValue'
       }
-      endpoints['state://some.new.key'] = {
-        url: 'state://some.new.key',
+      endpoints['dotted://some.new.key'] = {
+        url: 'dotted://some.new.key',
         callbacks: {
           one: jest.fn()
         },
         value: 'oldValue'
       }
-      plugin.set(endpoints['state://some'])
+      plugin.set(endpoints['dotted://some'])
       getValue.mockReturnValue('newValue')
       setValue.mockReturnValue({})
       jest.runAllTimers()
-      expect(endpoints['state://some.new.key'].callbacks.one).toHaveBeenLastCalledWith('newValue')
+      expect(endpoints['dotted://some.new.key'].callbacks.one).toHaveBeenLastCalledWith('newValue')
     })
   })
 
   describe('clean', () => {
     it('does nothing if there is children', () => {
-      endpoints['state://some.deep.child.foo.bar'] = {}
+      endpoints['dotted://some.deep.child.foo.bar'] = {}
       plugin.clean({
-        url: 'state://some.deep.child'
+        url: 'dotted://some.deep.child'
       })
       expect(setTimeout).not.toHaveBeenCalled()
     })
     it('propagateUp if there is no children', () => {
       plugin.clean({
-        url: 'state://some.deep.child'
+        url: 'dotted://some.deep.child'
       })
-      expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'state://some.deep')
+      expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'dotted://some.deep')
     })
   })
 })

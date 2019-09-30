@@ -7,9 +7,9 @@ global.sessionStorage = {}
 jest.useFakeTimers()
 const unsubscribes = []
 
-describe('state', () => {
+describe('dotted', () => {
   beforeEach(() => {
-    set('state://foo', undefined)
+    set('dotted://foo', undefined)
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
@@ -19,32 +19,32 @@ describe('state', () => {
   describe('onGet', () => {
     it('should not call cb if there is no initial value', () => {
       const cb = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cb))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb))
 
       expect(cb).not.toHaveBeenCalled()
     })
 
     it('should call cb with the initial value', () => {
       const cb = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cb, { first: 'world' }))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
 
       expect(cb).toHaveBeenCalledWith('world')
     })
 
     it('should call cb with the current value, if exists', () => {
-      set('state://foo.bar.hello', 'mars')
+      set('dotted://foo.bar.hello', 'mars')
       const cb = jest.fn()
 
-      unsubscribes.push(onGet('state://foo.bar.hello', cb))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb))
 
       expect(cb).toHaveBeenCalledWith('mars')
     })
 
     it('should call cb with the current value, even if pass a different initial one', () => {
-      set('state://foo.bar.hello', 'mars')
+      set('dotted://foo.bar.hello', 'mars')
       const cb = jest.fn()
 
-      unsubscribes.push(onGet('state://foo.bar.hello', cb, { first: 'world' }))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
 
       expect(cb).toHaveBeenCalledWith('mars')
     })
@@ -53,9 +53,9 @@ describe('state', () => {
   describe('set', () => {
     it('triggers the callbacks of the endpoint', () => {
       const cb = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cb, { first: 'world' }))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
       expect(cb).toHaveBeenCalledWith('world')
-      set('state://foo.bar.hello', 'mars')
+      set('dotted://foo.bar.hello', 'mars')
 
       jest.runAllTimers()
 
@@ -64,9 +64,9 @@ describe('state', () => {
 
     it('does not trigger the callbacks if the value is the same', () => {
       const cb = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cb, { first: 'world' }))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
       expect(cb).toHaveBeenCalledWith('world')
-      set('state://foo.bar.hello', 'world')
+      set('dotted://foo.bar.hello', 'world')
 
       jest.runAllTimers()
 
@@ -78,12 +78,12 @@ describe('state', () => {
       const cbFooBar = jest.fn()
       const cbFoo = jest.fn()
       const cbFooNot = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cbFooBarHello))
-      unsubscribes.push(onGet('state://foo.bar', cbFooBar))
-      unsubscribes.push(onGet('state://foo.Not', cbFooNot))
-      unsubscribes.push(onGet('state://foo', cbFoo))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cbFooBarHello))
+      unsubscribes.push(onGet('dotted://foo.bar', cbFooBar))
+      unsubscribes.push(onGet('dotted://foo.Not', cbFooNot))
+      unsubscribes.push(onGet('dotted://foo', cbFoo))
 
-      set('state://foo.bar.hello', 'mars')
+      set('dotted://foo.bar.hello', 'mars')
 
       jest.runAllTimers()
 
@@ -98,12 +98,12 @@ describe('state', () => {
       const cbFooBar = jest.fn()
       const cbFoo = jest.fn()
       const cbFooNot = jest.fn()
-      unsubscribes.push(onGet('state://foo.bar.hello', cbFooBarHello))
-      unsubscribes.push(onGet('state://foo.bar', cbFooBar))
-      unsubscribes.push(onGet('state://foo.Not', cbFooNot))
-      unsubscribes.push(onGet('state://foo', cbFoo))
+      unsubscribes.push(onGet('dotted://foo.bar.hello', cbFooBarHello))
+      unsubscribes.push(onGet('dotted://foo.bar', cbFooBar))
+      unsubscribes.push(onGet('dotted://foo.Not', cbFooNot))
+      unsubscribes.push(onGet('dotted://foo', cbFoo))
 
-      set('state://foo', { bar: { hello: 'mars' } })
+      set('dotted://foo', { bar: { hello: 'mars' } })
 
       jest.runAllTimers()
 
@@ -116,10 +116,10 @@ describe('state', () => {
 
   describe('get', () => {
     it('returns the value for a url', () => {
-      set('state://foo.bar.hello', 'mars')
-      expect(get('state://foo.bar.hello')).toBe('mars')
-      expect(get('state://foo.bar')).toEqual({ hello: 'mars' })
-      expect(get('state://foo')).toEqual({ bar: { hello: 'mars' } })
+      set('dotted://foo.bar.hello', 'mars')
+      expect(get('dotted://foo.bar.hello')).toBe('mars')
+      expect(get('dotted://foo.bar')).toEqual({ hello: 'mars' })
+      expect(get('dotted://foo')).toEqual({ bar: { hello: 'mars' } })
     })
   })
 })

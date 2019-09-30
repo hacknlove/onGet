@@ -9,12 +9,12 @@ describe('useOnGet', () => {
     while (unmounts.length) {
       unmounts.pop()()
     }
-    set('state://foo', {})
+    set('dotted://foo', {})
     await new Promise(resolve => setTimeout(resolve, 10))
   })
 
   it('returns first value', () => {
-    const { result, unmount } = renderHook(() => useOnGet('state://foo.some.state', { first: 'first value' }))
+    const { result, unmount } = renderHook(() => useOnGet('dotted://foo.some.state', { first: 'first value' }))
 
     unmounts.push(unmount)
 
@@ -22,8 +22,8 @@ describe('useOnGet', () => {
   })
 
   it('returns the cached value, if exists', () => {
-    set('state://foo.some.state', 'cached value')
-    const { result, unmount } = renderHook(() => useOnGet('state://foo.some.state', { first: 'first value' }))
+    set('dotted://foo.some.state', 'cached value')
+    const { result, unmount } = renderHook(() => useOnGet('dotted://foo.some.state', { first: 'first value' }))
 
     unmounts.push(unmount)
 
@@ -31,11 +31,11 @@ describe('useOnGet', () => {
   })
 
   it('updates when onGet call the callback', async () => {
-    const { result, unmount, waitForNextUpdate } = renderHook(() => useOnGet('state://foo.some.state', { first: 'first value' }))
+    const { result, unmount, waitForNextUpdate } = renderHook(() => useOnGet('dotted://foo.some.state', { first: 'first value' }))
     unmounts.push(unmount)
     expect(result.current).toBe('first value')
     const wait = waitForNextUpdate()
-    act(() => set('state://foo.some.state', 'new value'))
+    act(() => set('dotted://foo.some.state', 'new value'))
     await wait
     expect(result.current).toBe('new value')
   })
