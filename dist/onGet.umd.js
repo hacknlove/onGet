@@ -316,6 +316,30 @@ function useOnGet(url, options) {
   return value;
 }
 
+function command(url, command) {
+  var _endpoint$plugin$comm;
+
+  var endpoint = endpoints[url] || {
+    plugin: findPlugin(url)
+  };
+
+  if (!endpoint.plugin.commands) {
+    console.warn('the plugin does not accept commands');
+    return;
+  }
+
+  if (!endpoint.plugin.commands[command]) {
+    console.warn('command not found');
+    return;
+  }
+
+  for (var _len = arguments.length, params = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    params[_key - 2] = arguments[_key];
+  }
+
+  return (_endpoint$plugin$comm = endpoint.plugin.commands)[command].apply(_endpoint$plugin$comm, [url].concat(params));
+}
+
 /**
  * Registers a plugin. Plugins are checked last registered first checked.
  * @param {object} plugin Plugin object to register
@@ -406,7 +430,7 @@ var state = {};
 /**
  * For each endpoint whose url is a parent of url, update his value and call his callbacks
  *
- * state://foo.bar is a parent of state://foo.bar.buz
+ * dotted://foo.bar is a parent of dotted://foo.bar.buz
  * @param {string} url
  * @returns {undefined}
  */
@@ -432,7 +456,7 @@ function propagateUp(url) {
 /**
  * For each endpoint whose url is a child of url, if his value has changed, update it and call his callbacks
  *
- * state://foo.bar.buz is a parent of state://foo.bar
+ * dotted://foo.bar.buz is a parent of dotted://foo.bar
  * @param {string} url
  * @returns {undefined}
  */
@@ -456,9 +480,9 @@ function propagateDown(url) {
     }
   });
 }
-var state$1 = {
+var dotted = {
   name: 'state',
-  regex: /^state:\/\/./,
+  regex: /^dotted:\/\/./,
 
   /**
    * Nothing to refresh. shows a warning in the console
@@ -527,8 +551,9 @@ var state$1 = {
 registerPlugin(plugin);
 registerPlugin(localStorage$1);
 registerPlugin(sessionStorate);
-registerPlugin(state$1);
+registerPlugin(dotted);
 
+exports.command = command;
 exports.conf = conf;
 exports.endpoints = endpoints;
 exports.get = get;
