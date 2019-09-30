@@ -19,7 +19,7 @@ export function getRelativeValue (url, n) {
     return
   }
 
-  const absolute = history.cursor - n * 1
+  const absolute = history.cursor - n
 
   if (absolute < 0) {
     return undefined
@@ -34,7 +34,6 @@ export function getRelativeValue (url, n) {
 
 export function propagate (url) {
   const prefix = `${url}#`
-
   Object.values(endpoints).forEach(endpoint => {
     if (!endpoint.relative) {
       return
@@ -59,7 +58,7 @@ const plugin = {
    * @returns {undefined}
    */
   refresh () {
-    console.warn('the true source for this plugin is client side, so refresh does nothing')
+    console.warn('refresh does nothing with history:// plugin')
   },
 
   /**
@@ -80,16 +79,21 @@ const plugin = {
 
     endpoint.relative = {
       url: relative[1],
-      n: relative[2]
+      n: relative[2] * 1
     }
 
-    endpoint.value = getRelativeValue(relative[1], relative[2])
+    endpoint.value = getRelativeValue(relative[1], relative[2] * 1)
   },
 
   get (url) {
+    if (state[url]) {
+      return state[url].history[state[url].cursor]
+    }
     const relative = url.match(/(.*)#(-?\d+)$/)
-
-    return getRelativeValue(relative[1], relative[2])
+    if (!relative) {
+      return
+    }
+    return getRelativeValue(relative[1], relative[2] * 1)
   },
 
   /**
@@ -105,23 +109,28 @@ const plugin = {
       if (history.cursor < history.history.length) {
         history.history.splice(history.cursor + 1)
       }
-      history.push(endpoint.value)
+      history.history.push(endpoint.value)
       history.cursor++
       propagate(endpoint.url)
       return
     }
 
     const history = state[relative.url]
+    if (!history) {
+      return
+    }
 
-    const n = Math.max(
-      0,
-      Math.min(
-        history.cursor - relative.n * 1,
-        history.history.length - 1
-      )
-    )
+    const absolute = history.cursor - relative.n
 
-    history.history[n] = endpoint.value
+    if (absolute < 0) {
+      return
+    }
+
+    if (absolute >= history.history.length) {
+      return
+    }
+
+    history.history[absolute] = endpoint.value
   },
 
   /**
@@ -130,6 +139,27 @@ const plugin = {
    * @returns {undefined}
    */
   clean (endpoint) {
+    const url = endpoint.url.replace(/#-?\d+$/, '')
+    if (!state[endpoint.url]) {
+      return
+    }
+    if (endpoints[url] && !endpoints[url].clean) {
+      return
+    }
+    if (endpoints.some(endpoint => {
+      if (endpoint.clean) {
+        return false
+      }
+      if (!endpoint.relative) {
+        return false
+      }
+      if (endpoint.relative.url !== url) {
+        return false
+      }
+      return true
+    })) {
+      return
+    }
     delete state[endpoint.url]
   },
 
