@@ -427,6 +427,295 @@ var sessionStorate = {
 };
 
 var state = {};
+function cleanUrlAndGetHistory(url, command) {
+  for (var _len = arguments.length, params = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    params[_key - 2] = arguments[_key];
+  }
+
+  var history = state[url.replace(/#-?\d+$/, '')];
+
+  if (history) {
+    return history;
+  }
+
+  if (command && url === 'history://' && plugin$1.commands[command]) {
+    Object.keys(state).forEach(function (url) {
+      var _plugin$commands;
+
+      return (_plugin$commands = plugin$1.commands)[command].apply(_plugin$commands, [url].concat(params));
+    });
+  }
+}
+function getRelativeValue(url, n) {
+  var history = state[url];
+
+  if (!history) {
+    return;
+  }
+
+  var absolute = history.cursor - n;
+
+  if (absolute < 0) {
+    return undefined;
+  }
+
+  if (absolute >= history.history.length) {
+    return undefined;
+  }
+
+  return history.history[absolute];
+}
+function propagate(url) {
+  var prefix = url + "#";
+  Object.values(endpoints).forEach(function (endpoint) {
+    if (!endpoint.relative) {
+      return;
+    }
+
+    if (!endpoint.url.startsWith(prefix)) {
+      return;
+    }
+
+    var newValue = getRelativeValue(endpoint.relative.url, endpoint.relative.n);
+
+    if (isDifferent(newValue, endpoint.value)) {
+      endpoint.value = newValue;
+      Object.values(endpoint.callbacks).forEach(function (cb) {
+        return setTimeout(cb, 0, endpoint.value);
+      });
+    }
+  });
+}
+var plugin$1 = {
+  name: 'history',
+  regex: /^history:\/\/./,
+
+  /**
+   * Nothing to refresh. shows a warning in the console
+   * @returns {undefined}
+   */
+  refresh: function refresh() {
+    console.warn('refresh does nothing with history:// plugin');
+  },
+
+  /**
+   * If the state has not value for this endpoint.url, creates a new updated state
+   * else, set endpoint.value according to the state
+   * @param {object} endpoint
+   */
+  getEndpoint: function getEndpoint(endpoint) {
+    var relative = endpoint.url.match(/(.*)#(-?\d+)$/);
+
+    if (!relative) {
+      state[endpoint.url] = {
+        history: [endpoint.value],
+        cursor: 0
+      };
+      return;
+    }
+
+    endpoint.relative = {
+      url: relative[1],
+      n: relative[2] * 1
+    };
+    endpoint.value = getRelativeValue(relative[1], relative[2] * 1);
+  },
+  get: function get(url) {
+    if (state[url]) {
+      return state[url].history[state[url].cursor];
+    }
+
+    var relative = url.match(/(.*)#(-?\d+)$/);
+
+    if (!relative) {
+      return;
+    }
+
+    return getRelativeValue(relative[1], relative[2] * 1);
+  },
+
+  /**
+   * Updates the endpoint.value, and propagates up and down
+   * @params {object} endpoint
+   * @returns {undefined}
+   */
+  set: function set(endpoint) {
+    var relative = endpoint.relative;
+
+    if (!relative) {
+      var _history = state[endpoint.url];
+
+      if (_history.cursor < _history.history.length) {
+        _history.history.splice(_history.cursor + 1);
+      }
+
+      _history.history.push(endpoint.value);
+
+      _history.cursor++;
+      propagate(endpoint.url);
+      return;
+    }
+
+    var history = state[relative.url];
+
+    if (!history) {
+      return;
+    }
+
+    var absolute = history.cursor - relative.n;
+
+    if (absolute < 0) {
+      return;
+    }
+
+    if (absolute >= history.history.length) {
+      return;
+    }
+
+    history.history[absolute] = endpoint.value;
+  },
+
+  /**
+   * Removes the history
+   * @param {object} endpoint
+   * @returns {undefined}
+   */
+  clean: function clean(endpoint) {
+    var url = endpoint.url.replace(/#-?\d+$/, '');
+
+    if (!state[endpoint.url]) {
+      return;
+    }
+
+    if (endpoints[url] && !endpoints[url].clean) {
+      return;
+    }
+
+    if (endpoints.some(function (endpoint) {
+      if (endpoint.clean) {
+        return false;
+      }
+
+      if (!endpoint.relative) {
+        return false;
+      }
+
+      if (endpoint.relative.url !== url) {
+        return false;
+      }
+
+      return true;
+    })) {
+      return;
+    }
+
+    delete state[endpoint.url];
+  },
+  commands: {
+    replace: function replace(url, value) {
+      url = url.replace(/#-?\d+$/, '');
+      var history = state[url];
+
+      if (!history) {
+        console.warn('cannot replace. History not found');
+        return;
+      }
+
+      if (history.cursor < history.history.length) {
+        history.history.splice(history.cursor + 1);
+      }
+
+      history.history[history.cursor] = value;
+      propagate(url);
+      var endpoint = endpoints[url];
+
+      if (!endpoint) {
+        return;
+      }
+
+      endpoint.value = value;
+      Object.values(endpoint.callbacks).forEach(function (cb) {
+        return setTimeout(cb, 0, endpoint.value);
+      });
+    },
+    undo: function undo(url, n) {
+      if (n === void 0) {
+        n = 1;
+      }
+
+      n = Math.floor(n * 1);
+      var history = cleanUrlAndGetHistory(url, 'undo', n);
+
+      if (!history) {
+        return;
+      }
+
+      history.cursor = Math.max(0, history.cursor - n);
+      propagate(url);
+    },
+    redo: function redo(url, n) {
+      if (n === void 0) {
+        n = 1;
+      }
+
+      n = Math.floor(n * 1);
+      var history = cleanUrlAndGetHistory(url, 'redo', n);
+
+      if (!history) {
+        return;
+      }
+
+      history.cursor = Math.min(history.cursor + n, history.history.length - 1);
+      propagate(url);
+    },
+    goto: function goto(url, n) {
+      n = Math.floor(n * 1);
+      var history = cleanUrlAndGetHistory(url, 'goto', n);
+
+      if (!history) {
+        return;
+      }
+
+      history.cursor = Math.max(0, Math.min(n, history.history.length - 1));
+      propagate(url);
+    },
+    first: function first(url) {
+      plugin$1.commands.undo(url, Infinity);
+    },
+    last: function last(url) {
+      plugin$1.commands.redo(url, Infinity);
+    },
+    length: function length(url) {
+      var history = cleanUrlAndGetHistory(url);
+
+      if (!history) {
+        return 0;
+      }
+
+      return history.history.length;
+    },
+    undoLength: function undoLength(url) {
+      var history = cleanUrlAndGetHistory(url);
+
+      if (!history) {
+        return 0;
+      }
+
+      return history.cursor;
+    },
+    redoLength: function redoLength(url) {
+      var history = cleanUrlAndGetHistory(url);
+
+      if (!history) {
+        return 0;
+      }
+
+      return history.history.length - history.cursor - 1;
+    }
+  }
+};
+
+var state$1 = {};
 /**
  * For each endpoint whose url is a parent of url, update his value and call his callbacks
  *
@@ -445,7 +734,7 @@ function propagateUp(url) {
   var endpoint = endpoints[parentUrl];
 
   if (endpoint) {
-    endpoint.value = deepobject.getValue(state, endpoint.url);
+    endpoint.value = deepobject.getValue(state$1, endpoint.url);
     Object.values(endpoint.callbacks).forEach(function (cb) {
       return setTimeout(cb, 0, endpoint.value);
     });
@@ -498,10 +787,10 @@ var dotted = {
    * @param {object} endpoint
    */
   getEndpoint: function getEndpoint(endpoint) {
-    var actualValue = deepobject.getValue(state, endpoint.url);
+    var actualValue = deepobject.getValue(state$1, endpoint.url);
 
     if (actualValue === undefined) {
-      state = deepobject.setValue(state, endpoint.url, endpoint.value);
+      state$1 = deepobject.setValue(state$1, endpoint.url, endpoint.value);
       propagateUp(endpoint.url);
       propagateDown(endpoint.url);
       return;
@@ -516,7 +805,7 @@ var dotted = {
    * @returns {object} the value
    */
   get: function get(url) {
-    return deepobject.getValue(state, url);
+    return deepobject.getValue(state$1, url);
   },
 
   /**
@@ -525,7 +814,7 @@ var dotted = {
    * @returns {undefined}
    */
   set: function set(endpoint) {
-    state = deepobject.setValue(state, endpoint.url, endpoint.value);
+    state$1 = deepobject.setValue(state$1, endpoint.url, endpoint.value);
     propagateUp(endpoint.url);
     propagateDown(endpoint.url);
   },
@@ -551,6 +840,7 @@ var dotted = {
 registerPlugin(plugin);
 registerPlugin(localStorage$1);
 registerPlugin(sessionStorate);
+registerPlugin(plugin$1);
 registerPlugin(dotted);
 
 exports.command = command;
