@@ -11,6 +11,7 @@ const mockedCommand = jest.fn()
 plugin.commands.mockedCommand = mockedCommand
 
 beforeEach(() => Object.keys(state).forEach(key => delete state[key]))
+beforeEach(() => Object.keys(endpoints).forEach(key => delete endpoints[key]))
 beforeEach(() => mockedCommand.mockImplementation())
 
 describe('cleanUrlAndGetHistory', () => {
@@ -447,5 +448,249 @@ describe('clean', () => {
 
   it('does nothing if exists some relative endpoint not for clean', () => {
 
+  })
+})
+
+describe('commands', () => {
+  const commands = plugin.commands
+  describe('replace', () => {
+    it('warns if not exists the history', () => {
+      commands.replace('someUrl', 'newValue')
+      expect(console.warn).toHaveBeenCalledWith('cannot replace. History not found')
+      console.warn.mockClear()
+      commands.replace('someUrl#1', 'newValue')
+      expect(console.warn).toHaveBeenCalledWith('cannot replace. History not found')
+    })
+
+    it('replace the current value in the history', () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4],
+        cursor: 3
+      }
+
+      commands.replace('someUrl', 7)
+      expect(state.someUrl).toEqual({
+        history: [1, 2, 3, 7],
+        cursor: 3
+      })
+    })
+
+    it('replace the current value in the history and cut the rest', () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4, 5, 6],
+        cursor: 2
+      }
+
+      commands.replace('someUrl', 7)
+      expect(state.someUrl).toEqual({
+        history: [1, 2, 7],
+        cursor: 2
+      })
+    })
+
+    it('propagates the change to the relative urls', async () => {
+      isDifferent.mockReturnValue(true)
+
+      state.someUrl = {
+        history: [
+          'uno',
+          'dos',
+          'tres',
+          'cuatro'
+        ],
+        cursor: 1
+      }
+
+      endpoints['someUrl#-1'] = {
+        url: 'someUrl#-1',
+        relative: {
+          url: 'someUrl',
+          n: -1
+        },
+        value: 'tres',
+        callbacks: {
+          cb: jest.fn()
+        }
+      }
+
+      commands.replace('someUrl', 'cinco')
+
+      expect(endpoints['someUrl#-1'].value).toBeUndefined()
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(endpoints['someUrl#-1'].callbacks.cb).toHaveBeenCalledWith(undefined)
+    })
+    it('updates the endpoint and call the callbacks', async () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4],
+        cursor: 3
+      }
+      endpoints.someUrl = {
+        value: 4,
+        callbacks: {
+          cb: jest.fn()
+        }
+      }
+
+      commands.replace('someUrl', 7)
+      expect(endpoints.someUrl.value).toBe(7)
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(7)
+
+    })
+  })
+
+  describe('undo', () => {
+    it('goes one step back', () => {
+      state.someUrl = {
+        cursor: 5
+      }
+      commands.undo('someUrl')
+      expect(state.someUrl.cursor).toBe(4)
+    })
+
+    it('goes n steps back', () => {
+      state.someUrl = {
+        cursor: 5
+      }
+      commands.undo('someUrl', 3)
+      expect(state.someUrl.cursor).toBe(2)
+    })
+
+    it('doest no go before 0', () => {
+      state.someUrl = {
+        cursor: 5
+      }
+      commands.undo('someUrl', 13)
+      expect(state.someUrl.cursor).toBe(0)
+    })
+    it('does not break if no history', () => {
+      expect(() => commands.undo('someUrl')).not.toThrow()
+    })
+  })
+
+  describe('redo', () => {
+    it('goes one step forward', () => {
+      state.someUrl = {
+        cursor: 3,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.redo('someUrl')
+      expect(state.someUrl.cursor).toBe(4)
+    })
+
+    it('goes n steps forward', () => {
+      state.someUrl = {
+        cursor: 1,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.redo('someUrl', 3)
+      expect(state.someUrl.cursor).toBe(4)
+    })
+
+    it('doest no go after the last', () => {
+      state.someUrl = {
+        cursor: 1,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.redo('someUrl', 13)
+      expect(state.someUrl.cursor).toBe(4)
+    })
+    it('does not break if no history', () => {
+      expect(() => commands.redo('someUrl')).not.toThrow()
+    })
+  })
+
+  describe('goto', () => {
+    it('goes to the n step', () => {
+      state.someUrl = {
+        cursor: 1,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.goto('someUrl', 3)
+      expect(state.someUrl.cursor).toBe(3)
+    })
+
+    it('doest no go after the last', () => {
+      state.someUrl = {
+        cursor: 1,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.goto('someUrl', 13)
+      expect(state.someUrl.cursor).toBe(4)
+    })
+
+    it('doest no go before the first', () => {
+      state.someUrl = {
+        cursor: 1,
+        history: [1, 2, 3, 4, 5]
+      }
+      commands.goto('someUrl', -13)
+      expect(state.someUrl.cursor).toBe(0)
+    })
+
+    it('does not break if no history', () => {
+      expect(() => commands.goto('someUrl')).not.toThrow()
+    })
+  })
+  describe('first', () => {
+    it('goes to the first state', () => {
+      state.someUrl = {
+        cursor: 5
+      }
+      commands.first('someUrl')
+      expect(state.someUrl.cursor).toBe(0)
+    })
+  })
+
+  describe('last', () => {
+    it('goes to the last state', () => {
+      state.someUrl = {
+        cursor: 3,
+        history: [1, 2, 3, 4, 5, 6, 7, 8]
+      }
+      commands.last('someUrl')
+      expect(state.someUrl.cursor).toBe(7)
+    })
+  })
+
+  describe('length', () => {
+    it('returns the length of the history', () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4, 5, 6, 7, 8]
+      }
+      expect(commands.length('someUrl')).toBe(8)
+    })
+
+    it('returns 0 if there is no history', () => {
+      expect(commands.length('someUrl')).toBe(0)
+    })
+  })
+
+  describe('undoLength', () => {
+    it('returns the amount of steps that can be undone', () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4, 5, 6, 7, 8],
+        cursor: 4
+      }
+      expect(commands.undoLength('someUrl')).toBe(4)
+    })
+
+    it('returns 0 if there is no history', () => {
+      expect(commands.undoLength('someUrl')).toBe(0)
+    })
+  })
+
+  describe('redoLength', () => {
+    it('returns the amount of steps that can be redone', () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4, 5, 6, 7, 8],
+        cursor: 4
+      }
+      expect(commands.redoLength('someUrl')).toBe(3)
+    })
+
+    it('returns 0 if there is no history', () => {
+      expect(commands.redoLength('someUrl')).toBe(0)
+    })
   })
 })

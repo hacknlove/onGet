@@ -165,40 +165,48 @@ const plugin = {
 
   commands: {
     replace (url, value) {
-      const endpoint = endpoints[url.replace(/#-?\d+$/, '')]
-      if (!endpoint) {
+      url = url.replace(/#-?\d+$/, '')
+      const history = state[url]
+
+      if (!history) {
         console.warn('cannot replace. History not found')
         return
       }
 
-      const history = state[endpoint.url] || state[endpoint.relative.url]
-
       if (history.cursor < history.history.length) {
         history.history.splice(history.cursor + 1)
       }
-
       history.history[history.cursor] = value
-      propagate(endpoint.url)
 
+      propagate(url)
+
+      const endpoint = endpoints[url]
+      if (!endpoint) {
+        return
+      }
+      endpoint.value = value
       Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
     },
     undo (url, n = 1) {
+      n = Math.floor(n * 1)
       const history = cleanUrlAndGetHistory(url, 'undo', n)
       if (!history) {
         return
       }
-      history.cursor = Math.max(0, history.cursor - 1)
+      history.cursor = Math.max(0, history.cursor - n)
       propagate(url)
     },
     redo (url, n = 1) {
+      n = Math.floor(n * 1)
       const history = cleanUrlAndGetHistory(url, 'redo', n)
       if (!history) {
         return
       }
-      history.cursor = Math.max(0, history.cursor - 1)
+      history.cursor = Math.min(history.cursor + n, history.history.length - 1)
       propagate(url)
     },
     goto (url, n) {
+      n = Math.floor(n * 1)
       const history = cleanUrlAndGetHistory(url, 'goto', n)
       if (!history) {
         return
@@ -213,17 +221,17 @@ const plugin = {
       propagate(url)
     },
     first (url) {
-      plugin.commands.goto(url, 0)
+      plugin.commands.undo(url, Infinity)
     },
     last (url) {
-      plugin.commands.goto(url, Infinity)
+      plugin.commands.redo(url, Infinity)
     },
     length (url) {
       const history = cleanUrlAndGetHistory(url)
       if (!history) {
         return 0
       }
-      return history.length
+      return history.history.length
     },
     undoLength (url) {
       const history = cleanUrlAndGetHistory(url)
@@ -237,7 +245,7 @@ const plugin = {
       if (!history) {
         return 0
       }
-      return history.length - history.cursor - 1
+      return history.history.length - history.cursor - 1
     }
   }
 }
