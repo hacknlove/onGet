@@ -124,6 +124,9 @@ const plugin = {
 
     if (!relative) {
       const history = state[endpoint.url]
+      if (!isDifferent(endpoint.value, history.history[history.cursor])) {
+        return
+      }
       if (history.cursor < history.history.length) {
         history.history.splice(history.cursor + 1)
       }
