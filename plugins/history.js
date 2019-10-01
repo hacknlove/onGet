@@ -44,9 +44,27 @@ export function propagate (url) {
     const newValue = getRelativeValue(endpoint.relative.url, endpoint.relative.n)
     if (isDifferent(newValue, endpoint.value)) {
       endpoint.value = newValue
-      Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
+      executeCallbacks(endpoint.url)
     }
   })
+}
+
+export function executeCallbacks (url) {
+  const endpoint = endpoints[url]
+  if (!endpoint) {
+    return
+  }
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
+}
+
+export function updateEndpoint (url) {
+  const endpoint = endpoints[url]
+  if (!endpoint) {
+    return
+  }
+  const history = state[url]
+  endpoint.value = history.history[history.cursor]
+  executeCallbacks(url)
 }
 
 const plugin = {
@@ -178,14 +196,8 @@ const plugin = {
       }
       history.history[history.cursor] = value
 
+      updateEndpoint(url)
       propagate(url)
-
-      const endpoint = endpoints[url]
-      if (!endpoint) {
-        return
-      }
-      endpoint.value = value
-      Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
     },
     undo (url, n = 1) {
       n = Math.floor(n * 1)
@@ -194,6 +206,7 @@ const plugin = {
         return
       }
       history.cursor = Math.max(0, history.cursor - n)
+      updateEndpoint(url)
       propagate(url)
     },
     redo (url, n = 1) {
@@ -203,6 +216,7 @@ const plugin = {
         return
       }
       history.cursor = Math.min(history.cursor + n, history.history.length - 1)
+      updateEndpoint(url)
       propagate(url)
     },
     goto (url, n) {
@@ -218,6 +232,7 @@ const plugin = {
           history.history.length - 1
         )
       )
+      updateEndpoint(url)
       propagate(url)
     },
     first (url) {

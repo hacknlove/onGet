@@ -535,7 +535,6 @@ describe('commands', () => {
       expect(endpoints.someUrl.value).toBe(7)
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(7)
-
     })
   })
 
@@ -565,6 +564,23 @@ describe('commands', () => {
     })
     it('does not break if no history', () => {
       expect(() => commands.undo('someUrl')).not.toThrow()
+    })
+    it('updates the endpoint and call the callbacks', async () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4],
+        cursor: 3
+      }
+      endpoints.someUrl = {
+        value: 4,
+        callbacks: {
+          cb: jest.fn()
+        }
+      }
+
+      commands.undo('someUrl')
+      expect(endpoints.someUrl.value).toBe(3)
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(3)
     })
   })
 
@@ -598,6 +614,23 @@ describe('commands', () => {
     it('does not break if no history', () => {
       expect(() => commands.redo('someUrl')).not.toThrow()
     })
+    it('updates the endpoint and call the callbacks', async () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4],
+        cursor: 2
+      }
+      endpoints.someUrl = {
+        value: 3,
+        callbacks: {
+          cb: jest.fn()
+        }
+      }
+
+      commands.redo('someUrl')
+      expect(endpoints.someUrl.value).toBe(4)
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(4)
+    })
   })
 
   describe('goto', () => {
@@ -630,6 +663,23 @@ describe('commands', () => {
 
     it('does not break if no history', () => {
       expect(() => commands.goto('someUrl')).not.toThrow()
+    })
+    it('updates the endpoint and call the callbacks', async () => {
+      state.someUrl = {
+        history: [1, 2, 3, 4],
+        cursor: 3
+      }
+      endpoints.someUrl = {
+        value: 4,
+        callbacks: {
+          cb: jest.fn()
+        }
+      }
+
+      commands.goto('someUrl', 1)
+      expect(endpoints.someUrl.value).toBe(2)
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(2)
     })
   })
   describe('first', () => {

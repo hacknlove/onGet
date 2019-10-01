@@ -480,11 +480,31 @@ function propagate(url) {
 
     if (isDifferent(newValue, endpoint.value)) {
       endpoint.value = newValue;
-      Object.values(endpoint.callbacks).forEach(function (cb) {
-        return setTimeout(cb, 0, endpoint.value);
-      });
+      executeCallbacks(endpoint.url);
     }
   });
+}
+function executeCallbacks(url) {
+  var endpoint = endpoints[url];
+
+  if (!endpoint) {
+    return;
+  }
+
+  Object.values(endpoint.callbacks).forEach(function (cb) {
+    return setTimeout(cb, 0, endpoint.value);
+  });
+}
+function updateEndpoint(url) {
+  var endpoint = endpoints[url];
+
+  if (!endpoint) {
+    return;
+  }
+
+  var history = state[url];
+  endpoint.value = history.history[history.cursor];
+  executeCallbacks(url);
 }
 var plugin$1 = {
   name: 'history',
@@ -626,17 +646,8 @@ var plugin$1 = {
       }
 
       history.history[history.cursor] = value;
+      updateEndpoint(url);
       propagate(url);
-      var endpoint = endpoints[url];
-
-      if (!endpoint) {
-        return;
-      }
-
-      endpoint.value = value;
-      Object.values(endpoint.callbacks).forEach(function (cb) {
-        return setTimeout(cb, 0, endpoint.value);
-      });
     },
     undo: function undo(url, n) {
       if (n === void 0) {
@@ -651,6 +662,7 @@ var plugin$1 = {
       }
 
       history.cursor = Math.max(0, history.cursor - n);
+      updateEndpoint(url);
       propagate(url);
     },
     redo: function redo(url, n) {
@@ -666,6 +678,7 @@ var plugin$1 = {
       }
 
       history.cursor = Math.min(history.cursor + n, history.history.length - 1);
+      updateEndpoint(url);
       propagate(url);
     },
     goto: function goto(url, n) {
@@ -677,6 +690,7 @@ var plugin$1 = {
       }
 
       history.cursor = Math.max(0, Math.min(n, history.history.length - 1));
+      updateEndpoint(url);
       propagate(url);
     },
     first: function first(url) {
