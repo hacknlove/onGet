@@ -28,8 +28,13 @@ And if you plan to use `dotted://deep.dot.key` in memory state, you must include
 
 
 ## Examples
-The same examples of the redux repository, but using onGet.
-[Check them out](/examples)
+
+* Counter-vanilla [source](/examples/counter-vanilla) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter-vanilla)
+* counter [source](/examples/counter) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter)
+* Todos [source](/master/examples/todos) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos)
+* Todos-with-undo [source](/examples/todos-with-undo) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo)
+* TodoMVC [source](/master/examples/todomvc) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc)
+
 
 ## Use
 

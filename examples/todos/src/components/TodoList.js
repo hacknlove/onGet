@@ -2,24 +2,7 @@ import React from 'react'
 import Todo from './Todo'
 import { useOnGet } from 'onget'
 
-function filterTodos (todos) {
-  let filterFunction
-
-  switch (todos.filter) {
-    case 'SHOW_COMPLETED':
-      filterFunction = (todo) => todo.completed
-      break
-    case 'SHOW_ACTIVE':
-      filterFunction = (todo) => !todo.completed
-      break
-    default:
-      filterFunction = () => true
-  }
-
-  return todos.items.filter(filterFunction)
-}
-
-export default function TodoList () {
+function useFilterTodos () {
   const todos = useOnGet('dotted://todos', {
     first: {
       items: [],
@@ -27,7 +10,18 @@ export default function TodoList () {
     }
   })
 
-  const filtered = filterTodos(todos)
+  switch (todos.filter) {
+    case 'SHOW_COMPLETED':
+      return todos.items.filter(todo => todo.completed)
+    case 'SHOW_ACTIVE':
+      return todos.items.filter(todo => !todo.completed)
+    default:
+      return todos.items
+  }
+}
+
+export default function TodoList () {
+  const filtered = useFilterTodos()
 
   return (
     <ul>

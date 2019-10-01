@@ -2,27 +2,22 @@ import React from 'react'
 import Todo from './Todo'
 import { useOnGet } from 'onget'
 
-function filterTodos (todos, filter) {
-  let filterFunction
+function useFilterTodos () {
+  const todos = useOnGet('history://todos', { first: [] })
+  const filter = useOnGet('dotted://filter', { first: 'SHOW_ALL' })
 
   switch (filter) {
     case 'SHOW_COMPLETED':
-      filterFunction = (todo) => todo.completed
-      break
+      return todos.filter(todo => todo.completed)
     case 'SHOW_ACTIVE':
-      filterFunction = (todo) => !todo.completed
-      break
+      return todos.filter(todo => !todo.completed)
     default:
-      filterFunction = () => true
+      return todos
   }
-
-  return todos.filter(filterFunction)
 }
 
 export default function TodoList () {
-  const todos = useOnGet('history://todos', { first: [] })
-  const filter = useOnGet('dotted://filter', { first: 'SHOW_ALL' })
-  const filtered = filterTodos(todos, filter)
+  const filtered = useFilterTodos()
 
   return (
     <ul>

@@ -1,26 +1,17 @@
 import React from 'react'
 import { useOnGet, command } from 'onget'
 
-export default function UndoRedo  () {
-  const canRedo = command('history://todos#-1', 'redoLength')
-  const canUndo = command('history://todos#1', 'undoLength')
-
-  console.log(canUndo)
+export default function UndoRedo () {
   useOnGet('history://todos')
-
-  function undo () {
-    command('history://todos', 'undo')
-  }
-  function redo () {
-    command('history://todos', 'redo')
-  }
+  const canRedo = command('history://todos', 'redoLength')
+  const canUndo = command('history://todos', 'undoLength')
 
   return (
     <p>
-      <button onClick={undo} disabled={!canUndo}>
+      <button onClick={() => command('history://todos', 'undo')} disabled={!canUndo}>
         Undo
       </button>
-      <button onClick={redo} disabled={!canRedo}>
+      <button onClick={() => command('history://todos', 'redo')} disabled={!canRedo}>
         Redo
       </button>
     </p>

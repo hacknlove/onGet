@@ -11,11 +11,9 @@ function App () {
   )
 }
 
-const rootEl = document.getElementById('root')
-
 const render = () => ReactDOM.render(
   <App/>,
-  rootEl
+  document.getElementById('root')
 )
 
 render()

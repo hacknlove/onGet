@@ -9,41 +9,23 @@ export default function Counter (props) {
     set(`dotted://${props.counterKey}`, value + x)
   }
 
-  function onIncrement () {
-    sum(1)
-  }
-
-  function onDecrement () {
-    sum(-1)
-  }
-
-  function incrementIfOdd () {
-    if (value % 2 !== 0) {
-      onIncrement()
-    }
-  }
-
-  function incrementAsync () {
-    setTimeout(onIncrement, 1000)
-  }
-
   return (
     <p>
       {props.label } Clicked: {value} times
 
-      <button onClick={onIncrement}>
+      <button onClick={() => sum(1)}>
         +
       </button>
 
-      <button onClick={onDecrement}>
+      <button onClick={() => sum(-1)}>
         -
       </button>
 
-      <button onClick={incrementIfOdd}>
+      <button onClick={() => value % 2 && sum(1)}>
         Increment if odd
       </button>
 
-      <button onClick={incrementAsync}>
+      <button onClick={() => setTimeout(() => sum(1), 1000)}>
         Increment async
       </button>
     </p>

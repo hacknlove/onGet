@@ -1,14 +1,13 @@
 import React from 'react'
 import { get, set } from 'onget'
 
-let nextTodoId = 0
-
 function addTodo (text) {
   const todos = get('history://todos') || []
 
-  set('history://todos', [...todos,
+  set('history://todos', [
+    ...todos,
     {
-      id: nextTodoId++,
+      id: Date.now(),
       text,
       completed: false
     }
