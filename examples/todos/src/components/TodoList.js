@@ -1,18 +1,8 @@
 import React from 'react'
 import Todo from './Todo'
-import { set, get, useOnGet } from 'onget'
+import { useOnGet } from 'onget'
 
-function toggleTodo (todoId) {
-  const todos = get('dotted://todos.items')
-
-  set('dotted://todos.items', todos.map(todo =>
-    (todo.id === todoId)
-      ? { ...todo, completed: !todo.completed }
-      : todo
-  ))
-}
-
-function filterTodos(todos) {
+function filterTodos (todos) {
   let filterFunction
 
   switch (todos.filter) {
@@ -45,7 +35,6 @@ export default function TodoList () {
         <Todo
           key={todo.id}
           {...todo}
-          onClick={() => toggleTodo(todo.id)}
         />
       )}
     </ul>

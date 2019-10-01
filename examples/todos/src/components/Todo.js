@@ -1,14 +1,27 @@
 import React from 'react'
+import { set, get } from 'onget'
 
-const Todo = ({ onClick, completed, text }) => (
-  <li
-    onClick={onClick}
-    style={{
-      textDecoration: completed ? 'line-through' : 'none'
-    }}
-  >
-    {text}
-  </li>
-)
+export default function Todo (props) {
+  const { id, completed, text } = props
 
-export default Todo
+  function toggleTodo () {
+    const todos = get('dotted://todos.items')
+
+    set('dotted://todos.items', todos.map(todo =>
+      (todo.id === id)
+        ? { ...todo, completed: !completed }
+        : todo
+    ))
+  }
+
+  return (
+    <li
+      onClick={toggleTodo}
+      style={{
+        textDecoration: completed ? 'line-through' : 'none'
+      }}
+    >
+      {text}
+    </li>
+  )
+}
