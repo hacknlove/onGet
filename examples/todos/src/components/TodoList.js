@@ -3,9 +3,9 @@ import Todo from './Todo'
 import { set, get, useOnGet } from 'onget'
 
 function toggleTodo (todoId) {
-  const todos = get('state://todos.items')
+  const todos = get('dotted://todos.items')
 
-  set('state://todos.items', todos.map(todo =>
+  set('dotted://todos.items', todos.map(todo =>
     (todo.id === todoId)
       ? { ...todo, completed: !todo.completed }
       : todo
@@ -30,7 +30,7 @@ function filterTodos(todos) {
 }
 
 export default function TodoList () {
-  const todos = useOnGet('state://todos', {
+  const todos = useOnGet('dotted://todos', {
     first: {
       items: [],
       filter: 'SHOW_ALL'

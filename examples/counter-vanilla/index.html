@@ -4,7 +4,7 @@
     <title>onGet basic example</title>
     <script src="https://cdn.jsdelivr.net/npm/isdifferent@1.0.2/build/isDifferent.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@hacknlove/deepobject@1.1.6/dist/deepObject.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/onget@1.0.5/dist/onGet.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/onget@1.1.0/dist/onGet.umd.min.js"></script>
   </head>
   <body>
     <div>
@@ -22,10 +22,10 @@
         valueEl.innerHTML = value
       }
       function sum (x) {
-          const value = onGet.get('state://counter')
-          onGet.set('state://counter', value + x)
+          const value = onGet.get('dotted://counter')
+          onGet.set('dotted://counter', value + x)
       }
-      onGet.onGet('state://counter', render, { first: 0 })
+      onGet.onGet('dotted://counter', render, { first: 0 })
 
       document.getElementById('increment')
         .addEventListener('click', function () {
@@ -39,7 +39,7 @@
 
       document.getElementById('incrementIfOdd')
         .addEventListener('click', function () {
-          if (onGet.get('state://counter') % 2 !== 0) {
+          if (onGet.get('dotted://counter') % 2 !== 0) {
             sum(1)
           }
         })

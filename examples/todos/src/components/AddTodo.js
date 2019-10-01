@@ -4,9 +4,9 @@ import { get, set } from 'onget'
 let nextTodoId = 0
 
 function addTodo (text) {
-  const todos = get('state://todos.items') || []
+  const todos = get('dotted://todos.items') || []
 
-  set('state://todos.items', [...todos,
+  set('dotted://todos.items', [...todos,
     {
       id: nextTodoId++,
       text,
