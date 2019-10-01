@@ -1,13 +1,12 @@
 # onGet
-![test coverage 100%](https://img.shields.io/badge/test_coverage-100%25-brightgreen)
-![minified size 5.7k](https://img.shields.io/badge/minified_size-2k-brightgreen)
+The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.
 
-## Developer Notes:
-This is the First published version, and It has been fully and deeply tested, thus it should be ready for production uses, so enjoy it.
+## Why
 
-Please, do not hesitate to throw me an issue if you have some suggestions to improve the API, the implementation, the tests, or if you find a bug.
+Because It does not feel right when you end up with a lot of boilerplate code, a lot of unnecessary complexity and a big lack of liberty.
 
-Any help is welcome, for instance you can do a PR with TypeScript type definition, I will appreciate that.
+Reactive State shared across your components should be as efficient, transparent, fun to work with, and less intrusive as possible.
+
 
 ## Install
 
@@ -18,9 +17,8 @@ npm i onget
 
 ### CDN
 ```html
-<script src="https://cdn.jsdelivr.net/npm/isdifferent@1.0.5/dist/isDifferent.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/onget@1.0.5/dist/onGet.umd.min.js"></script>
-<!-- -->
+<script src="https://cdn.jsdelivr.net/npm/isdifferent@1.1.0/dist/isDifferent.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onget@1.1.0/dist/onGet.umd.min.js"></script>
 ```
 
 And if you plan to use `dotted://deep.dot.key` in memory state, you must include too
@@ -28,17 +26,23 @@ And if you plan to use `dotted://deep.dot.key` in memory state, you must include
 <script src="https://cdn.jsdelivr.net/npm/@hacknlove/deepobject@1.1.6/dist/deepObject.umd.min.js"></script>
 ```
 
+
+## Examples
+The same examples of the redux repository, but using onGet.
+[Check them out](/examples)
+
 ## Use
 
 ### urls
-The state is organized in urls that maps some resource through a plugin.
+The state is organized in urls that points some resource through a plugin that deal with some state source or origin.
 
 For instance:
 
-* The url `http://example.com/some/path` maps to the response of fetch a GET to that url
-* The url `localstorage://foo` maps to the value `foo` at `localStorage`
-* The url `sessionstorage://foo` maps to the value `foo` at `sessionStorage`
-* The url `dotted://some.deep.dotted.key` maps to `VALUE` in an in-memory state similar to `{..., some: {..., deep: {..., dotted: {.., key: VALUE }}}}`
+* The url `http://example.com/some/path` points to the response of fetch a GET to that url
+* The url `localstorage://foo` points to the value `foo` at `localStorage`
+* The url `sessionstorage://foo` points to the value `foo` at `sessionStorage`
+* The url `dotted://some.deep.dotted.key` points to the value of `some['some']['deep']['dotted']['key']` in an in-memory state .
+* The url `history://someKey` points to an in-memory state called `someKey` that is undoable and redoable
 
 ### Subscriptions
 
@@ -52,12 +56,14 @@ When you stop needing a subscription, you should call the unsubscribe function t
 const unsubscribe = onGet(url, callback);
 ```
 
+If you use `useOnGet` you do not need to worry about unsubscribe.
+
 
 ## API
 
 ### onGet(url, callback, options) => function
 It starts a subscription for the `url` that calls `callback` each time the state of the `url` changes.
-It returns an `unsuscribe` function.
+It returns an `unsubscribe` function.
 
 The callback is called with the state of the url as the only parameter.
 
@@ -80,7 +86,7 @@ React hook that reloads the component when the state of url changes
 `options` are passed to `onGet`
 
 
-### set(url, value, doPospone) => undefined
+### set(url, value, doPospone=false) => undefined
 It sets the state for the url.
 It could change the actual value at the source, or not. See the plugin documentation.
 
@@ -102,26 +108,29 @@ Returns the state for the url.
 
 If there is no subscription for the url, it depends on the plugin. See the plugin documentation.
 
+### command(url, command, ...params) => any
+
+Execute a plugin comand. See the available commands for each plugin in the documentation.
+
 ### registerPlugin(plugin) => undefined
 Allows you to register a new plugin, to deal with other urls, like `foo://...`
 
 [See Plugin Authoring](#plugin-authoring)
 
-### command(url, command, ...params) => undefined
-**next versión  (1.0.6)**
-
-Execute a plugin comand. See the available commands for each plugin in the documentation.
-
 ## Included Plugins
 
 ### history `history://someKey`
-A convenient way to store (undo-redo)able states.
+To store (undo-redo)able states.
 
-#### Notes
+#### Quick Notes
 * `set` push a new state in the history, and clear the redo states if any.
 * there are no periodical checks
 * `refresh` does nothing
 * the `interval` optional parameter at `onGet` does nothing
+* To undo/redo you must call `command('history://someKey', 'undo')`/`command('history://someKey', 'redo')`
+* To undo/redo all your histories, you must call `command('history://, 'undo')`/`command('history://, 'undo')`
+* You can suscribe to relative steps, so `history://someKey#1` points to the previous state on `someKey` history.
+* Updates are propagated to the relative steps.
 
 #### Commands
 
@@ -140,36 +149,32 @@ The catch all histories url, `history://`, can be used with commands, to execute
 
 For instance `command('history://', 'undo'), undoes one step in every history.
 
-If use `history://` in `useOnGet`, `onGet`, `get` or `set`, this catch all behavior will stop working, and the commands executed in the url `history://` will affect only the sole history referenced by this url.
+If you use `history://` with `useOnGet`, `onGet`, `get` or `set`, the catch-all behavior will stop working, and the commands executed in the url `history://` will affect only the sole history referenced by this url.
 
 
 #### Relative URL `history://someKey#n`
 
-With `onGet`, `useOnGet` and `get` points to previous n state.
+With `onGet`, `useOnGet` and `get` points to previous `n` state.
 
 So `history://someKey#1` is the previos one, and `history://someKey#2` is two steps before now, and `history://someKey#-1` is the next step (if exists)
 
 With `set` it does not push a new state in the history, but overwrites the pointed state.
 
 **Commands and relative URL**
-`command('history://someKey#n', command, ...params)` is like `command('history://someKey', command, ...params)`
+Relative urls are threated transparentely as the original url so `command('history://someKey#n', command, ...params)` is like `command('history://someKey', command, ...params)`
 
 
 ### dotted `dotted://some.dotted.key`
 
-It is a way very fast, and very convenient to reactively share state across your application.
-
-The urls are `deep.dotted.keys`, so if the state of `dotted://some.dotted.key` is `{foo: 'bar}` the state of `dotted://some.dotted.key.foo` is `bar`
-
-The changes are propagated efficiently up and down, so if you call `set('dotted://some.dotted.key', {foo: 'buz'})` the next subscriptions callbacks are called (if the subscriptions exist)
+To store states that fully works with `deep.dotted.keys`, so if the state of `dotted://some.dotted.key` is `{foo: 'bar}` the state of `dotted://some.dotted.key.foo` is `bar`, and the changes are propagated efficiently up and down to parents and children, so if you call `set('dotted://some.dotted.key', {foo: 'buz'})` the next subscriptions callbacks are called (if exist)
 
 * `dotted://some.dotted.key`
 * `dotted://some.dotted`
 * `dotted://some`
 * `dotted://some.dotted.key.foo`
 
-#### Notes
-* `set` changes the value at the source, and could affects the values or child and parent other urls.
+#### Quick Notes
+* `set` changes the value at the source, and propagates to children and parents.
 * there are no periodical checks
 * `refresh` does nothing
 * the `interval` optional parameter at `onGet` does nothing
@@ -178,7 +183,7 @@ The changes are propagated efficiently up and down, so if you call `set('dotted:
 
 The url `localStorage://someKey` points to the resource `localStorage.someKey`
 
-#### Notes
+#### Quick Notes
 * `set` changes the value at the source
 * there are periodical checks, the default interval value is 3000 milliseconds.
 * refresh does check the actual value
@@ -187,7 +192,7 @@ The url `localStorage://someKey` points to the resource `localStorage.someKey`
 
 The url `sessionStorage://someKey` points to the resource `sessionStorage.someKey`
 
-#### Notes
+#### Quick Notes
 * `set` changes the value at the source
 * there are periodical checks, the default interval value is 3000 milliseconds.
 * refresh does check the actual value
@@ -198,11 +203,11 @@ Does a HTTP GET to the url. It is a catch-all that handles every url that has no
 
 The url `http://example.com/foo/bar` points to the JSON object of the response, or the raw body if it is not valid JSON. No matter what HTTPS status. It can also points to the error, if the HTTP GET cannot be done.
 
-#### Notes
-* `set` does NOT changes the value at the source. It is only used to optimistically speed things up.
+#### Quick Notes
+* `set` does **NOT** change the value at the source. It is only used to optimistically speed things up.
 * there are periodical checks, the default interval value is 3000 milliseconds.
 * refresh does check the actual value
-* `get` returns the cached value, so returns undefined if the urls has never been used with `onGet` or if it has been used but its cached value has been cleaned by the garbage collector.
+* `get` does not make a HTTP request. if the urls has never been used with `onGet` or if it has been cleaned by the garbage collector, `get` returns undefined
 
 ## Advanced use:
 
@@ -230,6 +235,18 @@ The regex to check the url for instance `/^foo:\/\//`
 If you source need to be checked periodically, set here a default interval, in milliseconds.
 #### plugin.threshold
 Amount in milliseconds of time to debounce the consecutive checks, because of `refresh` or `onGet`
+#### plugin.commands
+Object to define the commands your plugin will accept.
+```js
+const plugin = {
+  ...
+  commands: {
+    commandName (url, ...params) {
+      //
+    }
+  }
+}
+```
 
 ### Hooks
 All hooks are optional. Define the ones you need to deal with your source.
