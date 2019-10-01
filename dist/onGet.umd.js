@@ -565,6 +565,10 @@ var plugin$1 = {
     if (!relative) {
       var _history = state[endpoint.url];
 
+      if (!isDifferent(endpoint.value, _history.history[_history.cursor])) {
+        return;
+      }
+
       if (_history.cursor < _history.history.length) {
         _history.history.splice(_history.cursor + 1);
       }

@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useOnGet, set } from '../'
+import { useOnGet, set, get } from '../'
 
 const unmounts = []
 
@@ -38,5 +38,16 @@ describe('useOnGet', () => {
     act(() => set('dotted://foo.some.state', 'new value'))
     await wait
     expect(result.current).toBe('new value')
+  })
+})
+
+describe('history', () => {
+  it('returns the first value', () => {
+    const { result, unmount } = renderHook(() => useOnGet('history://one', { first: 'first value' }))
+
+    unmounts.push(unmount)
+
+    expect(result.current).toBe('first value')
+    expect(get('history://one')).toBe('first value')
   })
 })
