@@ -1,4 +1,4 @@
-import { endpoints } from '../src'
+import { endpoints } from '../src/conf'
 import isDifferent from 'isdifferent'
 
 export const state = {}
