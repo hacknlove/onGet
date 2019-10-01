@@ -17,7 +17,7 @@ export default function Link (props) {
         marginLeft: '4px'
       }}
     >
-      {children} {myFilter}
+      {children}
     </button>
   )
 }
