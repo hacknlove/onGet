@@ -184,15 +184,16 @@ function set (url, value, doPospone) {
 /**
  * Obtain the current value and is different, update the cache and call the handlers
  * @param {string} url of the endpoints to be refreshed
+ * @param {boolean} force to ignore the threshold and force a refresh no matter how close it is from the previous check
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
-function refresh (url) {
+function refresh (url, force = false) {
   const endpoint = endpoints[url];
   if (!endpoint) {
     return false
   }
   endpoint.clean = undefined;
-  if (endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
+  if (!force && endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
     return
   }
   pospone(endpoint);

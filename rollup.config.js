@@ -83,7 +83,9 @@ export default [
       name: 'onGet',
       indent: false,
       globals: {
-        '@hacknlove/deepobject': 'deepObject'
+        '@hacknlove/deepobject': 'deepObject',
+        isdifferent: 'isDifferent',
+        react: 'React'
       }
     },
     external: [
@@ -106,7 +108,9 @@ export default [
       name: 'onGet',
       indent: false,
       globals: {
-        '@hacknlove/deepobject': 'deepObject'
+        '@hacknlove/deepobject': 'deepObject',
+        isdifferent: 'isDifferent',
+        react: 'React'
       }
     },
     external: [

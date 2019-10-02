@@ -1,7 +1,7 @@
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('isdifferent'), require('react'), require('@hacknlove/deepobject')) :
 typeof define === 'function' && define.amd ? define(['exports', 'isdifferent', 'react', '@hacknlove/deepobject'], factory) :
-(global = global || self, factory(global.onGet = {}, global.isDifferent, global.react, global.deepObject));
+(global = global || self, factory(global.onGet = {}, global.isDifferent, global.React, global.deepObject));
 }(this, function (exports, isDifferent, react, deepobject) { 'use strict';
 
 isDifferent = isDifferent && isDifferent.hasOwnProperty('default') ? isDifferent['default'] : isDifferent;
@@ -214,10 +214,15 @@ function set(url, value, doPospone) {
 /**
  * Obtain the current value and is different, update the cache and call the handlers
  * @param {string} url of the endpoints to be refreshed
+ * @param {boolean} force to ignore the threshold and force a refresh no matter how close it is from the previous check
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
 
-function refresh(url) {
+function refresh(url, force) {
+  if (force === void 0) {
+    force = false;
+  }
+
   var endpoint = endpoints[url];
 
   if (!endpoint) {
@@ -226,7 +231,7 @@ function refresh(url) {
 
   endpoint.clean = undefined;
 
-  if (endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
+  if (!force && endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
     return;
   }
 

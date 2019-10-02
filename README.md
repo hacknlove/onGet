@@ -18,7 +18,7 @@ npm i onget
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/isdifferent@1.1.0/dist/isDifferent.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/onget@1.1.2/dist/onGet.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onget@1.1.3/dist/onGet.umd.min.js"></script>
 ```
 
 And if you plan to use `dotted://deep.dot.key` in memory state, you must include too
@@ -97,14 +97,14 @@ It could change the actual value at the source, or not. See the plugin documenta
 
 If the plugin supports periodical checks, you can postpone the next check, passing true as `doPospone`
 
-### refresh(url) => boolean / undefined
+### refresh(url, force=boolean) => boolean / undefined
 it checks the actual value at the source, and if it is different than one stored at the state, it updates it and call the subscriptions callbacks.
 
 Either Different or not, it postpone the next periodical check.
 
 If there is no subscription for this url, it returns `false`.
 
-If the plugin supports periodical checks and refresh is called to close a periodical check (or to other refresh), it returns `undefined`, and does nothing.
+If the plugin supports periodical checks and refresh is called to close a periodical check (or to other refresh), it returns `undefined`, and does nothing. If you want to force the refresh even if it too close to the previous one, you can set force to true.
 
 It returns `true`, otherwise.
 

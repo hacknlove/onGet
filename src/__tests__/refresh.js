@@ -76,6 +76,20 @@ test('if refresh is called inside the plugin threshold, it does not refresh', ()
   expect(endpoints['test url'].plugin.refresh).not.toHaveBeenCalled()
 })
 
+test('if refresh is called inside the plugin threshold with force, it does refresh', () => {
+  endpoints['test url'] = {
+    plugin: {
+      threshold: 1000,
+      refresh: jest.fn()
+    },
+    last: Date.now()
+  }
+  refresh('test url', true)
+  expect(pospone).toHaveBeenCalled()
+  expect(endpoints['test url'].plugin.refresh).toHaveBeenCalled()
+})
+
+
 test('if refresh is called outside the plugin threshold, it refresh', () => {
   endpoints['test url'] = {
     plugin: {
