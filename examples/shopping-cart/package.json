@@ -1,0 +1,30 @@
+{
+  "name": "shopping-cart",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
+    "nodemon": "^1.19.3",
+    "react-scripts": "^3.0.0"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "onget": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start & npm run api & wait",
+    "api": "nodemon backend/index.js & wait",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
+    "test": "react-scripts test --env=node"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "proxy": "http://localhost:3001"
+}
