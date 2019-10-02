@@ -37,7 +37,6 @@ The onGet version of http://todomvc.com/
 Using a REST api  as remote source for the local state
 
 * [source](/examples/shopping-cart)
-* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/shopping-cart)
 
 
 ## Tree-view

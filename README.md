@@ -36,7 +36,7 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * Todos [source](/master/examples/todos) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos)
 * Todos-with-undo [source](/examples/todos-with-undo) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo)
 * TodoMVC [source](/master/examples/todomvc) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc)
-* Shopping-cart [source](/examples/shopping-cart) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/shopping-cart)
+* Shopping-cart [source](/examples/shopping-cart)
 * Tree-view [source](/examples/tree-view) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view)
 ## Use
 
