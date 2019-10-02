@@ -38,3 +38,12 @@ Using a REST api  as remote source for the local state
 
 * [source](/examples/shopping-cart)
 * [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/shopping-cart)
+
+
+## Tree-view
+
+I could use the same approach of the redux state, to store the tree, but I wanted to show stress-test the dotted plugin, with thousends of differents subscriptions and changes propagating up and down the tree.
+
+
+* [source](/examples/shopping-cart)
+* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/shopping-cart)
