@@ -261,7 +261,11 @@ function get (url) {
  * @param {*} first the first value to use, before the real one arrives
  */
 function useOnGet (url, options = {}) {
-  const [value, set] = react.useState(() => get(url) || options.first);
+  let [value, set] = react.useState(() => get(url) || options.first);
+
+  if (options.firstIfUrlChanges) {
+    value = get(url) || options.first;
+  }
 
   react.useEffect(() => {
     return onGet(url, set, options)

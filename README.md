@@ -18,7 +18,7 @@ npm i onget
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/isdifferent@1.1.0/dist/isDifferent.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/onget@1.1.3/dist/onGet.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/onget@1.2.0/dist/onGet.umd.min.js"></script>
 ```
 
 And if you plan to use `dotted://deep.dot.key` in memory state, you must include too
@@ -92,7 +92,15 @@ The first value to initialize the state, if it has been initialized yet. See the
 ### useOnGet(url, options) => value
 React hook that reloads the component when the state of url changes
 
-`options` are passed to `onGet`
+#### options.firstIfUrlChanges
+if `false`, if you change the url, the returned value will remain the last url's one until a new one arrives.
+if `true`, if you change the url, the returned value will be `options.first` one until a new one arrives.
+
+#### options.interval
+Same as in `onGet`
+
+#### options.first
+Same as in `onGet`
 
 
 ### set(url, value, doPospone=false) => undefined

@@ -2,7 +2,9 @@ import React from 'react'
 import { useOnGet, set, refresh, get } from 'onget'
 
 function useOnReddit (url) {
-  const json = useOnGet(url)
+  const json = useOnGet(url, {
+    firstIfUrlChanges: true
+  })
 
   return json
     ? {
@@ -25,7 +27,6 @@ function refreshSubReddit (url) {
 export default function Posts ({ url }) {
 
   const { isFetching, posts, receivedAt } = useOnReddit(url)
-
   return (
     <>
       <p>

@@ -315,6 +315,10 @@ function useOnGet(url, options) {
       value = _useState[0],
       set = _useState[1];
 
+  if (options.firstIfUrlChanges) {
+    value = get(url) || options.first;
+  }
+
   react.useEffect(function () {
     return onGet(url, set, options);
   }, [url]);
