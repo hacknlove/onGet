@@ -38,6 +38,8 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * TodoMVC [source](/master/examples/todomvc) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc)
 * Shopping-cart [source](/examples/shopping-cart)
 * Tree-view [source](/examples/tree-view) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view)
+* Async [source](/examples/async) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
+
 ## Use
 
 ### urls
