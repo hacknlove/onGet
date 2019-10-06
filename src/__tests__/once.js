@@ -16,7 +16,7 @@ describe('waitUntil', () => {
     once('url', callback)
     expect(callback).not.toHaveBeenCalled()
     handler('ok')
-    expect(callback).toHaveBeenCalledWith('ok')
+    expect(callback).toHaveBeenCalledWith('ok', 'url')
     expect(unsubscribe).toHaveBeenCalled()
   })
 })
