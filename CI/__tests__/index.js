@@ -1,6 +1,6 @@
 /* global localStorage sessionStorage */
 // Integration
-import { onGet, set, get, refresh, endpoints } from '../'
+import { onGet, set, get, refresh, endpoints } from '../../'
 
 global.localStorage = {}
 global.sessionStorage = {}

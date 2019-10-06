@@ -7,31 +7,10 @@ Because It does not feel right when you end up with a lot of boilerplate code, a
 
 Reactive State shared across your components should be as efficient, transparent, fun to work with, and less intrusive as possible.
 
-
-## Install
-
-### npm
-```bash
-npm i onget
-```
-
-### CDN
-```html
-<script src="https://cdn.jsdelivr.net/npm/isdifferent@1.1.0/dist/isDifferent.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/onget@1.2.0/dist/onGet.umd.min.js"></script>
-```
-
-And if you plan to use `dotted://deep.dot.key` in memory state, you must include too
-```html
-<script src="https://cdn.jsdelivr.net/npm/@hacknlove/deepobject@1.1.6/dist/deepObject.umd.min.js"></script>
-```
-
-
 ## Examples
 
 Forked from https://github.com/reduxjs/redux/tree/master/examples
 
-* Counter-vanilla [source](/examples/counter-vanilla) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter-vanilla)
 * counter [source](/examples/counter) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter)
 * Todos [source](/master/examples/todos) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos)
 * Todos-with-undo [source](/examples/todos-with-undo) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo)
@@ -89,6 +68,15 @@ Be careful with passing too low values, because you can degrade the performance 
 #### options.first
 The first value to initialize the state, if it has been initialized yet. See the plugin documentation.
 
+
+### waitUntil(url, condition) => promise
+Returns a promise that will be resolved when calling `condition(value. url)` returns truthy
+
+### once(url, callback) => function
+When there were some value to return,  `callback(value, url`) will be executed.
+
+It returns an unsubscribe function to avoid this
+
 ### useOnGet(url, options) => value
 React hook that reloads the component when the state of url changes
 
@@ -102,6 +90,11 @@ Same as in `onGet`
 #### options.first
 Same as in `onGet`
 
+
+### get(url) => value
+Returns the state for the url.
+
+If there is state for the url, it could return undefined or the actual value. See the plugin documentation.
 
 ### set(url, value, doPospone=false) => undefined
 It sets the state for the url.
@@ -119,11 +112,6 @@ If there is no subscription for this url, it returns `false`.
 If the plugin supports periodical checks and refresh is called to close a periodical check (or to other refresh), it returns `undefined`, and does nothing. If you want to force the refresh even if it too close to the previous one, you can set force to true.
 
 It returns `true`, otherwise.
-
-### get(url) => value
-Returns the state for the url.
-
-If there is no subscription for the url, it depends on the plugin. See the plugin documentation.
 
 ### command(url, command, ...params) => any
 
@@ -304,3 +292,13 @@ To be transparent for the developer, It should return the same value that would 
 When the garbage collector is going to delete the endpoint from `endpoints` and to stop the periodical check timer, it executes `plugin.clean(endpoint)`
 
 That is your chance to clean the things up, or to return `true` and prevent the garbage collector from deleting the endpoint
+
+## Changes
+
+### 1.3.1
+* waitUntil
+* once
+
+### 1.3.0
+* Better build system
+* dropped UML and IIFE versions.

@@ -1,5 +1,5 @@
 import { getValue, setValue } from '@hacknlove/deepobject'
-import isDifferent from 'isdifferent'
+import { isDifferent } from 'isdifferent'
 import { endpoints } from '../../src/conf'
 import plugin, { propagateUp, propagateDown } from '../dotted'
 

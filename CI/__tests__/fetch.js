@@ -1,16 +1,34 @@
 /* global fetch */
 // Integration
-import { onGet, set, get, refresh, endpoints } from '../'
+import { onGet, set, get, refresh, endpoints, plugins } from '../../'
+
+plugins.forEach(plugin => {
+  if (plugin.name !== 'fetch') {
+    return
+  }
+  plugin.checkInterval = 100
+})
 
 global.fetch = jest.fn()
 const unsubscribes = []
 
 describe('fetch', () => {
   beforeEach(() => {
+    fetch.mockImplementation(() => Promise.resolve({
+      async json () {
+        return Promise.resolve('fetch response')
+      }
+    }))
+  })
+
+  afterEach(() => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(endpoints).forEach(key => {
+      clearTimeout(endpoints.timeout)
+      delete endpoints[key]
+    })
     fetch.mockImplementation(() => Promise.resolve({
       async json () {
         return Promise.resolve('fetch response')

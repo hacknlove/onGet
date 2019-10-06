@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useOnGet, set, get } from '../'
+import { useOnGet, set, get } from '../../'
 
 const unmounts = []
 

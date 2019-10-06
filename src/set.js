@@ -1,4 +1,4 @@
-import isDifferent from 'isdifferent'
+import { isDifferent } from 'isdifferent'
 import { endpoints } from './conf'
 import { getEndpoint } from './getEndpoint'
 import { pospone } from './pospone'

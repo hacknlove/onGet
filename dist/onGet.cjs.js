@@ -2,9 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var isDifferent = _interopDefault(require('isdifferent'));
+var isdifferent = require('isdifferent');
 var react = require('react');
 var deepobject = require('@hacknlove/deepobject');
 
@@ -175,7 +173,7 @@ function set (url, value, doPospone) {
   if (endpoint.intervals && doPospone) {
     pospone(endpoint);
   }
-  if (!isDifferent(value, endpoint.value)) {
+  if (!isdifferent.isDifferent(value, endpoint.value)) {
     return
   }
 
@@ -425,7 +423,7 @@ function propagate (url) {
       return
     }
     const newValue = getRelativeValue(endpoint.relative.url, endpoint.relative.n);
-    if (isDifferent(newValue, endpoint.value)) {
+    if (isdifferent.isDifferent(newValue, endpoint.value)) {
       endpoint.value = newValue;
       executeCallbacks(endpoint.url);
     }
@@ -507,7 +505,7 @@ const plugin$1 = {
 
     if (!relative) {
       const history = state[endpoint.url];
-      if (!isDifferent(endpoint.value, history.history[history.cursor])) {
+      if (!isdifferent.isDifferent(endpoint.value, history.history[history.cursor])) {
         return
       }
       if (history.cursor < history.history.length) {
@@ -691,7 +689,7 @@ function propagateDown (url) {
     const child = endpoints[childUrl];
     const newChildValue = deepobject.getValue(parent.value, childUrl.substr(url.length + 1));
 
-    if (isDifferent(newChildValue, child.value)) {
+    if (isdifferent.isDifferent(newChildValue, child.value)) {
       child.value = newChildValue;
       Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue));
     }

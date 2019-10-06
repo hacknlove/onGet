@@ -1,5 +1,5 @@
 import { set } from '../set'
-import isdifferent from 'isdifferent'
+import { isDifferent } from 'isdifferent'
 import { endpoints } from '../conf'
 import { getEndpoint } from '../getEndpoint'
 import { pospone } from '../pospone'
@@ -14,7 +14,7 @@ test('If the endpoint does not exist, getEndPoint should be called', () => {
 
   set('test', 'value')
   expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
-  expect(isdifferent).not.toHaveBeenCalled()
+  expect(isDifferent).not.toHaveBeenCalled()
 })
 
 test('If the plugin has the hook set, it is called', () => {
@@ -31,7 +31,7 @@ test('If the plugin has the hook set, it is called', () => {
 
   expect(endpoint.plugin.set).toHaveBeenCalledWith(endpoint)
 
-  expect(isdifferent).not.toHaveBeenCalled()
+  expect(isDifferent).not.toHaveBeenCalled()
 })
 
 test('set clean to undefined', () => {
@@ -76,7 +76,7 @@ test('if value is not different do not set the new value', () => {
   endpoints.test = {
     value: 'old'
   }
-  isdifferent.mockReturnValue(false)
+  isDifferent.mockReturnValue(false)
 
   set('test', 'new')
 
@@ -90,7 +90,7 @@ test('if value is different do not set the new value', () => {
     plugin: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
-  isdifferent.mockReturnValue(true)
+  isDifferent.mockReturnValue(true)
 
   set('test', 'new')
 
@@ -107,7 +107,7 @@ test('if value is different and there is callbacks, call the callbacks', () => {
     plugin: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
-  isdifferent.mockReturnValue(true)
+  isDifferent.mockReturnValue(true)
 
   set('test', 'new')
   jest.runAllTimers()
@@ -126,7 +126,7 @@ test('if value is different and there is plugin.set, call plugin.set', () => {
     }
   }
   getEndpoint.mockReturnValue(endpoints.test)
-  isdifferent.mockReturnValue(true)
+  isDifferent.mockReturnValue(true)
 
   set('test', 'new')
 

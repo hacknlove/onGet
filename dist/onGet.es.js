@@ -1,4 +1,4 @@
-import isDifferent from 'isdifferent';
+import { isDifferent } from 'isdifferent';
 import { useState, useEffect } from 'react';
 import { getValue, setValue } from '@hacknlove/deepobject';
 

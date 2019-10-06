@@ -1,4 +1,4 @@
-import isDifferent from 'isdifferent'
+import { isDifferent } from 'isdifferent'
 import { endpoints } from '../../src/conf'
 import plugin, { cleanUrlAndGetHistory, getRelativeValue, propagate, state } from '../history'
 
