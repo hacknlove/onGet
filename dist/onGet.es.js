@@ -268,6 +268,25 @@ function useOnGet (url, options = {}) {
   return value
 }
 
+function once (url, cb) {
+  const unsubscribe = onGet(url, value => {
+    unsubscribe();
+    cb(value, url);
+  });
+  return unsubscribe
+}
+
+function waitUntil (url, condition = value => value) {
+  return new Promise(resolve => {
+    const unsubscribe = onGet(url, value => {
+      if (condition(value, url)) {
+        unsubscribe();
+        resolve(value);
+      }
+    });
+  })
+}
+
 function command (url, command, ...params) {
   const endpoint = endpoints[url] || {
     plugin: findPlugin(url)
@@ -760,4 +779,4 @@ registerPlugin(sessionStorate);
 registerPlugin(plugin$1);
 registerPlugin(dotted);
 
-export { command, conf, endpoints, get, onGet, plugins, refresh, registerPlugin, set, useOnGet };
+export { command, conf, endpoints, get, onGet, once, plugins, refresh, registerPlugin, set, useOnGet, waitUntil };

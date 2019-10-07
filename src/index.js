@@ -3,6 +3,8 @@ import { useOnGet } from './useOnGet'
 import { set } from './set'
 import { refresh } from './refresh'
 import { get } from './get'
+import { once } from './once'
+import { waitUntil } from './waitUntil'
 import { command } from './command'
 import { conf, endpoints, plugins } from './conf'
 import { registerPlugin } from './registerPlugin'
@@ -20,5 +22,16 @@ registerPlugin(history)
 registerPlugin(dotted)
 
 export {
-  onGet, useOnGet, set, refresh, get, registerPlugin, conf, endpoints, plugins, command
+  command,
+  conf,
+  endpoints,
+  get,
+  once,
+  onGet,
+  plugins,
+  refresh,
+  registerPlugin,
+  set,
+  useOnGet,
+  waitUntil
 }
