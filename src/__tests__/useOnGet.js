@@ -23,6 +23,25 @@ describe('useOnGet', () => {
     expect(result.current).toBe('first value')
   })
 
+  it('options is optional', () => {
+    const { result, unmount } = renderHook(() => useOnGet('url'))
+
+    unmounts.push(unmount)
+
+    expect(result.current).toBeUndefined()
+  })
+
+  it('return first value, if the url changes', () => {
+    const { result, unmount } = renderHook(() => useOnGet('url', {
+      first: 'first value',
+      firstIfUrlChanges: true
+    }))
+
+    unmounts.push(unmount)
+
+    expect(result.current).toBe('first value')
+  })
+
   it('returns the cached value, if exists', () => {
     get.mockReturnValue('cached value')
     const { result, unmount } = renderHook(() => useOnGet('url', { first: 'first value' }))

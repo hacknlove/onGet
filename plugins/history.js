@@ -127,7 +127,7 @@ const plugin = {
       if (!isDifferent(endpoint.value, history.history[history.cursor])) {
         return
       }
-      if (history.cursor < history.history.length) {
+      if (history.cursor < history.history.length - 1) {
         history.history.splice(history.cursor + 1)
       }
       history.history.push(endpoint.value)
@@ -164,10 +164,12 @@ const plugin = {
     if (!state[endpoint.url]) {
       return
     }
+
     if (endpoints[url] && !endpoints[url].clean) {
       return
     }
-    if (endpoints.some(endpoint => {
+
+    if (Object.values(endpoints).some(endpoint => {
       if (endpoint.clean) {
         return false
       }
@@ -194,7 +196,7 @@ const plugin = {
         return
       }
 
-      if (history.cursor < history.history.length) {
+      if (history.cursor < history.history.length - 1) {
         history.history.splice(history.cursor + 1)
       }
       history.history[history.cursor] = value

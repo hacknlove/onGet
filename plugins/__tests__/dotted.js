@@ -1,4 +1,4 @@
-import { getValue, setValue } from '@hacknlove/deepobject'
+import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
 import { isDifferent } from 'isdifferent'
 import { endpoints } from '../../src/conf'
 import plugin, { propagateUp, propagateDown } from '../dotted'
@@ -216,6 +216,15 @@ describe('plugin', () => {
         url: 'dotted://some.deep.child'
       })
       expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'dotted://some.deep')
+    })
+  })
+
+  describe('commands', () => {
+    describe('remove', () => {
+      it('ok', () => {
+        plugin.commands.remove('one.removed.dotted.url')
+        expect(deleteValue).toHaveBeenCalled()
+      })
     })
   })
 })

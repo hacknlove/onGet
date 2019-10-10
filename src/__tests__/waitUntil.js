@@ -25,4 +25,21 @@ describe('waitUntil', () => {
     expect(promise.isPending()).toBe(false)
     expect(unsubscribe).toHaveBeenCalled()
   })
+
+  it('condition is optional', () => {
+    let handler
+    const unsubscribe = jest.fn()
+
+    onGet.mockImplementation((url, hb) => {
+      handler = hb
+      return unsubscribe
+    })
+    const promise = waitUntil('url')
+    expect(promise.isPending()).toBe(true)
+    handler(false)
+    expect(promise.isPending()).toBe(true)
+    handler(true)
+    expect(promise.isPending()).toBe(false)
+    expect(unsubscribe).toHaveBeenCalled()
+  })
 })

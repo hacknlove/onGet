@@ -1,6 +1,6 @@
 import { isDifferent } from 'isdifferent'
 import { endpoints } from '../../src/conf'
-import plugin, { cleanUrlAndGetHistory, getRelativeValue, propagate, state } from '../history'
+import plugin, { cleanUrlAndGetHistory, getRelativeValue, propagate, state, executeCallbacks } from '../history'
 
 jest.mock('isdifferent')
 
@@ -97,8 +97,8 @@ describe('propagate', () => {
     expect(() => propagate('someUrl')).not.toThrow()
   })
 
-  it('calls the callbacks of the relative endpoints, but not the callbacks of the original url', async () => {
-    isDifferent.mockReturnValue(true)
+  it('not call the callbacks of the relative endpoints, if there is no changes', async () => {
+    isDifferent.mockReturnValue(false)
     endpoints['history://someHistory'] = {
       callbacks: {
         cb: jest.fn()
@@ -145,6 +145,17 @@ describe('propagate', () => {
       }
     }
 
+    endpoints['history://otherHistory#1'] = {
+      url: 'history://otherHistory#1',
+      relative: {
+        url: 'history://otherHistory',
+        n: -1
+      },
+      callbacks: {
+        cb: jest.fn()
+      }
+    }
+
     state['history://someHistory'] = {
       history: [
         'uno',
@@ -160,10 +171,11 @@ describe('propagate', () => {
     await new Promise(resolve => setTimeout(resolve, 10))
 
     expect(endpoints['history://someHistory'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://someHistory#-1'].callbacks.cb).toHaveBeenCalledWith('cuatro')
-    expect(endpoints['history://someHistory#0'].callbacks.cb).toHaveBeenCalledWith('tres')
-    expect(endpoints['history://someHistory#1'].callbacks.cb).toHaveBeenCalledWith('dos')
-    expect(endpoints['history://someHistory#2'].callbacks.cb).toHaveBeenCalledWith('uno')
+    expect(endpoints['history://someHistory#-1'].callbacks.cb).not.toHaveBeenCalled()
+    expect(endpoints['history://someHistory#0'].callbacks.cb).not.toHaveBeenCalled()
+    expect(endpoints['history://someHistory#1'].callbacks.cb).not.toHaveBeenCalled()
+    expect(endpoints['history://someHistory#2'].callbacks.cb).not.toHaveBeenCalled()
+    expect(endpoints['history://otherHistory#1'].callbacks.cb).not.toHaveBeenCalled()
   })
 })
 
@@ -363,6 +375,8 @@ describe('set', () => {
   })
   describe('absolute url', () => {
     it('push a new state in the history', () => {
+      isDifferent.mockReturnValue(true)
+
       state.someUrl = {
         history: [
           'uno',
@@ -386,6 +400,33 @@ describe('set', () => {
           'cinco'
         ],
         cursor: 4
+      })
+    })
+
+    it('cuts the history, if there is steps to be redone', () => {
+      isDifferent.mockReturnValue(true)
+
+      state.someUrl = {
+        history: [
+          'uno',
+          'dos',
+          'tres',
+          'cuatro'
+        ],
+        cursor: 1
+      }
+
+      plugin.set({
+        url: 'someUrl',
+        value: 'cinco'
+      })
+      expect(state.someUrl).toEqual({
+        history: [
+          'uno',
+          'dos',
+          'cinco'
+        ],
+        cursor: 2
       })
     })
 
@@ -423,6 +464,35 @@ describe('set', () => {
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(endpoints['someUrl#1'].callbacks.cb).toHaveBeenCalledWith('cuatro')
     })
+
+    it('does nothing if the new value is equal to the old one', () => {
+      isDifferent.mockReturnValue(false)
+
+      state.someUrl = {
+        history: [
+          'uno',
+          'dos',
+          'tres',
+          'cuatro'
+        ],
+        cursor: 3
+      }
+
+      plugin.set({
+        url: 'someUrl',
+        value: 'cuatro'
+      })
+      expect(state.someUrl).toEqual({
+        history: [
+          'uno',
+          'dos',
+          'tres',
+          'cuatro'
+        ],
+        cursor: 3
+      })
+
+    })
   })
 })
 
@@ -438,16 +508,61 @@ describe('clean', () => {
 
   it('does nothing if the absolute endpoint is not for clean', () => {
     endpoints.someUrl = {}
+    state.someUrl = {}
     expect(() => plugin.clean({
       url: 'someUrl'
-    })).not.toThrow()
-    expect(() => plugin.clean({
-      url: 'someUrl#3'
     })).not.toThrow()
   })
 
   it('does nothing if exists some relative endpoint not for clean', () => {
+    endpoints.someUrl = {
+      clean: true
+    }
+    endpoints['other'] = {
+      clean: true
+    }
+    endpoints['other#1'] = {
+      clean: false
+    }
+    endpoints['other#2'] = {
+      clean: false,
+      relative: {
+        url: 'other'
+      }
+    }
+    endpoints['someUrl#1'] = {
+      relative: {
+        url: 'someUrl'
+      }
+    }
+    state.someUrl = {}
+    plugin.clean({
+      url: 'someUrl'
+    })
+    expect(state).toStrictEqual({ someUrl: {} })
+  })
 
+  it('it removes if every relative is for clean', () => {
+    endpoints.someUrl = {
+      clean: true
+    }
+    endpoints['other'] = {
+      clean: true
+    }
+    endpoints['other#1'] = {
+      clean: false
+    }
+    endpoints['someUrl#1'] = {
+      clean: true,
+      relative: {
+        url: 'someUrl'
+      }
+    }
+    state.someUrl = {}
+    plugin.clean({
+      url: 'someUrl'
+    })
+    expect(state).toStrictEqual({})
   })
 })
 
@@ -742,5 +857,11 @@ describe('commands', () => {
     it('returns 0 if there is no history', () => {
       expect(commands.redoLength('someUrl')).toBe(0)
     })
+  })
+})
+
+describe('executeCallbacks', () => {
+  it('does not break if not exists the url', () => {
+    expect(executeCallbacks('someUrl')).toBeUndefined()
   })
 })
