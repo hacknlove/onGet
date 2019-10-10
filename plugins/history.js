@@ -54,7 +54,7 @@ export function executeCallbacks (url) {
   if (!endpoint) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
+  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
 }
 
 export function updateEndpoint (url) {

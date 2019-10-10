@@ -20,9 +20,9 @@ export function propagateUp (url) {
 
   if (endpoint) {
     endpoint.value = getValue(state, endpoint.url)
-    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
+    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
   }
-  setTimeout(propagateUp, 0, parentUrl)
+  propagateUp(parentUrl)
 }
 
 /**
@@ -44,7 +44,7 @@ export function propagateDown (url) {
 
     if (isDifferent(newChildValue, child.value)) {
       child.value = newChildValue
-      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue))
+      Object.values(child.callbacks).forEach(cb => cb(newChildValue))
     }
   })
 }
