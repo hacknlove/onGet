@@ -1,5 +1,5 @@
 import React from 'react'
-import { get, set, useOnGet } from 'onget'
+import { get, set, useOnGet, command } from 'onget'
 
 let newId = 0
 
@@ -11,8 +11,7 @@ function increment (path) {
 
 function remove (e, path) {
   e.preventDefault()
-  const last = path.
-  set(`dotted://tree.${path}`, undefined)
+  command(`dotted://tree.${path}`, 'remove')
 }
 
 function addChild (e, path) {

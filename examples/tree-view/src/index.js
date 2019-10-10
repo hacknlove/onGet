@@ -6,8 +6,6 @@ import { set } from 'onget'
 
 const tree = generateTree()
 
-console.log(tree)
-
 set('dotted://tree', tree)
 
 render(

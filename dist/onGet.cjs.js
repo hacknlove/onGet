@@ -777,11 +777,11 @@ var dotted = {
   },
 
   commands: {
-    replace (url) {
+    remove (url) {
       deepobject.deleteValue(url);
-      propagateUp(endpoint.url);
-      propagateDown(endpoint.url);
-    },
+      propagateUp(url);
+      propagateDown(url);
+    }
   }
 };
 
