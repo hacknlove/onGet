@@ -28,12 +28,8 @@ describe('propagateUp', () => {
     expect(getValue).not.toHaveBeenCalled()
   })
   it('calls propagateUp(parentUrl)', () => {
-    endpoints.parent = {
-      url: 'parent',
-      callbacks: {}
-    }
     propagateUp('parent.child')
-    expect(getValue.mock.calls[0][1]).toBe('parent')
+    expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'parent')
   })
   it('updates parent value', () => {
     getValue.mockReturnValue('newParentValue')
@@ -180,9 +176,10 @@ describe('plugin', () => {
         },
         value: 'oldValue'
       }
+      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
       getValue.mockReturnValue('newValue')
       setValue.mockReturnValue({})
-      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
+      jest.runAllTimers()
       expect(endpoints['dotted://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
     })
 
@@ -215,15 +212,10 @@ describe('plugin', () => {
       expect(setTimeout).not.toHaveBeenCalled()
     })
     it('propagateUp if there is no children', () => {
-      endpoints['dotted://some.deep'] = {
-        url: 'dotted://some.deep',
-        callbacks: {}
-      }
       plugin.clean({
         url: 'dotted://some.deep.child'
       })
-
-      expect(getValue.mock.calls[0][1]).toBe('dotted://some.deep')
+      expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'dotted://some.deep')
     })
   })
 })

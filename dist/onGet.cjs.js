@@ -182,7 +182,7 @@ function set (url, value, doPospone) {
     endpoint.plugin.set(endpoint);
   }
 
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
 }
 
 /**
@@ -454,7 +454,7 @@ function executeCallbacks (url) {
   if (!endpoint) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
 }
 
 function updateEndpoint (url) {
@@ -686,9 +686,9 @@ function propagateUp (url) {
 
   if (endpoint) {
     endpoint.value = deepobject.getValue(state$1, endpoint.url);
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
   }
-  propagateUp(parentUrl);
+  setTimeout(propagateUp, 0, parentUrl);
 }
 
 /**
@@ -710,7 +710,7 @@ function propagateDown (url) {
 
     if (isdifferent.isDifferent(newChildValue, child.value)) {
       child.value = newChildValue;
-      Object.values(child.callbacks).forEach(cb => cb(newChildValue));
+      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue));
     }
   });
 }
@@ -774,6 +774,14 @@ var dotted = {
       return
     }
     propagateUp(endpoint.url);
+  },
+
+  commands: {
+    replace (url) {
+      deepobject.deleteValue(url);
+      propagateUp(endpoint.url);
+      propagateDown(endpoint.url);
+    },
   }
 };
 

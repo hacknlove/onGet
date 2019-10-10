@@ -1,4 +1,4 @@
-import { getValue, setValue } from '@hacknlove/deepobject'
+import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
 import { isDifferent } from 'isdifferent'
 import { endpoints } from '../src/conf'
 
@@ -20,9 +20,9 @@ export function propagateUp (url) {
 
   if (endpoint) {
     endpoint.value = getValue(state, endpoint.url)
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
   }
-  propagateUp(parentUrl)
+  setTimeout(propagateUp, 0, parentUrl)
 }
 
 /**
@@ -44,7 +44,7 @@ export function propagateDown (url) {
 
     if (isDifferent(newChildValue, child.value)) {
       child.value = newChildValue
-      Object.values(child.callbacks).forEach(cb => cb(newChildValue))
+      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue))
     }
   })
 }
@@ -108,5 +108,13 @@ export default {
       return
     }
     propagateUp(endpoint.url)
+  },
+
+  commands: {
+    replace (url) {
+      deleteValue(url)
+      propagateUp(endpoint.url)
+      propagateDown(endpoint.url)
+    },
   }
 }

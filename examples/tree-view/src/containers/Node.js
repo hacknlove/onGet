@@ -11,6 +11,7 @@ function increment (path) {
 
 function remove (e, path) {
   e.preventDefault()
+  const last = path.
   set(`dotted://tree.${path}`, undefined)
 }
 
@@ -30,7 +31,7 @@ export default function Node ({ path, doNotRemove = null }) {
   const childIds = Object.keys(node).filter(key => key !== 'counter')
 
   return (
-    <div key={path}>
+    <div>
       Counter: {node.counter}
 
       <button onClick={() => increment(path)}>
@@ -44,7 +45,7 @@ export default function Node ({ path, doNotRemove = null }) {
         </a>
       )}
       <ul>
-        {childIds.map(childId => <Node path={`${path}.${childId}`}/>)}
+        {childIds.map(childId => <li key={`${path}.${childId}`}><Node path={`${path}.${childId}`}/></li>)}
         <li key="add">
           <a href="#" // eslint-disable-line jsx-a11y/anchor-is-valid
             onClick={e => addChild(e, path)}

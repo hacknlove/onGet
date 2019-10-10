@@ -184,6 +184,9 @@ To store states that fully works with `deep.dotted.keys`, so if the state of `do
 * `refresh` does nothing
 * the `interval` optional parameter at `onGet` does nothing
 
+#### Commands
+* `command('dotted://some.deep.key', 'delete)` Deletes the key
+
 ### localStorage `localStorage://someKey`
 
 The url `localStorage://someKey` points to the resource `localStorage.someKey`

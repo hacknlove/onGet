@@ -1,6 +1,6 @@
 {
   "name": "onget",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "The elegant plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"

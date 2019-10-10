@@ -1,6 +1,6 @@
 import { isDifferent } from 'isdifferent';
 import { useState, useEffect } from 'react';
-import { getValue, setValue } from '@hacknlove/deepobject';
+import { getValue, setValue, deleteValue } from '@hacknlove/deepobject';
 
 const conf = {
   CACHE_SIZE: 100
@@ -178,7 +178,7 @@ function set (url, value, doPospone) {
     endpoint.plugin.set(endpoint);
   }
 
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
 }
 
 /**
@@ -450,7 +450,7 @@ function executeCallbacks (url) {
   if (!endpoint) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
 }
 
 function updateEndpoint (url) {
@@ -682,9 +682,9 @@ function propagateUp (url) {
 
   if (endpoint) {
     endpoint.value = getValue(state$1, endpoint.url);
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
   }
-  propagateUp(parentUrl);
+  setTimeout(propagateUp, 0, parentUrl);
 }
 
 /**
@@ -706,7 +706,7 @@ function propagateDown (url) {
 
     if (isDifferent(newChildValue, child.value)) {
       child.value = newChildValue;
-      Object.values(child.callbacks).forEach(cb => cb(newChildValue));
+      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue));
     }
   });
 }
@@ -770,6 +770,14 @@ var dotted = {
       return
     }
     propagateUp(endpoint.url);
+  },
+
+  commands: {
+    replace (url) {
+      deleteValue(url);
+      propagateUp(endpoint.url);
+      propagateDown(endpoint.url);
+    },
   }
 };
 
