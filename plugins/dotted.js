@@ -112,7 +112,7 @@ export default {
 
   commands: {
     remove (url) {
-      deleteValue(url)
+      state = deleteValue(state, url)
       propagateUp(url)
       propagateDown(url)
     }

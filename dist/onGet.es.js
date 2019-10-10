@@ -774,7 +774,7 @@ var dotted = {
 
   commands: {
     remove (url) {
-      deleteValue(url);
+      state$1 = deleteValue(state$1, url);
       propagateUp(url);
       propagateDown(url);
     }

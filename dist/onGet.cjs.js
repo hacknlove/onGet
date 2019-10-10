@@ -778,7 +778,7 @@ var dotted = {
 
   commands: {
     remove (url) {
-      deepobject.deleteValue(url);
+      state$1 = deepobject.deleteValue(state$1, url);
       propagateUp(url);
       propagateDown(url);
     }
