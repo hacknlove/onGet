@@ -3,6 +3,8 @@ import { isDifferent } from 'isdifferent'
 import { endpoints } from '../../src/conf'
 import plugin, { propagateUp, propagateDown } from '../dotted'
 
+const deepobject = jest.requireActual('@hacknlove/deepobject')
+
 jest.useFakeTimers()
 
 jest.mock('isdifferent')
@@ -12,6 +14,7 @@ jest.spyOn(global.console, 'warn').mockImplementation()
 
 beforeEach(() => {
   Object.keys(endpoints).forEach(key => delete endpoints[key])
+  setValue.mockReturnValue({})
 })
 
 describe('propagateUp', () => {
@@ -28,8 +31,12 @@ describe('propagateUp', () => {
     expect(getValue).not.toHaveBeenCalled()
   })
   it('calls propagateUp(parentUrl)', () => {
+    endpoints.parent = {
+      url: 'parent',
+      callbacks: {}
+    }
     propagateUp('parent.child')
-    expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'parent')
+    expect(getValue.mock.calls[0][1]).toBe('parent')
   })
   it('updates parent value', () => {
     getValue.mockReturnValue('newParentValue')
@@ -176,8 +183,8 @@ describe('plugin', () => {
         },
         value: 'oldValue'
       }
-      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
       getValue.mockReturnValue('newValue')
+      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
       setValue.mockReturnValue({})
       jest.runAllTimers()
       expect(endpoints['dotted://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
@@ -212,10 +219,14 @@ describe('plugin', () => {
       expect(setTimeout).not.toHaveBeenCalled()
     })
     it('propagateUp if there is no children', () => {
+      endpoints['dotted://some.deep'] = {
+        url: 'dotted://some.deep',
+        callbacks: {}
+      }
       plugin.clean({
         url: 'dotted://some.deep.child'
       })
-      expect(setTimeout).toHaveBeenCalledWith(propagateUp, 0, 'dotted://some.deep')
+      expect(getValue.mock.calls[0][1]).toBe('dotted://some.deep')
     })
   })
 
@@ -225,6 +236,20 @@ describe('plugin', () => {
         plugin.commands.remove('one.removed.dotted.url')
         expect(deleteValue).toHaveBeenCalled()
       })
+    })
+  })
+
+  describe('start', () => {
+    it('restart the state', () => {
+      setValue.mockImplementation(deepobject.setValue)
+      getValue.mockImplementation(deepobject.getValue)
+      plugin.set({
+        url: 'url',
+        value: 'value'
+      })
+      expect(plugin.get('url')).toBe('value')
+      plugin.start()
+      expect(plugin.get('url')).toBeUndefined()
     })
   })
 })

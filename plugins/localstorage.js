@@ -23,5 +23,9 @@ export default {
   },
   set (endpoint) {
     localStorage[endpoint.key] = endpoint.value
+  },
+
+  start () {
+    global.localStorage = {}
   }
 }

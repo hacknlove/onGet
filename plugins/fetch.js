@@ -17,6 +17,10 @@ const plugin = {
           })
       })
       .catch(eventHandler)
+  },
+  start () {
+    plugin.checkInterval = undefined
+    plugin.threshold = undefined
   }
 }
 

@@ -82,4 +82,12 @@ describe('plugin', () => {
       expect(sessionStorage.someKey).toBe('newValue')
     })
   })
+
+  describe('start', () => {
+    it('reset sessionStorage', () => {
+      global.sessionStorage.dirty = true
+      plugin.start()
+      expect(global.sessionStorage).toStrictEqual({})
+    })
+  })
 })

@@ -182,7 +182,7 @@ function set (url, value, doPospone) {
     endpoint.plugin.set(endpoint);
   }
 
-  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
 }
 
 /**
@@ -323,6 +323,30 @@ function registerPlugin (plugin) {
   plugins.unshift(plugin);
 }
 
+const promises = [];
+const resolves = [];
+async function start () {
+  promises.unshift(new Promise(resolve => resolves.unshift(resolve)));
+  await promises[1];
+  plugins.forEach(plugin => {
+    if (plugin.start) {
+      plugin.start();
+    }
+  });
+}
+
+function end () {
+  plugins.forEach(plugin => {
+    if (plugin.end) {
+      plugin.end();
+    }
+  });
+
+  promises.pop();
+  const resolve = resolves.pop();
+  resolve();
+}
+
 /* global fetch */
 
 const plugin = {
@@ -342,6 +366,10 @@ const plugin = {
           });
       })
       .catch(eventHandler)
+  },
+  start () {
+    plugin.checkInterval = undefined;
+    plugin.threshold = undefined;
   }
 };
 
@@ -370,6 +398,10 @@ var localStorage$1 = {
   },
   set (endpoint) {
     localStorage[endpoint.key] = endpoint.value;
+  },
+
+  start () {
+    global.localStorage = {};
   }
 };
 
@@ -398,10 +430,14 @@ var sessionStorate = {
   },
   set (endpoint) {
     sessionStorage[endpoint.key] = endpoint.value;
+  },
+
+  start () {
+    global.sessionStorage = {};
   }
 };
 
-const state = {};
+var state = {};
 
 function cleanUrlAndGetHistory (url, command, ...params) {
   const history = state[url.replace(/#-?\d+$/, '')];
@@ -454,7 +490,7 @@ function executeCallbacks (url) {
   if (!endpoint) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
+  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
 }
 
 function updateEndpoint (url) {
@@ -586,6 +622,10 @@ const plugin$1 = {
     delete state[endpoint.url];
   },
 
+  start () {
+    state = {};
+  },
+
   commands: {
     replace (url, value) {
       url = url.replace(/#-?\d+$/, '');
@@ -688,9 +728,9 @@ function propagateUp (url) {
 
   if (endpoint) {
     endpoint.value = deepobject.getValue(state$1, endpoint.url);
-    Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value));
+    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
   }
-  setTimeout(propagateUp, 0, parentUrl);
+  propagateUp(parentUrl);
 }
 
 /**
@@ -712,7 +752,7 @@ function propagateDown (url) {
 
     if (isdifferent.isDifferent(newChildValue, child.value)) {
       child.value = newChildValue;
-      Object.values(child.callbacks).forEach(cb => setTimeout(cb, 0, newChildValue));
+      Object.values(child.callbacks).forEach(cb => cb(newChildValue));
     }
   });
 }
@@ -778,6 +818,10 @@ var dotted = {
     propagateUp(endpoint.url);
   },
 
+  start () {
+    state$1 = {};
+  },
+
   commands: {
     remove (url) {
       state$1 = deepobject.deleteValue(state$1, url);
@@ -795,6 +839,7 @@ registerPlugin(dotted);
 
 exports.command = command;
 exports.conf = conf;
+exports.end = end;
 exports.endpoints = endpoints;
 exports.get = get;
 exports.onGet = onGet;
@@ -803,5 +848,6 @@ exports.plugins = plugins;
 exports.refresh = refresh;
 exports.registerPlugin = registerPlugin;
 exports.set = set;
+exports.start = start;
 exports.useOnGet = useOnGet;
 exports.waitUntil = waitUntil;

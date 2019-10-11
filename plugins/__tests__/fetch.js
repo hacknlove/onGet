@@ -52,4 +52,14 @@ describe('plugin', () => {
       expect(eventHandler).toHaveBeenCalledWith('RAW BODY')
     })
   })
+
+  describe('start', () => {
+    it('disable periodical checks', () => {
+      expect(plugin.checkInterval).not.toBeUndefined()
+      expect(plugin.threshold).not.toBeUndefined()
+      plugin.start()
+      expect(plugin.checkInterval).toBeUndefined()
+      expect(plugin.threshold).toBeUndefined()
+    })
+  })
 })

@@ -82,4 +82,12 @@ describe('plugin', () => {
       expect(localStorage.someKey).toBe('newValue')
     })
   })
+
+  describe('start', () => {
+    it('reset localStorage', () => {
+      global.localStorage.dirty = true
+      plugin.start()
+      expect(global.localStorage).toStrictEqual({})
+    })
+  })
 })

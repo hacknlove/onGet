@@ -23,5 +23,9 @@ export default {
   },
   set (endpoint) {
     sessionStorage[endpoint.key] = endpoint.value
+  },
+
+  start () {
+    global.sessionStorage = {}
   }
 }

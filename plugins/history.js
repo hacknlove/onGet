@@ -1,7 +1,7 @@
 import { endpoints } from '../src/conf'
 import { isDifferent } from 'isdifferent'
 
-export const state = {}
+export var state = {}
 
 export function cleanUrlAndGetHistory (url, command, ...params) {
   const history = state[url.replace(/#-?\d+$/, '')]
@@ -54,7 +54,7 @@ export function executeCallbacks (url) {
   if (!endpoint) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => setTimeout(cb, 0, endpoint.value))
+  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
 }
 
 export function updateEndpoint (url) {
@@ -184,6 +184,10 @@ const plugin = {
       return
     }
     delete state[endpoint.url]
+  },
+
+  start () {
+    state = {}
   },
 
   commands: {

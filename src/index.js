@@ -8,6 +8,7 @@ import { waitUntil } from './waitUntil'
 import { command } from './command'
 import { conf, endpoints, plugins } from './conf'
 import { registerPlugin } from './registerPlugin'
+import { start, end } from './server'
 
 import fetch from '../plugins/fetch'
 import localStorage from '../plugins/localstorage'
@@ -24,6 +25,7 @@ registerPlugin(dotted)
 export {
   command,
   conf,
+  end,
   endpoints,
   get,
   once,
@@ -32,6 +34,7 @@ export {
   refresh,
   registerPlugin,
   set,
+  start,
   useOnGet,
   waitUntil
 }
