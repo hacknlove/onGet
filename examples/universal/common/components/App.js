@@ -1,20 +1,12 @@
 import React from 'react'
-import { set, useOnGet } from 'onget'
+import Counter from './Counter'
 
-export default function App ({ props }) {
-  const value = useOnGet(`dotted://${props.counterKey}`, { first: props.firstValue || 0 })
-
+export default function App () {
   return (
-    <p>
-    Clicked: {counter} times
-    {' '}
-    <button onClick={increment}>+</button>
-    {' '}
-    <button onClick={decrement}>-</button>
-    {' '}
-    <button onClick={incrementIfOdd}>Increment if odd</button>
-    {' '}
-    <button onClick={() => incrementAsync()}>Increment async</button>
-  </p>
+    <div>
+      {/* <Counter url="dotted://counter" label="dotted" firstValue={0}/> */}
+      <Counter url="localStorage://counter" label="localStorage" firstValue={0}/>
+      {/* <Counter url="/api/v1/counter" label="api" firstValue={0}/> */}
+    </div>
   )
 }

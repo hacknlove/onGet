@@ -11,7 +11,6 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 
 import App from '../common/components/App'
-import { fetchCounter } from '../common/api/counter'
 
 const app = new Express()
 const port = 3000
@@ -21,28 +20,17 @@ const compiler = webpack(webpackConfig)
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }))
 app.use(webpackHotMiddleware(compiler))
 
-const handleRender = (req, res) => {
-  // Query our mock API asynchronously
-  fetchCounter(apiResult => {
-    // Read the counter from the request, if provided
-    const params = qs.parse(req.query)
-    const counter = parseInt(params.counter, 10) || apiResult || 0
+async function handleRender (req, res) {
+  await start()
+  const html = renderToString(
+    <App/>
+  )
 
-    // Compile an initial state
-    const preloadedState = { counter }
-
-    // Render the component to a string
-    start()
-    const html = renderToString(
-      <App/>
-    )
-
-    const finalState = {}
-    const rendered = renderFullPage(html, finalState)
-    end()
-    // Send the rendered page back to the client
-    res.send(rendered)
-  })
+  const finalState = {}
+  const rendered = renderFullPage(html, finalState)
+  end()
+  // Send the rendered page back to the client
+  res.send(rendered)
 }
 
 // This is fired every time the server side receives a request

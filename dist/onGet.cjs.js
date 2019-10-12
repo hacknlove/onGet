@@ -229,7 +229,7 @@ function onGet (url, cb, options = {}) {
     cb(endpoint.value);
   }
   if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
-    refresh(url);
+    // refresh(url);
   }
   return unsubscribe
 }
@@ -376,6 +376,14 @@ const plugin = {
 /* global localStorage */
 const PROTOCOLCUT = 'localStorage://'.length;
 
+function parseIfPossible (value) {
+  try {
+    return JSON.parse(value)
+  } catch {
+    return value
+  }
+}
+
 var localStorage$1 = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
@@ -388,16 +396,16 @@ var localStorage$1 = {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT);
 
     if (localStorage[endpoint.key] !== undefined) {
-      endpoint.value = localStorage[endpoint.key];
+      endpoint.value = parseIfPossible(localStorage[endpoint.key]);
       return
     }
-    localStorage[endpoint.key] = endpoint.value;
+    localStorage[endpoint.key] = JSON.stringify(endpoint.value);
   },
   get (url) {
-    return localStorage[url.substr(PROTOCOLCUT)]
+    return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
   set (endpoint) {
-    localStorage[endpoint.key] = endpoint.value;
+    localStorage[endpoint.key] = JSON.stringify(endpoint.value);
   },
 
   start () {
@@ -407,6 +415,14 @@ var localStorage$1 = {
 
 /* global sessionStorage */
 const PROTOCOLCUT$1 = 'sessionStorage://'.length;
+
+function parseIfPossible$1 (value) {
+  try {
+    return JSON.parse(value)
+  } catch {
+    return value
+  }
+}
 
 var sessionStorate = {
   name: 'sessionStorage',
@@ -420,16 +436,16 @@ var sessionStorate = {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT$1);
 
     if (sessionStorage[endpoint.key] !== undefined) {
-      endpoint.value = sessionStorage[endpoint.key];
+      endpoint.value = parseIfPossible$1(sessionStorage[endpoint.key]);
       return
     }
-    sessionStorage[endpoint.key] = endpoint.value;
+    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value);
   },
   get (url) {
-    return sessionStorage[url.substr(PROTOCOLCUT$1)]
+    return parseIfPossible$1(sessionStorage[url.substr(PROTOCOLCUT$1)])
   },
   set (endpoint) {
-    sessionStorage[endpoint.key] = endpoint.value;
+    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value);
   },
 
   start () {

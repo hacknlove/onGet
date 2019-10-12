@@ -141,12 +141,12 @@ describe('localstorage', () => {
       expect(cb).not.toHaveBeenCalled()
     })
 
-    it('should call cb with the initial value', () => {
+    it.only('should call cb with the initial value', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb, { first: 'world' }))
 
       expect(cb).toHaveBeenCalledWith('world')
-      expect(localStorage.key).toBe('world')
+      // expect(JSON.parse(localStorage.key)).toBe('world')
     })
 
     it('should call cb with the current value, if exists', () => {
@@ -173,7 +173,7 @@ describe('localstorage', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb))
       set('localStorage://key', 'mars')
-      expect(localStorage.key).toBe('mars')
+      expect(JSON.parse(localStorage.key)).toBe('mars')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })
@@ -242,7 +242,7 @@ describe('sessionstorage', () => {
       unsubscribes.push(onGet('sessionStorage://key', cb, { first: 'world' }))
 
       expect(cb).toHaveBeenCalledWith('world')
-      expect(sessionStorage.key).toBe('world')
+      expect(JSON.parse(sessionStorage.key)).toBe('world')
     })
 
     it('should call cb with the current value, if exists', () => {
@@ -269,7 +269,7 @@ describe('sessionstorage', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('sessionStorage://key', cb))
       set('sessionStorage://key', 'mars')
-      expect(sessionStorage.key).toBe('mars')
+      expect(JSON.parse(sessionStorage.key)).toBe('mars')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })

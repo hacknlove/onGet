@@ -1,6 +1,14 @@
 /* global localStorage */
 const PROTOCOLCUT = 'localStorage://'.length
 
+function parseIfPossible (value) {
+  try {
+    return JSON.parse(value)
+  } catch {
+    return value
+  }
+}
+
 export default {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
@@ -13,16 +21,16 @@ export default {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT)
 
     if (localStorage[endpoint.key] !== undefined) {
-      endpoint.value = localStorage[endpoint.key]
+      endpoint.value = parseIfPossible(localStorage[endpoint.key])
       return
     }
-    localStorage[endpoint.key] = endpoint.value
+    localStorage[endpoint.key] = JSON.stringify(endpoint.value)
   },
   get (url) {
-    return localStorage[url.substr(PROTOCOLCUT)]
+    return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
   set (endpoint) {
-    localStorage[endpoint.key] = endpoint.value
+    localStorage[endpoint.key] = JSON.stringify(endpoint.value)
   },
 
   start () {

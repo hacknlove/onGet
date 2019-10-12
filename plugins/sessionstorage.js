@@ -1,6 +1,14 @@
 /* global sessionStorage */
 const PROTOCOLCUT = 'sessionStorage://'.length
 
+function parseIfPossible (value) {
+  try {
+    return JSON.parse(value)
+  } catch {
+    return value
+  }
+}
+
 export default {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
@@ -13,16 +21,16 @@ export default {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT)
 
     if (sessionStorage[endpoint.key] !== undefined) {
-      endpoint.value = sessionStorage[endpoint.key]
+      endpoint.value = parseIfPossible(sessionStorage[endpoint.key])
       return
     }
-    sessionStorage[endpoint.key] = endpoint.value
+    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value)
   },
   get (url) {
-    return sessionStorage[url.substr(PROTOCOLCUT)]
+    return parseIfPossible(sessionStorage[url.substr(PROTOCOLCUT)])
   },
   set (endpoint) {
-    sessionStorage[endpoint.key] = endpoint.value
+    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value)
   },
 
   start () {
