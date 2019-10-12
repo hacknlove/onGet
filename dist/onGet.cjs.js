@@ -379,7 +379,7 @@ const PROTOCOLCUT = 'localStorage://'.length;
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)
-  } catch {
+  } catch (e) {
     return value
   }
 }
@@ -419,7 +419,7 @@ const PROTOCOLCUT$1 = 'sessionStorage://'.length;
 function parseIfPossible$1 (value) {
   try {
     return JSON.parse(value)
-  } catch {
+  } catch (e) {
     return value
   }
 }

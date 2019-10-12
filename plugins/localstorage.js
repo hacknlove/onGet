@@ -4,7 +4,7 @@ const PROTOCOLCUT = 'localStorage://'.length
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)
-  } catch {
+  } catch (e) {
     return value
   }
 }

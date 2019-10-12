@@ -4,7 +4,7 @@ const PROTOCOLCUT = 'sessionStorage://'.length
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)
-  } catch {
+  } catch (e) {
     return value
   }
 }
