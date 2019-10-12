@@ -229,7 +229,7 @@ function onGet (url, cb, options = {}) {
     cb(endpoint.value);
   }
   if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
-    // refresh(url);
+    refresh(url);
   }
   return unsubscribe
 }
@@ -390,7 +390,7 @@ var localStorage$1 = {
   checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
-    eventHandler(localStorage[endpoint.key]);
+    eventHandler(parseIfPossible(localStorage[endpoint.key]));
   },
   getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT);
@@ -430,7 +430,7 @@ var sessionStorate = {
   checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
-    eventHandler(sessionStorage[endpoint.key]);
+    eventHandler(parseIfPossible$1(sessionStorage[endpoint.key]));
   },
   getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT$1);

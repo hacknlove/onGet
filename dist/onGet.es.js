@@ -386,11 +386,9 @@ var localStorage$1 = {
   checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
-    eventHandler(localStorage[endpoint.key]);
+    eventHandler(parseIfPossible(localStorage[endpoint.key]));
   },
   getEndpoint (endpoint) {
-    console.log(endpoint);
-    console.log(localStorage);
     endpoint.key = endpoint.url.substr(PROTOCOLCUT);
 
     if (localStorage[endpoint.key] !== undefined) {
@@ -398,7 +396,6 @@ var localStorage$1 = {
       return
     }
     localStorage[endpoint.key] = JSON.stringify(endpoint.value);
-    console.log(endpoint);
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
@@ -429,7 +426,7 @@ var sessionStorate = {
   checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
-    eventHandler(sessionStorage[endpoint.key]);
+    eventHandler(parseIfPossible$1(sessionStorage[endpoint.key]));
   },
   getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT$1);
