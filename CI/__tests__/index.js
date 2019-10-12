@@ -141,12 +141,12 @@ describe('localstorage', () => {
       expect(cb).not.toHaveBeenCalled()
     })
 
-    it.only('should call cb with the initial value', () => {
+    it('should call cb with the initial value', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb, { first: 'world' }))
 
       expect(cb).toHaveBeenCalledWith('world')
-      // expect(JSON.parse(localStorage.key)).toBe('world')
+      expect(JSON.parse(localStorage.key)).toBe('world')
     })
 
     it('should call cb with the current value, if exists', () => {

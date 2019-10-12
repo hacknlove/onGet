@@ -4,7 +4,7 @@ const PROTOCOLCUT = 'localStorage://'.length
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)
-  } catch {
+  } catch (e) {
     return value
   }
 }
@@ -15,7 +15,7 @@ export default {
   checkInterval: 30000,
   threshold: 500,
   refresh (endpoint, eventHandler) {
-    eventHandler(localStorage[endpoint.key])
+    eventHandler(parseIfPossible(localStorage[endpoint.key]))
   },
   getEndpoint (endpoint) {
     endpoint.key = endpoint.url.substr(PROTOCOLCUT)
