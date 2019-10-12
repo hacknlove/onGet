@@ -6,8 +6,7 @@ import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import webpackConfig from '../webpack.config'
-import vm from 'vm'
-
+import { start, end } from 'onget'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
@@ -22,10 +21,6 @@ const compiler = webpack(webpackConfig)
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }))
 app.use(webpackHotMiddleware(compiler))
 
-const renderToStringInVM = `
-  html = renderToString(<App />)
-`
-
 const handleRender = (req, res) => {
   // Query our mock API asynchronously
   fetchCounter(apiResult => {
@@ -37,14 +32,16 @@ const handleRender = (req, res) => {
     const preloadedState = { counter }
 
     // Render the component to a string
+    start()
     const html = renderToString(
-      <App />
+      <App/>
     )
 
     const finalState = {}
-
+    const rendered = renderFullPage(html, finalState)
+    end()
     // Send the rendered page back to the client
-    res.send(renderFullPage(html, finalState))
+    res.send(rendered)
   })
 }
 

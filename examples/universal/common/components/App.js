@@ -1,7 +1,11 @@
 import React from 'react'
+import { set, useOnGet } from 'onget'
 
-const App = ({increment, incrementIfOdd, incrementAsync, decrement, counter}) => (
-  <p>
+export default function App ({ props }) {
+  const value = useOnGet(`dotted://${props.counterKey}`, { first: props.firstValue || 0 })
+
+  return (
+    <p>
     Clicked: {counter} times
     {' '}
     <button onClick={increment}>+</button>
@@ -12,6 +16,5 @@ const App = ({increment, incrementIfOdd, incrementAsync, decrement, counter}) =>
     {' '}
     <button onClick={() => incrementAsync()}>Increment async</button>
   </p>
-)
-
-export default App
+  )
+}
