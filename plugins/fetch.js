@@ -5,18 +5,19 @@ const plugin = {
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  refresh (endpoint, eventHandler) {
-    return fetch(endpoint.url)
-      .then(response => {
-        response.json()
-          .then(eventHandler)
-          .catch(() => {
-            response.text()
-              .then(eventHandler)
-              .catch(eventHandler)
-          })
-      })
-      .catch(eventHandler)
+  async refresh (endpoint, eventHandler) {
+    const response = await fetch(endpoint.url).catch(__error => ({ __error }))
+    if (response.__error) {
+      return eventHandler(response.__error)
+    }
+    const raw = await response.text()
+    let value
+    try {
+      value = JSON.parse(raw)
+    } catch (e) {
+      value = raw
+    }
+    eventHandler(value)
   },
   start () {
     plugin.checkInterval = undefined

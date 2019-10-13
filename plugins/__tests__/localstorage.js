@@ -49,19 +49,19 @@ describe('plugin', () => {
       }
       plugin.getEndpoint(endpoint)
 
-      expect(localStorage.someUrl).toBe('newValue')
+      expect(JSON.parse(localStorage.someUrl)).toBe('newValue')
       expect(endpoint.value).toBe('newValue')
     })
 
-    it('updates the endpoint, if lo has the key', () => {
-      localStorage.someUrl = 'oldValue'
+    it('updates the endpoint, if localStorage has the key', () => {
+      localStorage.someUrl = '"oldValue"'
       const endpoint = {
         url: 'localStorage://someUrl',
         value: 'newValue'
       }
       plugin.getEndpoint(endpoint)
 
-      expect(localStorage.someUrl).toBe('oldValue')
+      expect(JSON.parse(localStorage.someUrl)).toBe('oldValue')
       expect(endpoint.value).toBe('oldValue')
     })
   })
@@ -79,7 +79,7 @@ describe('plugin', () => {
         key: 'someKey',
         value: 'newValue'
       })
-      expect(localStorage.someKey).toBe('newValue')
+      expect(JSON.parse(localStorage.someKey)).toBe('newValue')
     })
   })
 

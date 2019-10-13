@@ -29,8 +29,8 @@ describe('plugin', () => {
 
     it('with json if fetch resolve', async () => {
       fetch.mockImplementation(() => Promise.resolve({
-        json () {
-          return Promise.resolve({ ok: true })
+        text () {
+          return Promise.resolve('{"ok": true }')
         }
       }))
       const eventHandler = jest.fn()
@@ -40,9 +40,6 @@ describe('plugin', () => {
 
     it('with text if fetch resolve but json fails', async () => {
       fetch.mockImplementation(() => Promise.resolve({
-        json () {
-          return Promise.reject('error')
-        },
         text () {
           return Promise.resolve('RAW BODY')
         }

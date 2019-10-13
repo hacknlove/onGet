@@ -15,7 +15,7 @@ const unsubscribes = []
 describe('fetch', () => {
   beforeEach(() => {
     fetch.mockImplementation(() => Promise.resolve({
-      async json () {
+      async text () {
         return Promise.resolve('fetch response')
       }
     }))
@@ -30,7 +30,7 @@ describe('fetch', () => {
       delete endpoints[key]
     })
     fetch.mockImplementation(() => Promise.resolve({
-      async json () {
+      async text () {
         return Promise.resolve('fetch response')
       }
     }))
@@ -103,7 +103,7 @@ describe('fetch', () => {
       await new Promise(resolve => setTimeout(resolve, 10))
       endpoints.key.last = -Infinity
       fetch.mockImplementation(() => Promise.resolve({
-        async json () {
+        async text () {
           return Promise.resolve('new response')
         }
       }))

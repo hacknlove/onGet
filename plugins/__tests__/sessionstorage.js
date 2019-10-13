@@ -49,19 +49,19 @@ describe('plugin', () => {
       }
       plugin.getEndpoint(endpoint)
 
-      expect(sessionStorage.someUrl).toBe('newValue')
+      expect(JSON.parse(sessionStorage.someUrl)).toBe('newValue')
       expect(endpoint.value).toBe('newValue')
     })
 
-    it('updates the endpoint, if lo has the key', () => {
-      sessionStorage.someUrl = 'oldValue'
+    it('updates the endpoint, if has the key', () => {
+      sessionStorage.someUrl = '"oldValue"'
       const endpoint = {
         url: 'sessionStorage://someUrl',
         value: 'newValue'
       }
       plugin.getEndpoint(endpoint)
 
-      expect(sessionStorage.someUrl).toBe('oldValue')
+      expect(JSON.parse(sessionStorage.someUrl)).toBe('oldValue')
       expect(endpoint.value).toBe('oldValue')
     })
   })
@@ -79,7 +79,7 @@ describe('plugin', () => {
         key: 'someKey',
         value: 'newValue'
       })
-      expect(sessionStorage.someKey).toBe('newValue')
+      expect(JSON.parse(sessionStorage.someKey)).toBe('newValue')
     })
   })
 
