@@ -215,7 +215,7 @@ async function executeHooks (url, value, where, doPospone) {
     }
   };
 
-  for (let i = 0, z = where.length - 1; i < z; i++) {
+  for (let i = 0, z = where.length; i < z; i++) {
     if (event.preventMoreHooks) {
       break
     }
