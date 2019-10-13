@@ -6,7 +6,6 @@ import { beforeSet } from 'onget'
 
 const rootElement = document.getElementById('app')
 
-debugger;
 beforeSet('/api/counter', event => {
   console.log(event)
 })

@@ -219,7 +219,7 @@ async function executeHooks (url, value, where, doPospone) {
     if (event.preventMoreHooks) {
       break
     }
-    const { regex, keys, cb } = where[i];
+    const [regex, keys, cb] = where[i];
     const match = url.match(regex);
     if (!match) {
       continue
