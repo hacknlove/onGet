@@ -2,8 +2,10 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
 var isdifferent = require('isdifferent');
-require('path-to-regexp');
+var pathToRegExp = _interopDefault(require('path-to-regexp'));
 var react = require('react');
 var deepobject = require('@hacknlove/deepobject');
 
@@ -231,6 +233,20 @@ async function executeHooks (url, value, where, doPospone) {
   }
 
   return event
+}
+
+function insertHook (path, hook, where) {
+  const keys = [];
+  const regex = pathToRegExp(path);
+  where.push([regex, keys, hook]);
+}
+
+async function beforeSet (path, hook) {
+  insertHook(path, hook, setHooks.before);
+}
+
+async function afterSet (path, hook) {
+  insertHook(path, hook, setHooks.after);
 }
 
 /**
@@ -906,6 +922,8 @@ registerPlugin(plugin$2);
 registerPlugin(plugin$3);
 registerPlugin(dotted);
 
+exports.afterSet = afterSet;
+exports.beforeSet = beforeSet;
 exports.command = command;
 exports.conf = conf;
 exports.end = end;

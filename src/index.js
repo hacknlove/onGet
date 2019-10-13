@@ -1,7 +1,7 @@
 import { onGet } from './onGet'
 import { useOnGet } from './useOnGet'
-import { set } from './set'
-import { refresh } from './refresh'
+import { set, beforeSet, afterSet } from './set'
+import { refresh, refreshRegExp } from './refresh'
 import { get } from './get'
 import { once } from './once'
 import { waitUntil } from './waitUntil'
@@ -33,7 +33,7 @@ export {
   plugins,
   refresh,
   registerPlugin,
-  set,
+  set, beforeSet, afterSet,
   start,
   useOnGet,
   waitUntil

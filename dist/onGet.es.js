@@ -1,5 +1,5 @@
 import { isDifferent } from 'isdifferent';
-import 'path-to-regexp';
+import pathToRegExp from 'path-to-regexp';
 import { useState, useEffect } from 'react';
 import { getValue, setValue, deleteValue } from '@hacknlove/deepobject';
 
@@ -227,6 +227,20 @@ async function executeHooks (url, value, where, doPospone) {
   }
 
   return event
+}
+
+function insertHook (path, hook, where) {
+  const keys = [];
+  const regex = pathToRegExp(path);
+  where.push([regex, keys, hook]);
+}
+
+async function beforeSet (path, hook) {
+  insertHook(path, hook, setHooks.before);
+}
+
+async function afterSet (path, hook) {
+  insertHook(path, hook, setHooks.after);
 }
 
 /**
@@ -902,4 +916,4 @@ registerPlugin(plugin$2);
 registerPlugin(plugin$3);
 registerPlugin(dotted);
 
-export { command, conf, end, endpoints, get, onGet, once, plugins, refresh, registerPlugin, set, start, useOnGet, waitUntil };
+export { afterSet, beforeSet, command, conf, end, endpoints, get, onGet, once, plugins, refresh, registerPlugin, set, start, useOnGet, waitUntil };
