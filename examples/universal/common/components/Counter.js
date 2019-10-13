@@ -11,9 +11,9 @@ export default function Counter ({ url, label, firstValue }) {
 
   return (
     <p>
-      {label } Clicked: {value} times
+      { label } Clicked: {value} times
 
-      <button onClick={() => sum(1)}>W
+      <button onClick={() => sum(1)}>
         +
       </button>
 

@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var isdifferent = require('isdifferent');
+require('path-to-regexp');
 var react = require('react');
 var deepobject = require('@hacknlove/deepobject');
 
@@ -11,6 +12,10 @@ const conf = {
 };
 const endpoints = {};
 const plugins = [];
+const setHooks = {
+  before: [],
+  after: []
+};
 
 /**
  * Internal: Returns the first plugin whose regex matchs the url
@@ -157,16 +162,22 @@ function pospone (endpoint) {
  * @return {object} endpoint
  */
 
-function set (url, value, doPospone) {
-  const endpoint = endpoints[url];
+async function set (url, value, doPospone) {
+  const beforeResult = await executeHooks(url, value, setHooks.before, doPospone);
+  if (beforeResult.preventSet) {
+    return
+  }
+  value = beforeResult.value;
+  doPospone = beforeResult.doPospone;
 
+  const endpoint = endpoints[url];
   if (!endpoint) {
     const endpoint = getEndpoint(url, value);
     if (endpoint.plugin.set) {
       endpoint.value = value;
       endpoint.plugin.set(endpoint);
     }
-    return
+    return executeHooks(url, value, setHooks.after, doPospone)
   }
 
   endpoint.clean = undefined;
@@ -174,15 +185,52 @@ function set (url, value, doPospone) {
     pospone(endpoint);
   }
   if (!isdifferent.isDifferent(value, endpoint.value)) {
-    return
+    return executeHooks(url, value, setHooks.after, doPospone)
   }
 
   endpoint.value = value;
   if (endpoint.plugin.set) {
     endpoint.plugin.set(endpoint);
   }
+  if (!beforeResult.preventRefresh) {
+    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  }
+  return executeHooks(url, value, setHooks.after, doPospone)
+}
 
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+async function executeHooks (url, value, where, doPospone) {
+  const event = {
+    doPospone,
+    url,
+    value,
+    preventSet: false,
+    preventRefresh: false,
+    preventMoreHooks: false,
+    redirect (newUrl) {
+      event.preventMoreHooks = true;
+      event.preventSet = true;
+      set(newUrl, event.value, where);
+    }
+  };
+
+  for (let i = 0, z = where.length - 1; i < z; i++) {
+    if (event.preventMoreHooks) {
+      break
+    }
+    const { regex, keys, cb } = where[i];
+    const match = url.match(regex);
+    if (!match) {
+      continue
+    }
+    event.params = {};
+    for (let i = 1; i < match.length; i++) {
+      event.params[keys[i - 1].name] = match[1];
+    }
+
+    await cb(event);
+  }
+
+  return event
 }
 
 /**
@@ -191,7 +239,7 @@ function set (url, value, doPospone) {
  * @param {boolean} force to ignore the threshold and force a refresh no matter how close it is from the previous check
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
-function refresh (url, force = false) {
+async function refresh (url, force = false) {
   const endpoint = endpoints[url];
   if (!endpoint) {
     return false
@@ -201,8 +249,8 @@ function refresh (url, force = false) {
     return
   }
   pospone(endpoint);
-  endpoint.plugin.refresh(endpoint, value => {
-    set(url, value);
+  endpoint.plugin.refresh(endpoint, async value => {
+    await set(url, value);
   });
   return true
 }
@@ -385,7 +433,7 @@ function parseIfPossible (value) {
   }
 }
 
-var localStorage$1 = {
+const plugin$1 = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
   checkInterval: 30000,
@@ -410,6 +458,8 @@ var localStorage$1 = {
   },
 
   start () {
+    plugin$1.checkInterval = 0;
+    plugin$1.threshold = undefined;
     global.localStorage = {};
   }
 };
@@ -425,7 +475,7 @@ function parseIfPossible$1 (value) {
   }
 }
 
-var sessionStorate = {
+const plugin$2 = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
   checkInterval: 30000,
@@ -450,6 +500,8 @@ var sessionStorate = {
   },
 
   start () {
+    plugin$2.checkInterval = 0;
+    plugin$2.threshold = undefined;
     global.sessionStorage = {};
   }
 };
@@ -461,8 +513,8 @@ function cleanUrlAndGetHistory (url, command, ...params) {
   if (history) {
     return history
   }
-  if (command && url === 'history://' && plugin$1.commands[command]) {
-    Object.keys(state).forEach(url => plugin$1.commands[command](url, ...params));
+  if (command && url === 'history://' && plugin$3.commands[command]) {
+    Object.keys(state).forEach(url => plugin$3.commands[command](url, ...params));
   }
 }
 
@@ -520,7 +572,7 @@ function updateEndpoint (url) {
   executeCallbacks(url);
 }
 
-const plugin$1 = {
+const plugin$3 = {
   name: 'history',
   regex: /^history:\/\/./,
 
@@ -698,10 +750,10 @@ const plugin$1 = {
       propagate(url);
     },
     first (url) {
-      plugin$1.commands.undo(url, Infinity);
+      plugin$3.commands.undo(url, Infinity);
     },
     last (url) {
-      plugin$1.commands.redo(url, Infinity);
+      plugin$3.commands.redo(url, Infinity);
     },
     length (url) {
       const history = cleanUrlAndGetHistory(url);
@@ -849,9 +901,9 @@ var dotted = {
 };
 
 registerPlugin(plugin);
-registerPlugin(localStorage$1);
-registerPlugin(sessionStorate);
 registerPlugin(plugin$1);
+registerPlugin(plugin$2);
+registerPlugin(plugin$3);
 registerPlugin(dotted);
 
 exports.command = command;

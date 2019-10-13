@@ -9,7 +9,7 @@ function parseIfPossible (value) {
   }
 }
 
-export default {
+const plugin = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
   checkInterval: 30000,
@@ -34,6 +34,10 @@ export default {
   },
 
   start () {
+    plugin.checkInterval = 0
+    plugin.threshold = undefined
     global.sessionStorage = {}
   }
 }
+
+export default plugin

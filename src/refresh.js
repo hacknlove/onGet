@@ -8,7 +8,7 @@ import { pospone } from './pospone'
  * @param {boolean} force to ignore the threshold and force a refresh no matter how close it is from the previous check
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
-export function refresh (url, force = false) {
+export async function refresh (url, force = false) {
   const endpoint = endpoints[url]
   if (!endpoint) {
     return false
@@ -18,8 +18,21 @@ export function refresh (url, force = false) {
     return
   }
   pospone(endpoint)
-  endpoint.plugin.refresh(endpoint, value => {
-    set(url, value)
+  endpoint.plugin.refresh(endpoint, async value => {
+    await set(url, value)
   })
   return true
+}
+
+/**
+ * call refresh on every endpoint that matches the regular expression
+ * @param {RegExp} regex to test the endpoints
+ * @param {boolean} force to pass to refresh
+ */
+export function refreshRegExp (regex, force) {
+  Object.values(endpoints).forEach(endpoint => {
+    if (refreshRegExp.test(endpoint.url)) {
+      refresh(endpoint.url, force)
+    }
+  })
 }

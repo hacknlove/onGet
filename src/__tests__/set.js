@@ -8,16 +8,16 @@ jest.mock('isdifferent')
 jest.mock('../getEndpoint')
 jest.mock('../pospone')
 jest.useFakeTimers()
-test('If the endpoint does not exist, getEndPoint should be called', () => {
+test('If the endpoint does not exist, getEndPoint should be called', async () => {
   const endpoint = { plugin: {} }
   getEndpoint.mockReturnValue(endpoint)
 
-  set('test', 'value')
+  await set('test', 'value')
   expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
   expect(isDifferent).not.toHaveBeenCalled()
 })
 
-test('If the plugin has the hook set, it is called', () => {
+test('If the plugin has the hook set, it is called', async () => {
   const endpoint = {
     plugin: {
       set: jest.fn()
@@ -25,7 +25,7 @@ test('If the plugin has the hook set, it is called', () => {
   }
   getEndpoint.mockReturnValue(endpoint)
 
-  set('test', 'value')
+  await set('test', 'value')
 
   expect(endpoint.value).toBe('value')
 
@@ -34,56 +34,56 @@ test('If the plugin has the hook set, it is called', () => {
   expect(isDifferent).not.toHaveBeenCalled()
 })
 
-test('set clean to undefined', () => {
+test('set clean to undefined', async () => {
   endpoints.test = {
     clean: true
   }
 
   getEndpoint.mockReturnValue(endpoints.test)
 
-  set('test')
+  await set('test')
 
   expect(endpoints.test.clean).toBeUndefined()
 })
 
-test('if endpoint has no intervals, do no set last neither call pospone', () => {
+test('if endpoint has no intervals, do no set last neither call pospone', async () => {
   endpoints.test = {}
   getEndpoint.mockReturnValue(endpoints.test)
-  set('test')
+  await set('test')
   expect(endpoints.test.last).toBeUndefined()
   expect(pospone).not.toHaveBeenCalled()
 })
 
-test('it not call pospone', () => {
+test('it not call pospone', async () => {
   endpoints.test = {
     intervals: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
-  set('test')
+  await set('test')
   expect(pospone).not.toHaveBeenCalled()
 })
 
-test('it calls pospone', () => {
+test('it calls pospone', async () => {
   endpoints.test = {
     intervals: {}
   }
   getEndpoint.mockReturnValue(endpoints.test)
-  set('test', undefined, true)
+  await set('test', undefined, true)
   expect(pospone).toHaveBeenCalledWith(endpoints.test)
 })
 
-test('if value is not different do not set the new value', () => {
+test('if value is not different do not set the new value', async () => {
   endpoints.test = {
     value: 'old'
   }
   isDifferent.mockReturnValue(false)
 
-  set('test', 'new')
+  await set('test', 'new')
 
   expect(endpoints.test.value).toBe('old')
 })
 
-test('if value is different do not set the new value', () => {
+test('if value is different do not set the new value', async () => {
   endpoints.test = {
     value: 'old',
     callbacks: {},
@@ -92,12 +92,12 @@ test('if value is different do not set the new value', () => {
   getEndpoint.mockReturnValue(endpoints.test)
   isDifferent.mockReturnValue(true)
 
-  set('test', 'new')
+  await set('test', 'new')
 
   expect(endpoints.test.value).toBe('new')
 })
 
-test('if value is different and there is callbacks, call the callbacks', () => {
+test('if value is different and there is callbacks, call the callbacks', async () => {
   endpoints.test = {
     value: 'old',
     callbacks: {
@@ -109,14 +109,14 @@ test('if value is different and there is callbacks, call the callbacks', () => {
   getEndpoint.mockReturnValue(endpoints.test)
   isDifferent.mockReturnValue(true)
 
-  set('test', 'new')
+  await set('test', 'new')
   jest.runAllTimers()
 
   expect(endpoints.test.callbacks.uno).toHaveBeenCalledWith('new')
   expect(endpoints.test.callbacks.dos).toHaveBeenCalledWith('new')
 })
 
-test('if value is different and there is plugin.set, call plugin.set', () => {
+test('if value is different and there is plugin.set, call plugin.set', async () => {
   endpoints.test = {
     value: 'old',
     callbacks: {
@@ -128,7 +128,7 @@ test('if value is different and there is plugin.set, call plugin.set', () => {
   getEndpoint.mockReturnValue(endpoints.test)
   isDifferent.mockReturnValue(true)
 
-  set('test', 'new')
+  await set('test', 'new')
 
   expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test)
 })

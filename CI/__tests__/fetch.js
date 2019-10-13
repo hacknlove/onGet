@@ -71,7 +71,7 @@ describe('fetch', () => {
     it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
-      set('key', 'mars')
+      await set('key', 'mars')
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(cb).toHaveBeenCalledWith('mars')
     })
@@ -79,7 +79,7 @@ describe('fetch', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
       await new Promise(resolve => setTimeout(resolve, 10))
-      set('key', 'fetch response')
+      await set('key', 'fetch response')
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(cb.mock.calls.length).toBe(1)
     })

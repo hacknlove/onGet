@@ -8,8 +8,8 @@ jest.useFakeTimers()
 const unsubscribes = []
 
 describe('dotted', () => {
-  beforeEach(() => {
-    set('dotted://foo', undefined)
+  beforeEach(async () => {
+    await set('dotted://foo', undefined)
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
@@ -31,8 +31,8 @@ describe('dotted', () => {
       expect(cb).toHaveBeenCalledWith('world')
     })
 
-    it('should call cb with the current value, if exists', () => {
-      set('dotted://foo.bar.hello', 'mars')
+    it('should call cb with the current value, if exists', async () => {
+      await set('dotted://foo.bar.hello', 'mars')
       const cb = jest.fn()
 
       unsubscribes.push(onGet('dotted://foo.bar.hello', cb))
@@ -40,8 +40,8 @@ describe('dotted', () => {
       expect(cb).toHaveBeenCalledWith('mars')
     })
 
-    it('should call cb with the current value, even if pass a different initial one', () => {
-      set('dotted://foo.bar.hello', 'mars')
+    it('should call cb with the current value, even if pass a different initial one', async () => {
+      await set('dotted://foo.bar.hello', 'mars')
       const cb = jest.fn()
 
       unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
@@ -51,29 +51,29 @@ describe('dotted', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', () => {
+    it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
       expect(cb).toHaveBeenCalledWith('world')
-      set('dotted://foo.bar.hello', 'mars')
+      await set('dotted://foo.bar.hello', 'mars')
 
       jest.runAllTimers()
 
       expect(cb).toHaveBeenCalledWith('mars')
     })
 
-    it('does not trigger the callbacks if the value is the same', () => {
+    it('does not trigger the callbacks if the value is the same', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
       expect(cb).toHaveBeenCalledWith('world')
-      set('dotted://foo.bar.hello', 'world')
+      await set('dotted://foo.bar.hello', 'world')
 
       jest.runAllTimers()
 
       expect(cb.mock.calls.length).toBe(1)
     })
 
-    it('triggers the parent callbacks', () => {
+    it('triggers the parent callbacks', async () => {
       const cbFooBarHello = jest.fn()
       const cbFooBar = jest.fn()
       const cbFoo = jest.fn()
@@ -83,7 +83,7 @@ describe('dotted', () => {
       unsubscribes.push(onGet('dotted://foo.Not', cbFooNot))
       unsubscribes.push(onGet('dotted://foo', cbFoo))
 
-      set('dotted://foo.bar.hello', 'mars')
+      await set('dotted://foo.bar.hello', 'mars')
 
       jest.runAllTimers()
 
@@ -93,7 +93,7 @@ describe('dotted', () => {
       expect(cbFooNot).not.toHaveBeenCalled()
     })
 
-    it('triggers the children callbacks', () => {
+    it('triggers the children callbacks', async () => {
       const cbFooBarHello = jest.fn()
       const cbFooBar = jest.fn()
       const cbFoo = jest.fn()
@@ -103,7 +103,7 @@ describe('dotted', () => {
       unsubscribes.push(onGet('dotted://foo.Not', cbFooNot))
       unsubscribes.push(onGet('dotted://foo', cbFoo))
 
-      set('dotted://foo', { bar: { hello: 'mars' } })
+      await set('dotted://foo', { bar: { hello: 'mars' } })
 
       jest.runAllTimers()
 
@@ -115,8 +115,8 @@ describe('dotted', () => {
   })
 
   describe('get', () => {
-    it('returns the value for a url', () => {
-      set('dotted://foo.bar.hello', 'mars')
+    it('returns the value for a url', async () => {
+      await set('dotted://foo.bar.hello', 'mars')
       expect(get('dotted://foo.bar.hello')).toBe('mars')
       expect(get('dotted://foo.bar')).toEqual({ hello: 'mars' })
       expect(get('dotted://foo')).toEqual({ bar: { hello: 'mars' } })
@@ -169,20 +169,20 @@ describe('localstorage', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', () => {
+    it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb))
-      set('localStorage://key', 'mars')
+      await set('localStorage://key', 'mars')
       expect(JSON.parse(localStorage.key)).toBe('mars')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })
-    it('dows no trigger the callbacks if the value is the same', () => {
+    it('dows no trigger the callbacks if the value is the same', async () => {
       const cb = jest.fn()
       localStorage.key = 'mars'
       unsubscribes.push(onGet('localStorage://key', cb))
       expect(cb).toHaveBeenCalledWith('mars')
-      set('localStorage://key', 'mars')
+      await set('localStorage://key', 'mars')
       expect(localStorage.key).toBe('mars')
       jest.runAllTimers()
       expect(cb.mock.calls.length).toBe(1)
@@ -197,23 +197,23 @@ describe('localstorage', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint', () => {
+    it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       localStorage.key = 'earth'
       unsubscribes.push(onGet('localStorage://key', cb))
 
       localStorage.key = 'mars'
       endpoints['localStorage://key'].last = -Infinity
-      refresh('localStorage://key')
+      await refresh('localStorage://key')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })
-    it('dows no trigger the callbacks if the value is the same', () => {
+    it('dows no trigger the callbacks if the value is the same', async () => {
       const cb = jest.fn()
       localStorage.key = 'earth'
       unsubscribes.push(onGet('localStorage://key', cb))
       cb.mockClear()
-      refresh('localStorage://key')
+      await refresh('localStorage://key')
       jest.runAllTimers()
       expect(cb).not.toHaveBeenCalled()
     })
@@ -265,20 +265,20 @@ describe('sessionstorage', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', () => {
+    it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('sessionStorage://key', cb))
-      set('sessionStorage://key', 'mars')
+      await set('sessionStorage://key', 'mars')
       expect(JSON.parse(sessionStorage.key)).toBe('mars')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })
-    it('dows no trigger the callbacks if the value is the same', () => {
+    it('dows no trigger the callbacks if the value is the same', async () => {
       const cb = jest.fn()
       sessionStorage.key = 'mars'
       unsubscribes.push(onGet('sessionStorage://key', cb))
       expect(cb).toHaveBeenCalledWith('mars')
-      set('sessionStorage://key', 'mars')
+      await set('sessionStorage://key', 'mars')
       expect(sessionStorage.key).toBe('mars')
       jest.runAllTimers()
       expect(cb.mock.calls.length).toBe(1)
@@ -293,7 +293,7 @@ describe('sessionstorage', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint', () => {
+    it('triggers the callbacks of the endpoint', async () => {
       const cb = jest.fn()
       sessionStorage.key = 'earth'
       unsubscribes.push(onGet('sessionStorage://key', cb))
@@ -301,16 +301,16 @@ describe('sessionstorage', () => {
       sessionStorage.key = 'mars'
 
       endpoints['sessionStorage://key'].last = -Infinity
-      refresh('sessionStorage://key')
+      await refresh('sessionStorage://key')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
     })
-    it('dows no trigger the callbacks if the value is the same', () => {
+    it('dows no trigger the callbacks if the value is the same', async () => {
       const cb = jest.fn()
       sessionStorage.key = 'earth'
       unsubscribes.push(onGet('sessionStorage://key', cb))
       cb.mockClear()
-      refresh('sessionStorage://key')
+      await refresh('sessionStorage://key')
       jest.runAllTimers()
       expect(cb).not.toHaveBeenCalled()
     })

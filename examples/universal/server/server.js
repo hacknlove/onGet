@@ -14,6 +14,17 @@ import App from '../common/components/App'
 const app = new Express()
 const port = 3000
 
+var counter = 0
+app.get('/api/v1/counter', (req, res) => {
+  res.json(counter)
+})
+
+app.post('/api/v1/counter', (req, res) => {
+  counter += req.body.counter
+  res.json({ ok: true})
+})
+
+
 // Use this middleware to set up hot module reloading via webpack.
 const compiler = webpack(webpackConfig)
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }))

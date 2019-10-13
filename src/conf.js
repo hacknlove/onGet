@@ -3,3 +3,7 @@ export const conf = {
 }
 export const endpoints = {}
 export const plugins = []
+export const setHooks = {
+  before: [],
+  after: []
+}
