@@ -114,6 +114,18 @@ export default {
     state = {}
   },
 
+  exportEndpoint (exportedEndpoint) {
+    exportedEndpoint.skipExport = true
+  },
+
+  export () {
+    return state
+  },
+
+  import (data) {
+    state = data
+  },
+
   commands: {
     remove (url) {
       state = deleteValue(state, url)

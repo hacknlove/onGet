@@ -190,6 +190,12 @@ const plugin = {
     state = {}
   },
 
+  exportEndpoint (exportedEndpoint) {
+    if (exportedEndpoint.url.indexOf('#')) {
+      exportedEndpoint.skipExport = true
+    }
+  },
+
   commands: {
     replace (url, value) {
       url = url.replace(/#-?\d+$/, '')

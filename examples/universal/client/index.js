@@ -6,7 +6,7 @@ import { beforeSet } from 'onget'
 
 const rootElement = document.getElementById('app')
 
-beforeSet('/api/counter', event => {
+beforeSet('/api/v1/counter', event => {
   console.log(event)
 })
 
