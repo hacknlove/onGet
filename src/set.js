@@ -54,12 +54,7 @@ export async function executeHooks (url, value, where, doPospone) {
     value,
     preventSet: false,
     preventRefresh: false,
-    preventMoreHooks: false,
-    redirect (newUrl) {
-      event.preventMoreHooks = true
-      event.preventSet = true
-      set(newUrl, event.value, where, doPospone)
-    }
+    preventMoreHooks: false
   }
 
   for (let i = 0, z = where.length; i < z; i++) {
@@ -84,7 +79,7 @@ export async function executeHooks (url, value, where, doPospone) {
 
 export function insertHook (path, hook, where) {
   const keys = []
-  const regex = pathToRegExp(path)
+  const regex = pathToRegExp(path, keys)
   where.push([regex, keys, hook])
 }
 
