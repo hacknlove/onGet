@@ -191,9 +191,19 @@ const plugin = {
   },
 
   exportEndpoint (exportedEndpoint) {
-    if (exportedEndpoint.url.indexOf('#')) {
-      exportedEndpoint.skipExport = true
-    }
+    exportedEndpoint.skipExport = true
+  },
+
+  export () {
+    const data = []
+    Object.keys(state).forEach(key => {
+      const history = state[key]
+      data.push({
+        url: key,
+        state: history.history[history.cursor]
+      })
+    })
+    return data.length ? data : undefined
   },
 
   commands: {
