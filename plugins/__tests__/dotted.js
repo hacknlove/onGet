@@ -252,4 +252,23 @@ describe('plugin', () => {
       expect(plugin.get('url')).toBeUndefined()
     })
   })
+
+  describe('export, import', () => {
+    it('returns undefined if there is no data in the state', () => {
+      plugin.import({})
+      expect(plugin.export()).toBeUndefined()
+    })
+    it('returns the state, if it has data', () => {
+      plugin.import({ foo: 'bar' })
+      expect(plugin.export()).toStrictEqual({ foo: 'bar' })
+    })
+  })
+
+  describe('exportEndpoint', () => {
+    it('set skip', () => {
+      const exportedEndpoint = {}
+      plugin.exportEndpoint(exportedEndpoint)
+      expect(exportedEndpoint.skipExport).toBe(true)
+    })
+  })
 })

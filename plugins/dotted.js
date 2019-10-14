@@ -119,7 +119,7 @@ export default {
   },
 
   export () {
-    return Object.keys(state) ? state : undefined
+    return Object.keys(state).length ? state : undefined
   },
 
   import (data) {

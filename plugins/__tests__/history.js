@@ -877,4 +877,51 @@ describe('plugin', () => {
       })
     })
   })
+  describe('export, import', () => {
+    it('returns undefined if there is no data in the state', () => {
+      plugin.import([])
+      expect(plugin.export()).toBeUndefined()
+    })
+
+    it('exports the history', () => {
+      state.url = {
+        history: ['value'],
+        cursor: 0
+      }
+      state.foo = {
+        history: ['bar'],
+        cursor: 0
+      }
+
+      expect(plugin.export()).toStrictEqual([
+        ['url', 'value'],
+        ['foo', 'bar']
+      ])
+    })
+
+    it('imports the history', () => {
+      plugin.import([
+        ['url', 'value'],
+        ['foo', 'bar']
+      ])
+      expect(state).toStrictEqual({
+        url: {
+          history: ['value'],
+          cursor: 0
+        },
+        foo: {
+          history: ['bar'],
+          cursor: 0
+        }
+      })
+    })
+  })
+
+  describe('exportEndpoint', () => {
+    it('set skip', () => {
+      const exportedEndpoint = {}
+      plugin.exportEndpoint(exportedEndpoint)
+      expect(exportedEndpoint.skipExport).toBe(true)
+    })
+  })
 })

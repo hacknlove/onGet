@@ -198,12 +198,22 @@ const plugin = {
     const data = []
     Object.keys(state).forEach(key => {
       const history = state[key]
-      data.push({
-        url: key,
-        state: history.history[history.cursor]
-      })
+      data.push([
+        key,
+        history.history[history.cursor]
+      ])
     })
     return data.length ? data : undefined
+  },
+
+  import (data) {
+    state = {}
+    data.forEach(history => {
+      state[history[0]] = {
+        history: [history[1]],
+        cursor: 0
+      }
+    })
   },
 
   commands: {

@@ -207,12 +207,7 @@ async function executeHooks (url, value, where, doPospone) {
     value,
     preventSet: false,
     preventRefresh: false,
-    preventMoreHooks: false,
-    redirect (newUrl) {
-      event.preventMoreHooks = true;
-      event.preventSet = true;
-      set(newUrl, event.value, where);
-    }
+    preventMoreHooks: false
   };
 
   for (let i = 0, z = where.length; i < z; i++) {
@@ -237,7 +232,7 @@ async function executeHooks (url, value, where, doPospone) {
 
 function insertHook (path, hook, where) {
   const keys = [];
-  const regex = pathToRegExp(path);
+  const regex = pathToRegExp(path, keys);
   where.push([regex, keys, hook]);
 }
 
@@ -711,6 +706,32 @@ const plugin$3 = {
     state = {};
   },
 
+  exportEndpoint (exportedEndpoint) {
+    exportedEndpoint.skipExport = true;
+  },
+
+  export () {
+    const data = [];
+    Object.keys(state).forEach(key => {
+      const history = state[key];
+      data.push([
+        key,
+        history.history[history.cursor]
+      ]);
+    });
+    return data.length ? data : undefined
+  },
+
+  import (data) {
+    state = {};
+    data.forEach(history => {
+      state[history[0]] = {
+        history: [history[1]],
+        cursor: 0
+      };
+    });
+  },
+
   commands: {
     replace (url, value) {
       url = url.replace(/#-?\d+$/, '');
@@ -905,6 +926,18 @@ var dotted = {
 
   start () {
     state$1 = {};
+  },
+
+  exportEndpoint (exportedEndpoint) {
+    exportedEndpoint.skipExport = true;
+  },
+
+  export () {
+    return Object.keys(state$1).length ? state$1 : undefined
+  },
+
+  import (data) {
+    state$1 = data;
   },
 
   commands: {
