@@ -877,10 +877,10 @@ describe('plugin', () => {
       })
     })
   })
-  describe('export, import', () => {
+  describe('save, load', () => {
     it('returns undefined if there is no data in the state', () => {
-      plugin.import([])
-      expect(plugin.export()).toBeUndefined()
+      plugin.load([])
+      expect(plugin.save()).toBeUndefined()
     })
 
     it('exports the history', () => {
@@ -893,14 +893,14 @@ describe('plugin', () => {
         cursor: 0
       }
 
-      expect(plugin.export()).toStrictEqual([
+      expect(plugin.save()).toStrictEqual([
         ['url', 'value'],
         ['foo', 'bar']
       ])
     })
 
     it('imports the history', () => {
-      plugin.import([
+      plugin.load([
         ['url', 'value'],
         ['foo', 'bar']
       ])
@@ -917,11 +917,11 @@ describe('plugin', () => {
     })
   })
 
-  describe('exportEndpoint', () => {
+  describe('saveEndpoint', () => {
     it('set skip', () => {
-      const exportedEndpoint = {}
-      plugin.exportEndpoint(exportedEndpoint)
-      expect(exportedEndpoint.skipExport).toBe(true)
+      const savedEndpoint = {}
+      plugin.saveEndpoint(savedEndpoint)
+      expect(savedEndpoint.preventSave).toBe(true)
     })
   })
 })

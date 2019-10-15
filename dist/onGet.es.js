@@ -700,8 +700,8 @@ const plugin$3 = {
     state = {};
   },
 
-  exportEndpoint (exportedEndpoint) {
-    exportedEndpoint.skipExport = true;
+  saveEndpoint (savedEndpoint) {
+    savedEndpoint.preventSave = true;
   },
 
   export () {
@@ -922,8 +922,8 @@ var dotted = {
     state$1 = {};
   },
 
-  exportEndpoint (exportedEndpoint) {
-    exportedEndpoint.skipExport = true;
+  saveEndpoint (savedEndpoint) {
+    savedEndpoint.preventSave = true;
   },
 
   export () {

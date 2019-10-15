@@ -253,22 +253,22 @@ describe('plugin', () => {
     })
   })
 
-  describe('export, import', () => {
+  describe('save, load', () => {
     it('returns undefined if there is no data in the state', () => {
-      plugin.import({})
-      expect(plugin.export()).toBeUndefined()
+      plugin.load({})
+      expect(plugin.save()).toBeUndefined()
     })
     it('returns the state, if it has data', () => {
-      plugin.import({ foo: 'bar' })
-      expect(plugin.export()).toStrictEqual({ foo: 'bar' })
+      plugin.load({ foo: 'bar' })
+      expect(plugin.save()).toStrictEqual({ foo: 'bar' })
     })
   })
 
-  describe('exportEndpoint', () => {
+  describe('saveEndpoint', () => {
     it('set skip', () => {
-      const exportedEndpoint = {}
-      plugin.exportEndpoint(exportedEndpoint)
-      expect(exportedEndpoint.skipExport).toBe(true)
+      const savedEndpoint = {}
+      plugin.saveEndpoint(savedEndpoint)
+      expect(savedEndpoint.preventSave).toBe(true)
     })
   })
 })

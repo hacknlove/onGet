@@ -114,15 +114,15 @@ export default {
     state = {}
   },
 
-  exportEndpoint (exportedEndpoint) {
-    exportedEndpoint.skipExport = true
+  saveEndpoint (savedEndpoint) {
+    savedEndpoint.preventSave = true
   },
 
-  export () {
+  save () {
     return Object.keys(state).length ? state : undefined
   },
 
-  import (data) {
+  load (data) {
     state = data
   },
 

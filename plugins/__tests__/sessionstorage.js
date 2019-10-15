@@ -103,7 +103,7 @@ describe('plugin', () => {
   //   })
   // })
 
-  // describe('exportEndpoint', () => {
+  // describe('saveEndpoint', () => {
 
   // })
 

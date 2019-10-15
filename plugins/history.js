@@ -190,11 +190,11 @@ const plugin = {
     state = {}
   },
 
-  exportEndpoint (exportedEndpoint) {
-    exportedEndpoint.skipExport = true
+  saveEndpoint (savedEndpoint) {
+    savedEndpoint.preventSave = true
   },
 
-  export () {
+  save () {
     const data = []
     Object.keys(state).forEach(key => {
       const history = state[key]
@@ -206,7 +206,7 @@ const plugin = {
     return data.length ? data : undefined
   },
 
-  import (data) {
+  load (data) {
     state = {}
     data.forEach(history => {
       state[history[0]] = {

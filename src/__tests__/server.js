@@ -31,9 +31,7 @@ describe('start', () => {
     plugins.push({
     })
     start()
-    console.log(Date.now())
     await asyncwait(10)
-    console.log(Date.now())
     expect(plugins[0].start).toHaveBeenCalled()
   })
   it('awaits till the previous promise is resolved', async () => {
