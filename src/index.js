@@ -1,14 +1,17 @@
-import { onGet } from './onGet'
-import { useOnGet } from './useOnGet'
-import { set, beforeSet, afterSet } from './set'
-import { refresh, refreshRegExp } from './refresh'
-import { get } from './get'
-import { once } from './once'
-import { waitUntil } from './waitUntil'
 import { command } from './command'
 import { conf, endpoints, plugins } from './conf'
+import { get } from './get'
+import { load } from './load'
+import { once } from './once'
+import { onGet } from './onGet'
+import { refresh } from './refresh'
+import { refreshRegExp } from './refreshRegExp'
 import { registerPlugin } from './registerPlugin'
+import { save } from './save'
+import { set, beforeSet, afterSet } from './set'
 import { start, end } from './server'
+import { useOnGet } from './useOnGet'
+import { waitUntil } from './waitUntil'
 
 import fetch from '../plugins/fetch'
 import localStorage from '../plugins/localstorage'
@@ -28,11 +31,14 @@ export {
   end,
   endpoints,
   get,
+  load,
   once,
   onGet,
   plugins,
   refresh,
+  refreshRegExp,
   registerPlugin,
+  save,
   set, beforeSet, afterSet,
   start,
   useOnGet,

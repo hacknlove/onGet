@@ -5,7 +5,7 @@ import qs from 'qs'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackConfig from '../webpack.config'
-import { start, end, export } from 'onget'
+import { start, end, save } from 'onget'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
@@ -35,7 +35,7 @@ async function handleRender (req, res) {
     <App/>
   )
 
-  const finalState = export()
+  const finalState = save()
   const rendered = renderFullPage(html, finalState)
   end()
   // Send the rendered page back to the client

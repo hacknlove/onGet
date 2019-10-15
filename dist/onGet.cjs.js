@@ -28,6 +28,145 @@ function findPlugin (url) {
   return plugins.find(plugin => url.match(plugin.regex))
 }
 
+function command (url, command, ...params) {
+  const endpoint = endpoints[url] || {
+    plugin: findPlugin(url)
+  };
+
+  if (!endpoint.plugin.commands) {
+    console.warn('the plugin does not accept commands');
+    return
+  }
+
+  if (!endpoint.plugin.commands[command]) {
+    console.warn('command not found');
+    return
+  }
+
+  return endpoint.plugin.commands[command](url, ...params)
+}
+
+/**
+ * Returns the cached value for the endpoint
+ * @param {string} url url of the endpoint
+ * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
+ * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
+ */
+function get (url) {
+  const endpoint = endpoints[url];
+  if (endpoint) {
+    endpoint.clean = undefined;
+    return endpoints[url].value
+  }
+  const plugin = findPlugin(url);
+  if (!plugin.get) {
+    return undefined
+  }
+  return plugin.get(url)
+}
+
+/**
+ * Internal
+ *
+ * @return {object} serializable with the minimun data to restore the endpoints
+ */
+function savedEndpoints () {
+  const saved = {};
+  Object.values(endpoints).forEach(endpoint => {
+    const savedEndpoint = {
+      value: endpoint.value
+    };
+
+    if (endpoint.plugin.saveEndpoint) {
+      endpoint.plugin.saveEndpoint(endpoint.url, savedEndpoint);
+    }
+
+    if (!savedEndpoint.preventSave) {
+      saved[endpoint.url] = savedEndpoint;
+    }
+  });
+  return saved
+}
+
+/** Internal
+ *
+ * @return {object} with the minimun data to restore the plugin state
+ */
+function savedPlugins () {
+  const savedPlugins = {};
+  plugins.forEach(plugin => {
+    if (!plugin.save) {
+      return
+    }
+    const savedPlugin = plugin.save();
+    if (!savedPlugin) {
+      return
+    }
+    savedPlugins[plugin.name] = savedPlugin;
+  });
+  return savedPlugins
+}
+
+/**
+ * @return {object} an object that represents the current state of the application, and that can be serialized
+ */
+function save () {
+  return {
+    endpoints: savedEndpoints(),
+    plugins: savedPlugins()
+  }
+}
+
+/**
+ * Restore the state of the plugins
+ * @param {object} savedPlugins as returned by savePlugins, called by save
+ */
+function loadPlugins (savedPlugins) {
+  plugins.forEach(plugin => {
+    if (!plugin.load || !savedPlugins[plugin.name]) {
+      return
+    }
+    plugin.load(savedPlugins[plugin.name]);
+  });
+}
+
+/**
+ * restore the satate of the endpoints
+ * @param {savedEndpoints} as returned by saveEndpoints, called by save
+ */
+function loadEndpoints (savedEndpoints) {
+  Object.keys(savedEndpoints).forEach(url => {
+    const plugin = findPlugin(url);
+    const endpoint = {
+      ...savedEndpoints[url],
+      callbacks: {},
+      url,
+      plugin
+    };
+    if (plugin.checkInterval) {
+      endpoint.intervals = {};
+      endpoint.minInterval = Infinity;
+    }
+
+    if (plugin.threshold !== undefined) {
+      endpoint.last = -Infinity;
+    }
+    if (plugin.load) {
+      plugin.load(endpoint);
+    }
+    endpoints[url] = endpoint;
+  });
+}
+
+/**
+ * Loads a state
+ * @param {object} data is an object representing the state in which the application will be, after loading it.
+ */
+function load ({ savedEndpoints, savedPlugins }) {
+  loadPlugins(savedPlugins);
+  loadEndpoints(savedEndpoints);
+}
+
 /**
  * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
  * It is  intended to be called each time a new endpoint is created
@@ -293,44 +432,6 @@ function onGet (url, cb, options = {}) {
   return unsubscribe
 }
 
-/**
- * Returns the cached value for the endpoint
- * @param {string} url url of the endpoint
- * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
- * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
- */
-function get (url) {
-  const endpoint = endpoints[url];
-  if (endpoint) {
-    endpoint.clean = undefined;
-    return endpoints[url].value
-  }
-  const plugin = findPlugin(url);
-  if (!plugin.get) {
-    return undefined
-  }
-  return plugin.get(url)
-}
-
-/**
- * React hook that reload the component when the url's state change
- * @param {*} url the url to subscribe to
- * @param {*} first the first value to use, before the real one arrives
- */
-function useOnGet (url, options = {}) {
-  let [value, set] = react.useState(() => get(url) || options.first);
-
-  if (options.firstIfUrlChanges) {
-    value = get(url) || options.first;
-  }
-
-  react.useEffect(() => {
-    return onGet(url, set, options)
-  }, [url]);
-
-  return value
-}
-
 function once (url, cb) {
   const unsubscribe = onGet(url, value => {
     unsubscribe();
@@ -339,33 +440,17 @@ function once (url, cb) {
   return unsubscribe
 }
 
-function waitUntil (url, condition = value => value) {
-  return new Promise(resolve => {
-    const unsubscribe = onGet(url, value => {
-      if (condition(value, url)) {
-        unsubscribe();
-        resolve(value);
-      }
-    });
-  })
-}
-
-function command (url, command, ...params) {
-  const endpoint = endpoints[url] || {
-    plugin: findPlugin(url)
-  };
-
-  if (!endpoint.plugin.commands) {
-    console.warn('the plugin does not accept commands');
-    return
-  }
-
-  if (!endpoint.plugin.commands[command]) {
-    console.warn('command not found');
-    return
-  }
-
-  return endpoint.plugin.commands[command](url, ...params)
+/**
+ * call refresh on every endpoint that matches the regular expression
+ * @param {RegExp} regex to test the endpoints
+ * @param {boolean} force to pass to refresh
+ */
+function refreshRegExp (regex, force) {
+  Object.values(endpoints).forEach(endpoint => {
+    if (regex.test(endpoint.url)) {
+      refresh(endpoint.url, force);
+    }
+  });
 }
 
 /**
@@ -404,6 +489,36 @@ function end () {
   promises.pop();
   const resolve = resolves.pop();
   resolve();
+}
+
+/**
+ * React hook that reload the component when the url's state change
+ * @param {*} url the url to subscribe to
+ * @param {*} first the first value to use, before the real one arrives
+ */
+function useOnGet (url, options = {}) {
+  let [value, set] = react.useState(() => get(url) || options.first);
+
+  if (options.firstIfUrlChanges) {
+    value = get(url) || options.first;
+  }
+
+  react.useEffect(() => {
+    return onGet(url, set, options)
+  }, [url]);
+
+  return value
+}
+
+function waitUntil (url, condition = value => value) {
+  return new Promise(resolve => {
+    const unsubscribe = onGet(url, value => {
+      if (condition(value, url)) {
+        unsubscribe();
+        resolve(value);
+      }
+    });
+  })
 }
 
 /* global fetch */
@@ -962,11 +1077,14 @@ exports.conf = conf;
 exports.end = end;
 exports.endpoints = endpoints;
 exports.get = get;
+exports.load = load;
 exports.onGet = onGet;
 exports.once = once;
 exports.plugins = plugins;
 exports.refresh = refresh;
+exports.refreshRegExp = refreshRegExp;
 exports.registerPlugin = registerPlugin;
+exports.save = save;
 exports.set = set;
 exports.start = start;
 exports.useOnGet = useOnGet;
