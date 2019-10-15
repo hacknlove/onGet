@@ -1,5 +1,4 @@
 import { endpoints, plugins } from './conf'
-import { savedEndpoints } from './save'
 import { findPlugin } from './findPlugin'
 
 /**
@@ -47,7 +46,7 @@ export function loadEndpoints (savedEndpoints) {
  * Loads a state
  * @param {object} data is an object representing the state in which the application will be, after loading it.
  */
-export function load ({ savedEndpoints, savedPlugins }) {
-  loadPlugins(savedPlugins)
-  loadEndpoints(savedEndpoints)
+export function load ({ endpoints, plugins }) {
+  loadPlugins(plugins)
+  loadEndpoints(endpoints)
 }

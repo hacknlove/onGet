@@ -66,58 +66,6 @@ function get (url) {
 }
 
 /**
- * Internal
- *
- * @return {object} serializable with the minimun data to restore the endpoints
- */
-function savedEndpoints () {
-  const saved = {};
-  Object.values(endpoints).forEach(endpoint => {
-    const savedEndpoint = {
-      value: endpoint.value
-    };
-
-    if (endpoint.plugin.saveEndpoint) {
-      endpoint.plugin.saveEndpoint(endpoint.url, savedEndpoint);
-    }
-
-    if (!savedEndpoint.preventSave) {
-      saved[endpoint.url] = savedEndpoint;
-    }
-  });
-  return saved
-}
-
-/** Internal
- *
- * @return {object} with the minimun data to restore the plugin state
- */
-function savedPlugins () {
-  const savedPlugins = {};
-  plugins.forEach(plugin => {
-    if (!plugin.save) {
-      return
-    }
-    const savedPlugin = plugin.save();
-    if (!savedPlugin) {
-      return
-    }
-    savedPlugins[plugin.name] = savedPlugin;
-  });
-  return savedPlugins
-}
-
-/**
- * @return {object} an object that represents the current state of the application, and that can be serialized
- */
-function save () {
-  return {
-    endpoints: savedEndpoints(),
-    plugins: savedPlugins()
-  }
-}
-
-/**
  * Restore the state of the plugins
  * @param {object} savedPlugins as returned by savePlugins, called by save
  */
@@ -162,9 +110,9 @@ function loadEndpoints (savedEndpoints) {
  * Loads a state
  * @param {object} data is an object representing the state in which the application will be, after loading it.
  */
-function load ({ savedEndpoints, savedPlugins }) {
-  loadPlugins(savedPlugins);
-  loadEndpoints(savedEndpoints);
+function load ({ endpoints, plugins }) {
+  loadPlugins(plugins);
+  loadEndpoints(endpoints);
 }
 
 /**
@@ -465,6 +413,58 @@ function refreshRegExp (regex, force) {
  */
 function registerPlugin (plugin) {
   plugins.unshift(plugin);
+}
+
+/**
+ * Internal
+ *
+ * @return {object} serializable with the minimun data to restore the endpoints
+ */
+function savedEndpoints () {
+  const saved = {};
+  Object.values(endpoints).forEach(endpoint => {
+    const savedEndpoint = {
+      value: endpoint.value
+    };
+
+    if (endpoint.plugin.saveEndpoint) {
+      endpoint.plugin.saveEndpoint(endpoint.url, savedEndpoint);
+    }
+
+    if (!savedEndpoint.preventSave) {
+      saved[endpoint.url] = savedEndpoint;
+    }
+  });
+  return saved
+}
+
+/** Internal
+ *
+ * @return {object} with the minimun data to restore the plugin state
+ */
+function savedPlugins () {
+  const savedPlugins = {};
+  plugins.forEach(plugin => {
+    if (!plugin.save) {
+      return
+    }
+    const savedPlugin = plugin.save();
+    if (!savedPlugin) {
+      return
+    }
+    savedPlugins[plugin.name] = savedPlugin;
+  });
+  return savedPlugins
+}
+
+/**
+ * @return {object} an object that represents the current state of the application, and that can be serialized
+ */
+function save () {
+  return {
+    endpoints: savedEndpoints(),
+    plugins: savedPlugins()
+  }
 }
 
 const promises = [];

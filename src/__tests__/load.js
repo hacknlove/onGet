@@ -62,8 +62,8 @@ describe('load', () => {
   })
   it('works', () => {
     expect(() => load({
-      savedEndpoints: {},
-      savedPlugins: {}
+      endpoints: {},
+      plugins: {}
     })).not.toThrow()
   })
 })

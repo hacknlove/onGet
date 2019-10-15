@@ -4,6 +4,7 @@ import Express from 'express'
 import qs from 'qs'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackHotMiddleware from 'webpack-hot-middleware'
 import webpackConfig from '../webpack.config'
 import { start, end, save, set } from 'onget'
 import React from 'react'
@@ -28,12 +29,13 @@ app.post('/api/v1/counter', (req, res) => {
 // Use this middleware to set up hot module reloading via webpack.
 const compiler = webpack(webpackConfig)
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }))
+app.use(webpackHotMiddleware(compiler))
 
 async function handleRender (req, res) {
   await start()
 
-  set('dotted://counter', 5)
-  set('/api/v1/counter', counter)
+  await set('dotted://counter', 5)
+  await set('/api/v1/counter', counter)
 
   const html = renderToString(
     <App/>
