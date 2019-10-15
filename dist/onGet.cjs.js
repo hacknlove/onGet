@@ -710,7 +710,7 @@ const plugin$3 = {
     savedEndpoint.preventSave = true;
   },
 
-  export () {
+  save () {
     const data = [];
     Object.keys(state).forEach(key => {
       const history = state[key];
@@ -722,7 +722,7 @@ const plugin$3 = {
     return data.length ? data : undefined
   },
 
-  import (data) {
+  load (data) {
     state = {};
     data.forEach(history => {
       state[history[0]] = {
@@ -932,11 +932,11 @@ var dotted = {
     savedEndpoint.preventSave = true;
   },
 
-  export () {
+  save () {
     return Object.keys(state$1).length ? state$1 : undefined
   },
 
-  import (data) {
+  load (data) {
     state$1 = data;
   },
 

@@ -28,11 +28,20 @@ describe('save', () => {
         }
       }
     }
+
     plugins.push({
       name: 'testSave',
       save () {
         return 'OK'
       }
+    })
+    plugins.push({
+      name: 'saveButUndefined',
+      save () {
+      }
+    })
+    plugins.push({
+      name: 'saveNothing'
     })
     expect(save()).toStrictEqual({
       endpoints: {

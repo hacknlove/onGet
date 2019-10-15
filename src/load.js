@@ -17,19 +17,29 @@ export function loadPlugins (savedPlugins) {
 
 /**
  * restore the satate of the endpoints
- * @param {savedEnpoints} as returned by saveEndpoints, called by save
+ * @param {savedEndpoints} as returned by saveEndpoints, called by save
  */
-export function loadEndpoints (savedEnpoints) {
+export function loadEndpoints (savedEndpoints) {
   Object.keys(savedEndpoints).forEach(url => {
-    const loadedEndpoint = {
-      ...savedEnpoints[url],
-      url
+    const plugin = findPlugin(url)
+    const endpoint = {
+      ...savedEndpoints[url],
+      callbacks: {},
+      url,
+      plugin
     }
-    loadedEndpoint.plugin = findPlugin(loadedEndpoint.url)
-    if (loadedEndpoint.plugin.load) {
-      loadedEndpoint.plugin.load(loadedEndpoint)
+    if (plugin.checkInterval) {
+      endpoint.intervals = {}
+      endpoint.minInterval = Infinity
     }
-    endpoints[url] = loadedEndpoint
+
+    if (plugin.threshold !== undefined) {
+      endpoint.last = -Infinity
+    }
+    if (plugin.load) {
+      plugin.load(endpoint)
+    }
+    endpoints[url] = endpoint
   })
 }
 

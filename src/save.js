@@ -1,9 +1,9 @@
 import { endpoints, plugins } from './conf'
 
 /**
- * internal
+ * Internal
  *
- * @returns {array} serializable with the minimun data to restore the endpoints
+ * @return {object} serializable with the minimun data to restore the endpoints
  */
 export function savedEndpoints () {
   const saved = {}
@@ -23,6 +23,10 @@ export function savedEndpoints () {
   return saved
 }
 
+/** Internal
+ *
+ * @return {object} with the minimun data to restore the plugin state
+ */
 export function savedPlugins () {
   const savedPlugins = {}
   plugins.forEach(plugin => {
