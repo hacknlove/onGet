@@ -5,7 +5,7 @@ import qs from 'qs'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackConfig from '../webpack.config'
-import { start, end, save } from 'onget'
+import { start, end, save, set } from 'onget'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
@@ -31,11 +31,16 @@ app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig
 
 async function handleRender (req, res) {
   await start()
+
+  set('dotted://counter', 5)
+  set('/api/v1/counter', counter)
+
   const html = renderToString(
     <App/>
   )
 
   const finalState = save()
+  console.log(JSON.stringify(finalState, null, 4))
   const rendered = renderFullPage(html, finalState)
   end()
   // Send the rendered page back to the client

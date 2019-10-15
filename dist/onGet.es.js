@@ -815,7 +815,7 @@ const plugin$3 = {
     state = {};
   },
 
-  saveEndpoint (savedEndpoint) {
+  saveEndpoint (url, savedEndpoint) {
     savedEndpoint.preventSave = true;
   },
 
@@ -1037,7 +1037,7 @@ var dotted = {
     state$1 = {};
   },
 
-  saveEndpoint (savedEndpoint) {
+  saveEndpoint (url, savedEndpoint) {
     savedEndpoint.preventSave = true;
   },
 

@@ -267,7 +267,7 @@ describe('plugin', () => {
   describe('saveEndpoint', () => {
     it('set skip', () => {
       const savedEndpoint = {}
-      plugin.saveEndpoint(savedEndpoint)
+      plugin.saveEndpoint('', savedEndpoint)
       expect(savedEndpoint.preventSave).toBe(true)
     })
   })

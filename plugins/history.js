@@ -190,7 +190,7 @@ const plugin = {
     state = {}
   },
 
-  saveEndpoint (savedEndpoint) {
+  saveEndpoint (url, savedEndpoint) {
     savedEndpoint.preventSave = true
   },
 

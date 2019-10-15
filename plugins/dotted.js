@@ -114,7 +114,7 @@ export default {
     state = {}
   },
 
-  saveEndpoint (savedEndpoint) {
+  saveEndpoint (url, savedEndpoint) {
     savedEndpoint.preventSave = true
   },
 
