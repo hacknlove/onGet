@@ -1,5 +1,5 @@
 import { refresh } from '../refresh'
-import { set } from '../set'
+import { _set } from '../set'
 import { pospone } from '../pospone'
 import { endpoints } from '../conf'
 
@@ -60,7 +60,7 @@ describe('refresh', () => {
 
     refresh('test')
 
-    expect(set).toHaveBeenCalledWith('test', 'value')
+    expect(_set).toHaveBeenCalledWith(endpoints.test, 'value')
   })
 
   it('if refresh is called inside the plugin threshold, it does not refresh', () => {
