@@ -84,7 +84,7 @@ describe('set', () => {
     expect(endpoints.test.value).toBe('old')
   })
 
-  it('if value is different do not set the new value', async () => {
+  it('if value is different set the new value', async () => {
     endpoints.test = {
       value: 'old',
       callbacks: {},
@@ -131,7 +131,7 @@ describe('set', () => {
 
     set('test', 'new')
 
-    expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test, 'old', false)
+    expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test, 'old', undefined)
   })
 })
 
@@ -211,14 +211,14 @@ describe('hooks', () => {
   })
 
   describe('executeHooks', () => {
-    it('stop executing hooks if any of them set preventMoreHooks to true', async () => {
+    it('stop executing hooks if any of them set preventHooks to true', async () => {
       const where = [
         [/./, [], jest.fn()],
-        [/./, [], jest.fn(event => { event.preventMoreHooks = true })],
+        [/./, [], jest.fn(event => { event.preventHooks = true })],
         [/./, [], jest.fn()]
       ]
       executeHooks(where, {
-        url: 'url', 
+        url: 'url',
         value: 'value'
       })
       expect(where[0][2]).toHaveBeenCalled()
@@ -231,7 +231,7 @@ describe('hooks', () => {
         [/./, [], jest.fn()]
       ]
       executeHooks(where, {
-        url: 'url', 
+        url: 'url',
         value: 'value',
         doPospone: 'doPospone'
       })
@@ -241,7 +241,7 @@ describe('hooks', () => {
       expect(event.value).toBe('value')
       expect(event.preventSet).toBeUndefined()
       expect(event.preventRefresh).toBeUndefined()
-      expect(event.preventMoreHooks).toBeUndefined()
+      expect(event.preventHooks).toBeUndefined()
     })
 
     it('pass the same modifyable event context', async () => {
@@ -253,7 +253,7 @@ describe('hooks', () => {
         [/./, [], jest.fn()]
       ]
       executeHooks(where, {
-        url: 'url', 
+        url: 'url',
         value: 'value'
       })
       const event = where[1][2].mock.calls[0][0]

@@ -244,65 +244,38 @@ function pospone (endpoint) {
 }
 
 /**
- * set a new cached value for an endpoint, and call the handlers. If the endpoint does not exists, it creates it.
- * @param {string} url  of the endpoint whose value set to
- * @param {any} value value to series
- * @param {boolean} doPospone=true if false do not pospone the closest refresh
- * @return {object} endpoint
+ * Internal set, that does not call events
+ * @param {object} endpoint to be updated
+ * @param {*} value to update the endpoint with
+ * @param {boolean} preventRefresh to avoid calling the endpoint callbacks
  */
-
-async function set (url, value, doPospone) {
-  const beforeResult = await executeHooks(url, value, setHooks.before, doPospone);
-  if (beforeResult.preventSet) {
+function _set (endpoint, value, preventRefresh) {
+  if (!isdifferent.isDifferent(value, endpoint.value)) {
     return
   }
-  value = beforeResult.value;
-  doPospone = beforeResult.doPospone;
-
-  const endpoint = endpoints[url];
-  if (!endpoint) {
-    const endpoint = getEndpoint(url, value);
-    if (endpoint.plugin.set) {
-      endpoint.value = value;
-      endpoint.plugin.set(endpoint);
-    }
-    return executeHooks(url, value, setHooks.after, doPospone)
-  }
-
-  endpoint.clean = undefined;
-  if (endpoint.intervals && doPospone) {
-    pospone(endpoint);
-  }
-  if (!isdifferent.isDifferent(value, endpoint.value)) {
-    return executeHooks(url, value, setHooks.after, doPospone)
-  }
-
+  const oldValue = endpoint.value;
   endpoint.value = value;
   if (endpoint.plugin.set) {
-    endpoint.plugin.set(endpoint);
+    endpoint.plugin.set(endpoint, oldValue, preventRefresh);
   }
-  if (!beforeResult.preventRefresh) {
+  if (!preventRefresh) {
     Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
   }
-  return executeHooks(url, value, setHooks.after, doPospone)
 }
 
-async function executeHooks (url, value, where, doPospone) {
-  const event = {
-    doPospone,
-    url,
-    value,
-    preventSet: false,
-    preventRefresh: false,
-    preventMoreHooks: false
-  };
-
+/**
+ * Internal. Execute all the hooks that match an url
+ * @param {array} where array to search for the hook
+ * @param {object} event object to be passed to the hook
+ * @return {object} the event object, it might be modified by the hooks
+ */
+function executeHooks (where, event) {
   for (let i = 0, z = where.length; i < z; i++) {
-    if (event.preventMoreHooks) {
+    if (event.preventHooks) {
       break
     }
     const [regex, keys, cb] = where[i];
-    const match = url.match(regex);
+    const match = event.url.match(regex);
     if (!match) {
       continue
     }
@@ -311,25 +284,112 @@ async function executeHooks (url, value, where, doPospone) {
       event.params[keys[i - 1].name] = match[1];
     }
 
-    await cb(event);
+    cb(event);
   }
 
   return event
 }
 
+/**
+ * Internal. Prepares the regex that match the path patters, and insert the hook in the indicated array
+ * @param {string} path the same format of express. (path-to-regexp)
+ * @param {(afterSetHook|BeforeSetHook)} hook Function to be called at hook time
+ * @param {array} where array to insert the hook in
+*/
 function insertHook (path, hook, where) {
   const keys = [];
   const regex = pathToRegExp(path, keys);
   where.push([regex, keys, hook]);
 }
 
-async function beforeSet (path, hook) {
+/**
+ * set a new cached value for an endpoint, and call the handlers. If the endpoint does not exists, it creates it.
+ * @param {string} url  of the endpoint whose value set to
+ * @param {any} value value to series
+ * @param {boolean} doPospone=true if false do not pospone the closest refresh
+ * @return {object} endpoint
+ */
+function set (url, value, doPospone) {
+  const beforeResult = executeHooks(setHooks.before, {
+    url,
+    value,
+    doPospone
+  });
+  if (beforeResult.preventSet) {
+    return
+  }
+  const endpoint = endpoints[url];
+  value = beforeResult.value;
+  doPospone = beforeResult.doPospone;
+
+  if (!endpoint) {
+    const endpoint = getEndpoint(url, value);
+    if (endpoint.plugin.set) {
+      endpoint.value = value;
+      endpoint.plugin.set(endpoint);
+    }
+    return executeHooks(setHooks.after, {
+      url,
+      value,
+      doPospone
+    })
+  }
+
+  const oldValue = endpoint.value;
+
+  endpoint.clean = undefined;
+  if (endpoint.intervals && doPospone) {
+    pospone(endpoint);
+  }
+  _set(endpoint, value, beforeResult.preventRefresh);
+  return executeHooks(setHooks.after, {
+    url,
+    doPospone,
+    oldValue,
+    value
+  })
+}
+
+/**
+ * Insert a hook to be executed before doing the set. They can prevent the set, modify the value to be set, prevent to be set
+ * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {BeforeSetHook} hook Function to be called
+ */
+function beforeSet (path, hook) {
   insertHook(path, hook, setHooks.before);
 }
 
-async function afterSet (path, hook) {
+/**
+ * Insert a hook to be executed after doing the set. They  modify the value to be set
+ * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {afterSetHook} hook Function to be called
+ */
+function afterSet (path, hook) {
   insertHook(path, hook, setHooks.after);
 }
+
+/**
+ * Function to be called before a set operation. They are executed synchrony and they can modify, even prevent, the set.
+ * @function BeforeSetHook
+ * @param {object} event context in which the hook is executed
+ * @param {string} event.url url of the endpoint that has received the set
+ * @param {*} event.value The current value. It can be changed.
+ * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
+ * @param {boolean} event.preventRefresh set this to true to prevent the endpoint callbacks to be executed.
+ * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
+ * @param {boolean} event.doPospone Indicates if the next periodical check has been posponed
+*/
+
+/**
+ * Function to be called after a set operation. They are executed synchrony and they cannot modify the set.
+ * @function afterSetHook
+ * @param {object} event context in which the hook is executed
+ * @param {string} event.url url of the endpoint that has received the set
+ * @param {*} event.oldValue The previous value
+ * @param {*} event.value The current value
+ * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
+ * @param {boolean} event.doPospone Indicates if the next periodical check has been posponed
+*/
 
 /**
  * Obtain the current value and is different, update the cache and call the handlers
@@ -348,7 +408,7 @@ async function refresh (url, force = false) {
   }
   pospone(endpoint);
   endpoint.plugin.refresh(endpoint, async value => {
-    await set(url, value);
+    await _set(endpoint, value);
   });
   return true
 }
