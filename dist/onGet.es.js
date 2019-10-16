@@ -300,21 +300,24 @@ function insertHook (path, hook, where) {
  * set a new cached value for an endpoint, and call the handlers. If the endpoint does not exists, it creates it.
  * @param {string} url  of the endpoint whose value set to
  * @param {any} value value to series
- * @param {boolean} doPospone=true if false do not pospone the closest refresh
- * @return {object} endpoint
+ * @param {object} options to determine the behaviour of the set, and to be passed to the hooks
+ * @param {boolean} options.preventPospone if true, it prevents to pospone the next check
+ * @param {boolean} event.preventHooks if true, prevent the hooks to be executed.
+ * @param {boolean} event.preventRefresh if true, prevents the endpoint callbacks to be executed.
+ * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
  */
-function set (url, value, doPospone) {
+function set (url, value, options = {}) {
   const beforeResult = executeHooks(setHooks.before, {
+    ...options,
     url,
-    value,
-    doPospone
+    value
   });
   if (beforeResult.preventSet) {
     return
   }
   const endpoint = endpoints[url];
   value = beforeResult.value;
-  doPospone = beforeResult.doPospone;
+  options.preventPospone = beforeResult.preventPospone;
 
   if (!endpoint) {
     const endpoint = getEndpoint(url, value);
@@ -323,22 +326,22 @@ function set (url, value, doPospone) {
       endpoint.plugin.set(endpoint);
     }
     return executeHooks(setHooks.after, {
+      ...options,
       url,
-      value,
-      doPospone
+      value
     })
   }
 
   const oldValue = endpoint.value;
 
   endpoint.clean = undefined;
-  if (endpoint.intervals && doPospone) {
+  if (endpoint.intervals && !options.preventPospone) {
     pospone(endpoint);
   }
   _set(endpoint, value, beforeResult.preventRefresh);
   return executeHooks(setHooks.after, {
+    ...options,
     url,
-    doPospone,
     oldValue,
     value
   })
@@ -371,7 +374,7 @@ function afterSet (path, hook) {
  * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
  * @param {boolean} event.preventRefresh set this to true to prevent the endpoint callbacks to be executed.
  * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
- * @param {boolean} event.doPospone Indicates if the next periodical check has been posponed
+ * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
 */
 
 /**
@@ -382,7 +385,7 @@ function afterSet (path, hook) {
  * @param {*} event.oldValue The previous value
  * @param {*} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
- * @param {boolean} event.doPospone Indicates if the next periodical check has been posponed
+ * @param {boolean} event.preventPospone Indicates thet next periodical check has been posponed
 */
 
 /**

@@ -55,22 +55,22 @@ describe('set', () => {
     expect(pospone).not.toHaveBeenCalled()
   })
 
-  it('it not call pospone', async () => {
+  it('it call pospone', async () => {
     endpoints.test = {
       intervals: {}
     }
     getEndpoint.mockReturnValue(endpoints.test)
     set('test')
-    expect(pospone).not.toHaveBeenCalled()
+    expect(pospone).toHaveBeenCalledWith(endpoints.test)
   })
 
-  it('it calls pospone', async () => {
+  it('do not call pospone', async () => {
     endpoints.test = {
       intervals: {}
     }
     getEndpoint.mockReturnValue(endpoints.test)
-    set('test', undefined, true)
-    expect(pospone).toHaveBeenCalledWith(endpoints.test)
+    set('test', undefined, { preventPospone: true })
+    expect(pospone).not.toHaveBeenCalled()
   })
 
   it('if value is not different do not set the new value', async () => {
@@ -233,10 +233,10 @@ describe('hooks', () => {
       executeHooks(where, {
         url: 'url',
         value: 'value',
-        doPospone: 'doPospone'
+        preventPospone: 'preventPospone'
       })
       const event = where[0][2].mock.calls[0][0]
-      expect(event.doPospone).toBe('doPospone')
+      expect(event.preventPospone).toBe('preventPospone')
       expect(event.url).toBe('url')
       expect(event.value).toBe('value')
       expect(event.preventSet).toBeUndefined()

@@ -96,11 +96,11 @@ Returns the state for the url.
 
 If there is state for the url, it could return undefined or the actual value. See the plugin documentation.
 
-### set(url, value, doPospone=false) => undefined
+### set(url, value, preventPospone=false) => undefined
 It sets the state for the url.
 It could change the actual value at the source, or not. See the plugin documentation.
 
-If the plugin supports periodical checks, you can postpone the next check, passing true as `doPospone`
+If the plugin supports periodical checks, you can postpone the next check, passing true as `preventPospone`
 
 ### refresh(url, force=boolean) => boolean / undefined
 it checks the actual value at the source, and if it is different than one stored at the state, it updates it and call the subscriptions callbacks.

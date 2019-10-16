@@ -20,9 +20,9 @@ app.get('/api/v1/counter', (req, res) => {
   res.json(counter)
 })
 
-app.post('/api/v1/counter', (req, res) => {
-  counter += req.body.counter
-  res.json({ ok: true})
+app.post('/api/v1/counter/:counter', (req, res) => {
+  counter += req.params.counter * 1
+  res.json({ counter })
 })
 
 
@@ -34,8 +34,8 @@ app.use(webpackHotMiddleware(compiler))
 async function handleRender (req, res) {
   await start()
 
-  await set('dotted://counter', 5)
-  await set('/api/v1/counter', counter)
+  set('dotted://counter', 5)
+  set('/api/v1/counter', counter)
 
   const html = renderToString(
     <App/>
