@@ -646,6 +646,7 @@ const plugin$1 = {
     eventHandler(parseIfPossible(localStorage[endpoint.key]));
   },
   getEndpoint (endpoint) {
+    endpoint.unsubscribeStorage = onChange(endpoint);
     endpoint.key = endpoint.url.substr(PROTOCOLCUT);
 
     if (localStorage[endpoint.key] !== undefined) {
@@ -653,7 +654,6 @@ const plugin$1 = {
       return
     }
     localStorage[endpoint.key] = JSON.stringify(endpoint.value);
-    endpoint.unsubscribeStorage = onChange(endpoint);
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
@@ -665,8 +665,6 @@ const plugin$1 = {
     endpoint.unsubscribeStorage && endpoint.unsubscribeStorage();
   },
   start () {
-    plugin$1.checkInterval = 0;
-    plugin$1.threshold = undefined;
     global.localStorage = {};
   }
 };
@@ -705,8 +703,6 @@ const plugin$2 = {
   },
 
   start () {
-    plugin$2.checkInterval = 0;
-    plugin$2.threshold = undefined;
     global.sessionStorage = {};
   }
 };

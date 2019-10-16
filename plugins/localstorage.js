@@ -33,6 +33,7 @@ const plugin = {
     eventHandler(parseIfPossible(localStorage[endpoint.key]))
   },
   getEndpoint (endpoint) {
+    endpoint.unsubscribeStorage = onChange(endpoint)
     endpoint.key = endpoint.url.substr(PROTOCOLCUT)
 
     if (localStorage[endpoint.key] !== undefined) {
@@ -40,7 +41,6 @@ const plugin = {
       return
     }
     localStorage[endpoint.key] = JSON.stringify(endpoint.value)
-    endpoint.unsubscribeStorage = onChange(endpoint)
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
@@ -52,8 +52,6 @@ const plugin = {
     endpoint.unsubscribeStorage && endpoint.unsubscribeStorage()
   },
   start () {
-    plugin.checkInterval = 0
-    plugin.threshold = undefined
     global.localStorage = {}
   }
 }

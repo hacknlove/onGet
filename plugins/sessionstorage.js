@@ -32,8 +32,6 @@ const plugin = {
   },
 
   start () {
-    plugin.checkInterval = 0
-    plugin.threshold = undefined
     global.sessionStorage = {}
   }
 }

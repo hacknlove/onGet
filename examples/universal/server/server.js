@@ -41,9 +41,7 @@ async function handleRender (req, res) {
     <App/>
   )
 
-  const finalState = save()
-  console.log(JSON.stringify(finalState, null, 4))
-  const rendered = renderFullPage(html, finalState)
+  const rendered = renderFullPage(html, save())
   end()
   // Send the rendered page back to the client
   res.send(rendered)
