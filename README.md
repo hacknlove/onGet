@@ -36,19 +36,24 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 
 ## Basic Usage. Examples
 
-### Creating a subscription
+### Using a subscription
 ```js
 import { onGet } from 'onget'
 
+// call onGet to subscribe to the url
 const unsubscribe = onGet('dotted://hello', value => {
+  // This will be called each time the value of the resource changes
   console.log(value)
 }, {
-  first: 'word'
+  first: 'word' // You can set a first value, that will be used if there is no one, or if the evaluation of real value is asynchronous
 })
 
-set('dotted://hello', 'world')
+// You can set a new value, and the handler will be called
+set('dotted://hello', 'Earth')
 
+// You can unsubscribe
 unsubscribe()
 
-set('dotted://hello', 'earth')
+// You can set a new value, and now the handler will not be called
+set('dotted://hello', 'Mars')
 ```
