@@ -14,7 +14,8 @@ const setHooks = {
 };
 
 /**
- * Internal: Returns the first plugin whose regex matchs the url
+ * Returns the first plugin whose regex matchs the url
+ * @private
  * @param {string} url resource's url
  * @return plugin object
  */
@@ -22,6 +23,14 @@ function findPlugin (url) {
   return plugins.find(plugin => url.match(plugin.regex))
 }
 
+/**
+ *Executes a command defined in a plugin, for an url
+ *
+ * @param {string} url the resource url
+ * @param {string} command the command name
+ * @param {*} params the parameters to the command
+ * @returns
+ */
 function command (url, command, ...params) {
   const resource = resources[url] || {
     plugin: findPlugin(url)
@@ -44,7 +53,7 @@ function command (url, command, ...params) {
  * Returns the cached value for the resource
  * @param {string} url url of the resource
  * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
- * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
+ * @returns {any} the cached value is exists, or an evaluated value if plugin.get exists
  */
 function get (url) {
   const resource = resources[url];
@@ -61,6 +70,7 @@ function get (url) {
 
 /**
  * Restore the state of the plugins
+ * @private
  * @param {object} savedPlugins as returned by savePlugins, called by save
  */
 function loadPlugins (savedPlugins) {
@@ -74,6 +84,7 @@ function loadPlugins (savedPlugins) {
 
 /**
  * restore the satate of the resources
+ * @private
  * @param {savedresources} as returned by saveresources, called by save
  */
 function loadresources (savedresources) {
@@ -112,6 +123,7 @@ function load ({ resources, plugins }) {
 /**
  * Cleans unused resources. The ones that has no callbacks, no method called recently.
  * It is  intended to be called each time a new resource is created
+ * @private
  */
 function clean () {
   const values = Object.values(resources);
@@ -137,6 +149,7 @@ function clean () {
 
 /**
  * Creates if needed and returns the object that stores the callbacks, configuration and state of an resource
+ * @private
  * @param {string} url resource's url
  * @params {any} [firstValue] is used as a firstValue, before any action was performed by the plugin
  * @returns {object} the resource
@@ -175,7 +188,8 @@ function getResource (url, firstValue) {
 }
 
 /**
- * Function factory that creats and returns unsubscribe functions
+ * Function factory that creates and returns unsubscribe functions
+ * @private
  * @param {object} resource from which unsubscribe
  * @param {strink} sk key that identifies the subscription
  */
@@ -195,6 +209,7 @@ function createUnsubscribe (resource, sk) {
 
 /**
  * Adds the callback to the resource, updates the min interval configuration, and returns the unsubscribe function
+ * @private
  * @param {string} url resource's url
  * @param {function} callback it will be called each time the value of the resource changes
  * @param {number} [interval] max interval (milliseconds) to check for a new value
@@ -220,6 +235,7 @@ function addNewSubscription (url, callback, interval) {
 
 /**
  * Pospone the refresh of the resource
+ * @private
  * @param {object} resource resource whose refresh should be posponed, as returned by getResource(url)
  * @returns undefined
  */
@@ -385,7 +401,7 @@ function afterSet (path, hook) {
  * @param {*} event.oldValue The previous value
  * @param {*} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
- * @param {boolean} event.preventPospone Indicates thet next periodical check has been posponed
+ * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
 */
 
 /**
@@ -411,12 +427,13 @@ async function refresh (url, force = false) {
 }
 
 /**
- * Set a handler to be called each time the value of the url changes
- * @param {string} url The value to subscribe to
- * @param {function} cb handler to be called
+ * Set a handler to be called each time the value of resource at the url changes
+ * @param {string} url The resource to subscribe to
+ * @param {handler} cb handler to be called
  * @param {object} options Optional parameters
- * @param {integer} options.interval seconds to refresh the value
- * @param {any} options.first first value to pass to the plugin
+ * @param {integer} options.interval seconds check for a change on the resorce's value, (if supported by the plugin)
+ * @param {any} options.first first value to initiate the resorce with
+ * @return {function} unsubscribe function
  */
 function onGet (url, cb, options = {}) {
   const {
@@ -437,13 +454,31 @@ function onGet (url, cb, options = {}) {
   return unsubscribe
 }
 
-function once (url, cb) {
+/**
+ * @callback handler
+ * @param {object} resource at the url
+*/
+
+/**
+ * Attach a handler to change in an resource that will be executed at most once.
+ *
+ * @param {string} url
+ * @param {onceHandler} handler
+ * @returns
+ */
+function once (url, handler) {
   const unsubscribe = onGet(url, value => {
     unsubscribe();
-    cb(value, url);
+    handler(value, url);
   });
   return unsubscribe
 }
+
+/**
+ * @callback onceHandler
+ * @param {any} value
+ * @param {string} url of the resource whose value has change
+ */
 
 /**
  * call refresh on every resource that matches the regular expression
@@ -464,7 +499,7 @@ function refreshRegExp (regex, force) {
  * @param {string} plugin.name Name of the plugin, not really used
  * @param {RegExp} plugin.regex Regex to match the resource's url
  * @param {number} plugin.checkInterval amount of milliseconds to call refresh,
- * @param {number} plugin.threshold amount of millisecons in which a subsecuent call to get, or onGet, uses the cached value instead of calling refresh
+ * @param {number} plugin.threshold amount of milliseconds in which a subsequent call to get, or onGet, uses the cached value instead of calling refresh
  * @param {function} plugin.refresh function that is called to obtain the value
  * @returns {undefined} undefined
  */
@@ -1139,4 +1174,4 @@ registerPlugin(plugin$2);
 registerPlugin(plugin$3);
 registerPlugin(dotted);
 
-export { afterSet, beforeSet, command, conf, end, resources, get, load, onGet, once, plugins, refresh, refreshRegExp, registerPlugin, save, set, start, useOnGet, waitUntil };
+export { afterSet, beforeSet, command, conf, end, get, load, onGet, once, plugins, refresh, refreshRegExp, registerPlugin, resources, save, set, start, useOnGet, waitUntil };
