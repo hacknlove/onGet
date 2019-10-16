@@ -40,7 +40,6 @@ async function handleRender (req, res) {
   const html = renderToString(
     <App/>
   )
-
   const rendered = renderFullPage(html, save())
   end()
   // Send the rendered page back to the client
@@ -51,6 +50,8 @@ async function handleRender (req, res) {
 app.get('/', handleRender)
 
 const renderFullPage = (html, preloadedState) => {
+  console.log(preloadedState)
+
   return `
     <!doctype html>
     <html>

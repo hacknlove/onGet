@@ -9,7 +9,6 @@ const rootElement = document.getElementById('app')
 load(__PRELOADED_STATE__)
 
 afterSet('/api/v1/counter', async event => {
-  console.log(event)
   const delta = event.value - event.oldValue
   const response = await fetch(`/api/v1/counter/${delta}`, {
     method: 'POST',
