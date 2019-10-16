@@ -9,8 +9,8 @@
   "unpkg": "dist/onGet.umd.js",
   "module": "dist/onGet.es.js",
   "scripts": {
-    "test": "jest --watch ./src/__tests__ ./plugins/__tests__",
-    "coverage": "jest --coverage  ./src/__tests__ ./plugins/__tests__",
+    "test": "jest --watch ./src",
+    "coverage": "jest --coverage  ./src",
     "build": "./CI/build.sh"
   },
   "publishConfig": {
