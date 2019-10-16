@@ -8,7 +8,7 @@ const rootElement = document.getElementById('app')
 
 load(__PRELOADED_STATE__)
 
-beforeSet('/api/v1/counter', event => {
+afterSet('/api/v1/counter', event => {
   // fetch()
   console.log(get('/api/v1/counter'))
   console.log(event)

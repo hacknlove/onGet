@@ -13,7 +13,7 @@ describe('set', () => {
     const endpoint = { plugin: {} }
     getEndpoint.mockReturnValue(endpoint)
 
-    await set('test', 'value')
+    set('test', 'value')
     expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
     expect(isDifferent).not.toHaveBeenCalled()
   })
@@ -26,7 +26,7 @@ describe('set', () => {
     }
     getEndpoint.mockReturnValue(endpoint)
 
-    await set('test', 'value')
+    set('test', 'value')
 
     expect(endpoint.value).toBe('value')
 
@@ -42,7 +42,7 @@ describe('set', () => {
 
     getEndpoint.mockReturnValue(endpoints.test)
 
-    await set('test')
+    set('test')
 
     expect(endpoints.test.clean).toBeUndefined()
   })
@@ -50,7 +50,7 @@ describe('set', () => {
   it('if endpoint has no intervals, do no set last neither call pospone', async () => {
     endpoints.test = {}
     getEndpoint.mockReturnValue(endpoints.test)
-    await set('test')
+    set('test')
     expect(endpoints.test.last).toBeUndefined()
     expect(pospone).not.toHaveBeenCalled()
   })
@@ -60,7 +60,7 @@ describe('set', () => {
       intervals: {}
     }
     getEndpoint.mockReturnValue(endpoints.test)
-    await set('test')
+    set('test')
     expect(pospone).not.toHaveBeenCalled()
   })
 
@@ -69,7 +69,7 @@ describe('set', () => {
       intervals: {}
     }
     getEndpoint.mockReturnValue(endpoints.test)
-    await set('test', undefined, true)
+    set('test', undefined, true)
     expect(pospone).toHaveBeenCalledWith(endpoints.test)
   })
 
@@ -79,7 +79,7 @@ describe('set', () => {
     }
     isDifferent.mockReturnValue(false)
 
-    await set('test', 'new')
+    set('test', 'new')
 
     expect(endpoints.test.value).toBe('old')
   })
@@ -93,7 +93,7 @@ describe('set', () => {
     getEndpoint.mockReturnValue(endpoints.test)
     isDifferent.mockReturnValue(true)
 
-    await set('test', 'new')
+    set('test', 'new')
 
     expect(endpoints.test.value).toBe('new')
   })
@@ -110,7 +110,7 @@ describe('set', () => {
     getEndpoint.mockReturnValue(endpoints.test)
     isDifferent.mockReturnValue(true)
 
-    await set('test', 'new')
+    set('test', 'new')
     jest.runAllTimers()
 
     expect(endpoints.test.callbacks.uno).toHaveBeenCalledWith('new')
@@ -129,9 +129,9 @@ describe('set', () => {
     getEndpoint.mockReturnValue(endpoints.test)
     isDifferent.mockReturnValue(true)
 
-    await set('test', 'new')
+    set('test', 'new')
 
-    expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test)
+    expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test, 'old', false)
   })
 })
 
@@ -217,7 +217,10 @@ describe('hooks', () => {
         [/./, [], jest.fn(event => { event.preventMoreHooks = true })],
         [/./, [], jest.fn()]
       ]
-      await executeHooks('url', 'value', where)
+      executeHooks(where, {
+        url: 'url', 
+        value: 'value'
+      })
       expect(where[0][2]).toHaveBeenCalled()
       expect(where[1][2]).toHaveBeenCalled()
       expect(where[2][2]).not.toHaveBeenCalled()
@@ -227,14 +230,18 @@ describe('hooks', () => {
       const where = [
         [/./, [], jest.fn()]
       ]
-      await executeHooks('url', 'value', where, 'doPospone')
+      executeHooks(where, {
+        url: 'url', 
+        value: 'value',
+        doPospone: 'doPospone'
+      })
       const event = where[0][2].mock.calls[0][0]
       expect(event.doPospone).toBe('doPospone')
       expect(event.url).toBe('url')
       expect(event.value).toBe('value')
-      expect(event.preventSet).toBe(false)
-      expect(event.preventRefresh).toBe(false)
-      expect(event.preventMoreHooks).toBe(false)
+      expect(event.preventSet).toBeUndefined()
+      expect(event.preventRefresh).toBeUndefined()
+      expect(event.preventMoreHooks).toBeUndefined()
     })
 
     it('pass the same modifyable event context', async () => {
@@ -245,7 +252,10 @@ describe('hooks', () => {
         })],
         [/./, [], jest.fn()]
       ]
-      await executeHooks('url', 'value', where)
+      executeHooks(where, {
+        url: 'url', 
+        value: 'value'
+      })
       const event = where[1][2].mock.calls[0][0]
       expect(event.value).toBe('new value')
       expect(event.foo).toBe('bar')
@@ -256,7 +266,10 @@ describe('hooks', () => {
         [/^a/, [], jest.fn()],
         [/^b/, [], jest.fn()]
       ]
-      await executeHooks('a', 'value', where)
+      executeHooks(where, {
+        url: 'a',
+        value: 'value'
+      })
       expect(where[0][2]).toHaveBeenCalled()
       expect(where[1][2]).not.toHaveBeenCalled()
     })
@@ -279,7 +292,10 @@ describe('hooks', () => {
         ]
       ]
 
-      await executeHooks('/some/param', 'value', where)
+      executeHooks(where, {
+        url: '/some/param',
+        value: 'value'
+      })
       expect(where[0][2].mock.calls[0][0].params).toStrictEqual({
         name: 'param'
       })
@@ -289,7 +305,7 @@ describe('hooks', () => {
   describe('preventSet', () => {
     it('does not set', async () => {
       beforeSet('/url', event => { event.preventSet = true })
-      await set('/url', 'value')
+      set('/url', 'value')
       expect(getEndpoint).not.toHaveBeenCalled()
     })
   })
@@ -305,7 +321,7 @@ describe('hooks', () => {
         plugin: {}
       }
 
-      await set('/url', 'new value')
+      set('/url', 'new value')
       expect(endpoints['/url'].value).toBe('new value')
       expect(endpoints['/url'].callbacks.uno).not.toHaveBeenCalled()
     })

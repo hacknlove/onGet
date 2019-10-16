@@ -1,5 +1,5 @@
 import { endpoints } from './conf'
-import { set } from './set'
+import { _set } from './set'
 import { pospone } from './pospone'
 
 /**
@@ -19,7 +19,7 @@ export async function refresh (url, force = false) {
   }
   pospone(endpoint)
   endpoint.plugin.refresh(endpoint, async value => {
-    await set(url, value)
+    await _set(endpoint, value)
   })
   return true
 }
