@@ -9,11 +9,26 @@ function parseIfPossible (value) {
   }
 }
 
+export function onChange (endpoint) {
+  if (!global.addEventListener || !global.removeEventListener) {
+    return
+  }
+  function listener () {
+    if (localStorage[endpoint.key] === JSON.stringify(endpoint.value)) {
+      return
+    }
+    endpoint.value = parseIfPossible(localStorage[endpoint.key])
+    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+  }
+  global.addEventListener('storage', listener)
+  return () => {
+    global.removeEventListener(listener)
+  }
+}
+
 const plugin = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  checkInterval: 30000,
-  threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(parseIfPossible(localStorage[endpoint.key]))
   },
@@ -25,6 +40,7 @@ const plugin = {
       return
     }
     localStorage[endpoint.key] = JSON.stringify(endpoint.value)
+    endpoint.unsubscribeStorage = onChange(endpoint)
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
@@ -32,7 +48,9 @@ const plugin = {
   set (endpoint) {
     localStorage[endpoint.key] = JSON.stringify(endpoint.value)
   },
-
+  clean (endpoint) {
+    endpoint.unsubscribeStorage && endpoint.unsubscribeStorage()
+  },
   start () {
     plugin.checkInterval = 0
     plugin.threshold = undefined

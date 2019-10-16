@@ -1,6 +1,6 @@
 /* global localStorage */
 import { endpoints } from '../../src/conf'
-import plugin from '../localstorage.js'
+import plugin, { onChange } from '../localstorage.js'
 
 global.localStorage = {}
 
@@ -88,6 +88,88 @@ describe('plugin', () => {
       global.localStorage.dirty = true
       plugin.start()
       expect(global.localStorage).toStrictEqual({})
+    })
+  })
+
+  describe('clean', () => {
+    it('calls endpoint.unsubscribeStorage if exists', () => {
+      const endpoint = {
+        unsubscribeStorage: jest.fn()
+      }
+      plugin.clean(endpoint)
+      expect(endpoint.unsubscribeStorage).toHaveBeenCalledWith()
+    })
+    it('does not break if endpoint.unsubscribeStorage not exists', () => {
+      expect(() => plugin.clean({})).not.toThrow()
+    })
+  })
+})
+
+describe('onChange', () => {
+  beforeEach(() => {
+    delete global.addEventListener
+    delete global.removeEventListener
+  })
+  it('returns if no global.addEventListener', () => {
+    expect(onChange()).toBeUndefined()
+  })
+  it('returns if no global.removeEventListener', () => {
+    expect(onChange()).toBeUndefined()
+  })
+  // Otherwise
+  it('calls addEventListener', () => {
+    global.addEventListener = jest.fn()
+    global.removeEventListener = true
+    onChange()
+    expect(global.addEventListener).toHaveBeenCalled()
+  })
+  it('returns a function', () => {
+    global.addEventListener = () => {}
+    global.removeEventListener = true
+    expect(typeof onChange()).toBe('function')
+  })
+  it('calls removeEventListener when call the returned function', () => {
+    var listener
+    global.addEventListener = (e, l) => {
+      listener = l
+    }
+    global.removeEventListener = jest.fn()
+    onChange()()
+    expect(global.removeEventListener).toHaveBeenCalledWith(listener)
+  })
+  describe('listener', () => {
+    var endpoint = {}
+    var listener
+    beforeEach(() => {
+      endpoint = {}
+      global.addEventListener = (e, l) => {
+        listener = l
+      }
+      global.removeEventListener = true
+      onChange(endpoint)
+    })
+    it('does nothing if value has not changed', () => {
+      endpoint.key = 'someKey'
+      endpoint.value = 42
+      endpoint.callbacks = {
+        nop: jest.fn()
+
+      }
+      localStorage.someKey = '42'
+      listener()
+      expect(endpoint.callbacks.nop).not.toHaveBeenCalled()
+    })
+    it('sets the new value if has changed', () => {
+      endpoint.key = 'someKey'
+      endpoint.value = 42
+      endpoint.callbacks = {
+        nop: jest.fn()
+
+      }
+      localStorage.someKey = '24'
+      listener()
+      expect(endpoint.value).toBe(24)
+      expect(endpoint.callbacks.nop).toHaveBeenCalledWith(24)
     })
   })
 })

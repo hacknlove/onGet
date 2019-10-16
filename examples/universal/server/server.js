@@ -22,7 +22,7 @@ app.get('/api/v1/counter', (req, res) => {
 
 app.post('/api/v1/counter/:counter', (req, res) => {
   counter += req.params.counter * 1
-  res.json({ counter })
+  res.json({ value: counter })
 })
 
 

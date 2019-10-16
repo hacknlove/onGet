@@ -12,8 +12,6 @@ function parseIfPossible (value) {
 const plugin = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
-  checkInterval: 30000,
-  threshold: 500,
   refresh (endpoint, eventHandler) {
     eventHandler(parseIfPossible(sessionStorage[endpoint.key]))
   },

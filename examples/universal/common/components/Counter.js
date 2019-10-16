@@ -10,8 +10,11 @@ export default function Counter ({ url, label, firstValue }) {
   }
 
   return (
-    <p>
-      { label } Clicked: {value} times
+    <div>
+      <h3>{ label }</h3>
+      <p>
+       Clicked: <code>{value}</code> times
+      </p>
 
       <button onClick={() => sum(1)}>
         +
@@ -28,6 +31,6 @@ export default function Counter ({ url, label, firstValue }) {
       <button onClick={() => setTimeout(() => sum(1), 1000)}>
         Increment async
       </button>
-    </p>
+    </div>
   )
 }
