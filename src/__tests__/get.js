@@ -1,14 +1,14 @@
 import { get } from '../get'
 import { findPlugin } from '../findPlugin'
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 
 jest.mock('../findPlugin')
 
-beforeEach(() => Object.keys(endpoints).forEach(key => delete endpoints[key]))
+beforeEach(() => Object.keys(resources).forEach(key => delete resources[key]))
 
 describe('get', () => {
   it('returns the cached value, if exists', () => {
-    endpoints.someUrl = {
+    resources.someUrl = {
       value: 'value'
     }
     expect(get('someUrl')).toBe('value')

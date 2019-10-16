@@ -12,23 +12,23 @@ function parseIfPossible (value) {
 const plugin = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
-  refresh (endpoint, eventHandler) {
-    eventHandler(parseIfPossible(sessionStorage[endpoint.key]))
+  refresh (resource, eventHandler) {
+    eventHandler(parseIfPossible(sessionStorage[resource.key]))
   },
-  getEndpoint (endpoint) {
-    endpoint.key = endpoint.url.substr(PROTOCOLCUT)
+  getResource (resource) {
+    resource.key = resource.url.substr(PROTOCOLCUT)
 
-    if (sessionStorage[endpoint.key] !== undefined) {
-      endpoint.value = parseIfPossible(sessionStorage[endpoint.key])
+    if (sessionStorage[resource.key] !== undefined) {
+      resource.value = parseIfPossible(sessionStorage[resource.key])
       return
     }
-    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value)
+    sessionStorage[resource.key] = JSON.stringify(resource.value)
   },
   get (url) {
     return parseIfPossible(sessionStorage[url.substr(PROTOCOLCUT)])
   },
-  set (endpoint) {
-    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value)
+  set (resource) {
+    sessionStorage[resource.key] = JSON.stringify(resource.value)
   },
 
   start () {

@@ -1,12 +1,12 @@
 /* global sessionStorage */
-import { endpoints } from '../../src/conf'
+import { resources } from '../../src/conf'
 import plugin from '../sessionstorage.js'
 
 global.sessionStorage = {}
 
 beforeEach(() => {
 
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
   Object.keys(sessionStorage).forEach(key => delete sessionStorage[key])
 })
 
@@ -33,37 +33,37 @@ describe('plugin', () => {
     })
   })
 
-  describe('getEndpoint', () => {
+  describe('getResource', () => {
     it('sets the key', () => {
-      const endpoint = {
+      const resource = {
         url: 'sessionStorage://someUrl'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
-      expect(endpoint.key).toBe('someUrl')
+      expect(resource.key).toBe('someUrl')
     })
 
     it('updates sessionStorage, if sessionStorage has not that key', () => {
-      const endpoint = {
+      const resource = {
         url: 'sessionStorage://someUrl',
         value: 'newValue'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
       expect(JSON.parse(sessionStorage.someUrl)).toBe('newValue')
-      expect(endpoint.value).toBe('newValue')
+      expect(resource.value).toBe('newValue')
     })
 
-    it('updates the endpoint, if has the key', () => {
+    it('updates the resource, if has the key', () => {
       sessionStorage.someUrl = '"oldValue"'
-      const endpoint = {
+      const resource = {
         url: 'sessionStorage://someUrl',
         value: 'newValue'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
       expect(JSON.parse(sessionStorage.someUrl)).toBe('oldValue')
-      expect(endpoint.value).toBe('oldValue')
+      expect(resource.value).toBe('oldValue')
     })
   })
 
@@ -103,7 +103,7 @@ describe('plugin', () => {
   //   })
   // })
 
-  // describe('saveEndpoint', () => {
+  // describe('saveresource', () => {
 
   // })
 

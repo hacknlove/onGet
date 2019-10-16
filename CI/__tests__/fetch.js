@@ -1,6 +1,6 @@
 /* global fetch */
 // Integration
-import { onGet, set, get, refresh, endpoints, plugins } from '../../'
+import { onGet, set, get, refresh, resources, plugins } from '../../'
 
 plugins.forEach(plugin => {
   if (plugin.name !== 'fetch') {
@@ -25,9 +25,9 @@ describe('fetch', () => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => {
-      clearTimeout(endpoints.timeout)
-      delete endpoints[key]
+    Object.keys(resources).forEach(key => {
+      clearTimeout(resources.timeout)
+      delete resources[key]
     })
     fetch.mockImplementation(() => Promise.resolve({
       async text () {
@@ -68,7 +68,7 @@ describe('fetch', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
       await set('key', 'mars')
@@ -97,11 +97,11 @@ describe('fetch', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint if the value has changed', async () => {
+    it('triggers the callbacks of the resource if the value has changed', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
       await new Promise(resolve => setTimeout(resolve, 10))
-      endpoints.key.last = -Infinity
+      resources.key.last = -Infinity
       fetch.mockImplementation(() => Promise.resolve({
         async text () {
           return Promise.resolve('new response')

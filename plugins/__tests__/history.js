@@ -1,5 +1,5 @@
 import { isDifferent } from 'isdifferent'
-import { endpoints } from '../../src/conf'
+import { resources } from '../../src/conf'
 import plugin, { cleanUrlAndGetHistory, getRelativeValue, propagate, state, executeCallbacks } from '../history'
 
 jest.mock('isdifferent')
@@ -11,7 +11,7 @@ const mockedCommand = jest.fn()
 plugin.commands.mockedCommand = mockedCommand
 
 beforeEach(() => Object.keys(state).forEach(key => delete state[key]))
-beforeEach(() => Object.keys(endpoints).forEach(key => delete endpoints[key]))
+beforeEach(() => Object.keys(resources).forEach(key => delete resources[key]))
 beforeEach(() => mockedCommand.mockImplementation())
 
 describe('cleanUrlAndGetHistory', () => {
@@ -97,14 +97,14 @@ describe('propagate', () => {
     expect(() => propagate('someUrl')).not.toThrow()
   })
 
-  it('not call the callbacks of the relative endpoints, if there is no changes', async () => {
+  it('not call the callbacks of the relative resources, if there is no changes', async () => {
     isDifferent.mockReturnValue(false)
-    endpoints['history://someHistory'] = {
+    resources['history://someHistory'] = {
       callbacks: {
         cb: jest.fn()
       }
     }
-    endpoints['history://someHistory#-1'] = {
+    resources['history://someHistory#-1'] = {
       url: 'history://someHistory#-1',
       relative: {
         url: 'history://someHistory',
@@ -114,7 +114,7 @@ describe('propagate', () => {
         cb: jest.fn()
       }
     }
-    endpoints['history://someHistory#0'] = {
+    resources['history://someHistory#0'] = {
       url: 'history://someHistory#0',
       relative: {
         url: 'history://someHistory',
@@ -124,7 +124,7 @@ describe('propagate', () => {
         cb: jest.fn()
       }
     }
-    endpoints['history://someHistory#1'] = {
+    resources['history://someHistory#1'] = {
       url: 'history://someHistory#1',
       relative: {
         url: 'history://someHistory',
@@ -134,7 +134,7 @@ describe('propagate', () => {
         cb: jest.fn()
       }
     }
-    endpoints['history://someHistory#2'] = {
+    resources['history://someHistory#2'] = {
       url: 'history://someHistory#2',
       relative: {
         url: 'history://someHistory',
@@ -145,7 +145,7 @@ describe('propagate', () => {
       }
     }
 
-    endpoints['history://otherHistory#1'] = {
+    resources['history://otherHistory#1'] = {
       url: 'history://otherHistory#1',
       relative: {
         url: 'history://otherHistory',
@@ -170,12 +170,12 @@ describe('propagate', () => {
 
     await new Promise(resolve => setTimeout(resolve, 10))
 
-    expect(endpoints['history://someHistory'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://someHistory#-1'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://someHistory#0'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://someHistory#1'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://someHistory#2'].callbacks.cb).not.toHaveBeenCalled()
-    expect(endpoints['history://otherHistory#1'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://someHistory'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://someHistory#-1'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://someHistory#0'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://someHistory#1'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://someHistory#2'].callbacks.cb).not.toHaveBeenCalled()
+    expect(resources['history://otherHistory#1'].callbacks.cb).not.toHaveBeenCalled()
   })
 })
 
@@ -193,9 +193,9 @@ describe('plugin', () => {
     })
   })
 
-  describe('getEndpoint', () => {
+  describe('getResource', () => {
     it('creates the history if the url is not relative', () => {
-      plugin.getEndpoint({
+      plugin.getResource({
         url: 'noRelative',
         value: 'first value'
       })
@@ -206,25 +206,25 @@ describe('plugin', () => {
       })
     })
 
-    it('creates a relative endpoint, if the url is relative', () => {
-      const endpoint = {
+    it('creates a relative resource, if the url is relative', () => {
+      const resource = {
         url: 'relative#1',
         value: 'first value'
       }
 
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
       expect(state).toEqual({})
 
-      expect(endpoint.value).toBeUndefined()
+      expect(resource.value).toBeUndefined()
 
-      expect(endpoint.relative).toEqual({
+      expect(resource.relative).toEqual({
         url: 'relative',
         n: 1
       })
     })
 
-    it('takes from the history value for the relative endpoint', () => {
+    it('takes from the history value for the relative resource', () => {
       state.relativeUrl = {
         history: [
           'uno',
@@ -235,14 +235,14 @@ describe('plugin', () => {
         cursor: 2
       }
 
-      const endpoint = {
+      const resource = {
         url: 'relativeUrl#1',
         value: 'first value'
       }
 
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
-      expect(endpoint.value).toBe('dos')
+      expect(resource.value).toBe('dos')
     })
   })
 
@@ -339,7 +339,7 @@ describe('plugin', () => {
           cursor: 2
         }
 
-        endpoints['someUrl#2'] = {
+        resources['someUrl#2'] = {
           url: 'someUrl#1',
           relative: {
             url: 'someUrl',
@@ -377,7 +377,7 @@ describe('plugin', () => {
           cursor: 2
         })
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints['someUrl#2'].callbacks.cb).not.toHaveBeenCalled()
+        expect(resources['someUrl#2'].callbacks.cb).not.toHaveBeenCalled()
       })
     })
     describe('absolute url', () => {
@@ -450,7 +450,7 @@ describe('plugin', () => {
           cursor: 3
         }
 
-        endpoints['someUrl#1'] = {
+        resources['someUrl#1'] = {
           url: 'someUrl#1',
           relative: {
             url: 'someUrl',
@@ -467,9 +467,9 @@ describe('plugin', () => {
           value: 'cinco'
         })
 
-        expect(endpoints['someUrl#1'].value).toBe('cuatro')
+        expect(resources['someUrl#1'].value).toBe('cuatro')
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints['someUrl#1'].callbacks.cb).toHaveBeenCalledWith('cuatro')
+        expect(resources['someUrl#1'].callbacks.cb).toHaveBeenCalledWith('cuatro')
       })
 
       it('does nothing if the new value is equal to the old one', () => {
@@ -512,31 +512,31 @@ describe('plugin', () => {
       })).not.toThrow()
     })
 
-    it('does nothing if the absolute endpoint is not for clean', () => {
-      endpoints.someUrl = {}
+    it('does nothing if the absolute resource is not for clean', () => {
+      resources.someUrl = {}
       state.someUrl = {}
       expect(() => plugin.clean({
         url: 'someUrl'
       })).not.toThrow()
     })
 
-    it('does nothing if exists some relative endpoint not for clean', () => {
-      endpoints.someUrl = {
+    it('does nothing if exists some relative resource not for clean', () => {
+      resources.someUrl = {
         clean: true
       }
-      endpoints.other = {
+      resources.other = {
         clean: true
       }
-      endpoints['other#1'] = {
+      resources['other#1'] = {
         clean: false
       }
-      endpoints['other#2'] = {
+      resources['other#2'] = {
         clean: false,
         relative: {
           url: 'other'
         }
       }
-      endpoints['someUrl#1'] = {
+      resources['someUrl#1'] = {
         relative: {
           url: 'someUrl'
         }
@@ -549,16 +549,16 @@ describe('plugin', () => {
     })
 
     it('it removes if every relative is for clean', () => {
-      endpoints.someUrl = {
+      resources.someUrl = {
         clean: true
       }
-      endpoints.other = {
+      resources.other = {
         clean: true
       }
-      endpoints['other#1'] = {
+      resources['other#1'] = {
         clean: false
       }
-      endpoints['someUrl#1'] = {
+      resources['someUrl#1'] = {
         clean: true,
         relative: {
           url: 'someUrl'
@@ -622,7 +622,7 @@ describe('plugin', () => {
           cursor: 1
         }
 
-        endpoints['someUrl#-1'] = {
+        resources['someUrl#-1'] = {
           url: 'someUrl#-1',
           relative: {
             url: 'someUrl',
@@ -636,16 +636,16 @@ describe('plugin', () => {
 
         commands.replace('someUrl', 'cinco')
 
-        expect(endpoints['someUrl#-1'].value).toBeUndefined()
+        expect(resources['someUrl#-1'].value).toBeUndefined()
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints['someUrl#-1'].callbacks.cb).toHaveBeenCalledWith(undefined)
+        expect(resources['someUrl#-1'].callbacks.cb).toHaveBeenCalledWith(undefined)
       })
-      it('updates the endpoint and call the callbacks', async () => {
+      it('updates the resource and call the callbacks', async () => {
         state.someUrl = {
           history: [1, 2, 3, 4],
           cursor: 3
         }
-        endpoints.someUrl = {
+        resources.someUrl = {
           value: 4,
           callbacks: {
             cb: jest.fn()
@@ -653,9 +653,9 @@ describe('plugin', () => {
         }
 
         commands.replace('someUrl', 7)
-        expect(endpoints.someUrl.value).toBe(7)
+        expect(resources.someUrl.value).toBe(7)
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(7)
+        expect(resources.someUrl.callbacks.cb).toHaveBeenCalledWith(7)
       })
     })
 
@@ -686,12 +686,12 @@ describe('plugin', () => {
       it('does not break if no history', () => {
         expect(() => commands.undo('someUrl')).not.toThrow()
       })
-      it('updates the endpoint and call the callbacks', async () => {
+      it('updates the resource and call the callbacks', async () => {
         state.someUrl = {
           history: [1, 2, 3, 4],
           cursor: 3
         }
-        endpoints.someUrl = {
+        resources.someUrl = {
           value: 4,
           callbacks: {
             cb: jest.fn()
@@ -699,9 +699,9 @@ describe('plugin', () => {
         }
 
         commands.undo('someUrl')
-        expect(endpoints.someUrl.value).toBe(3)
+        expect(resources.someUrl.value).toBe(3)
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(3)
+        expect(resources.someUrl.callbacks.cb).toHaveBeenCalledWith(3)
       })
     })
 
@@ -735,12 +735,12 @@ describe('plugin', () => {
       it('does not break if no history', () => {
         expect(() => commands.redo('someUrl')).not.toThrow()
       })
-      it('updates the endpoint and call the callbacks', async () => {
+      it('updates the resource and call the callbacks', async () => {
         state.someUrl = {
           history: [1, 2, 3, 4],
           cursor: 2
         }
-        endpoints.someUrl = {
+        resources.someUrl = {
           value: 3,
           callbacks: {
             cb: jest.fn()
@@ -748,9 +748,9 @@ describe('plugin', () => {
         }
 
         commands.redo('someUrl')
-        expect(endpoints.someUrl.value).toBe(4)
+        expect(resources.someUrl.value).toBe(4)
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(4)
+        expect(resources.someUrl.callbacks.cb).toHaveBeenCalledWith(4)
       })
     })
 
@@ -785,12 +785,12 @@ describe('plugin', () => {
       it('does not break if no history', () => {
         expect(() => commands.goto('someUrl')).not.toThrow()
       })
-      it('updates the endpoint and call the callbacks', async () => {
+      it('updates the resource and call the callbacks', async () => {
         state.someUrl = {
           history: [1, 2, 3, 4],
           cursor: 3
         }
-        endpoints.someUrl = {
+        resources.someUrl = {
           value: 4,
           callbacks: {
             cb: jest.fn()
@@ -798,9 +798,9 @@ describe('plugin', () => {
         }
 
         commands.goto('someUrl', 1)
-        expect(endpoints.someUrl.value).toBe(2)
+        expect(resources.someUrl.value).toBe(2)
         await new Promise(resolve => setTimeout(resolve, 10))
-        expect(endpoints.someUrl.callbacks.cb).toHaveBeenCalledWith(2)
+        expect(resources.someUrl.callbacks.cb).toHaveBeenCalledWith(2)
       })
     })
     describe('first', () => {
@@ -867,7 +867,7 @@ describe('plugin', () => {
 
     describe('start', () => {
       it('reset the state', () => {
-        plugin.getEndpoint({
+        plugin.getResource({
           url: 'url',
           value: 'value'
         })
@@ -917,11 +917,11 @@ describe('plugin', () => {
     })
   })
 
-  describe('saveEndpoint', () => {
+  describe('saveresource', () => {
     it('set skip', () => {
-      const savedEndpoint = {}
-      plugin.saveEndpoint('', savedEndpoint)
-      expect(savedEndpoint.preventSave).toBe(true)
+      const savedresource = {}
+      plugin.saveresource('', savedresource)
+      expect(savedresource.preventSave).toBe(true)
     })
   })
 })

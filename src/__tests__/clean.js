@@ -1,72 +1,72 @@
-import { endpoints, conf } from '../conf'
+import { resources, conf } from '../conf'
 import { clean } from '../clean'
 
 beforeEach(() => {
   conf.CACHE_SIZE = 3
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
 })
 
-test('set endpoint.clean to the endpoints without callbacks', () => {
-  endpoints.uno = {
+test('set resource.clean to the resources without callbacks', () => {
+  resources.uno = {
     callbacks: {}
   }
-  endpoints.dos = {
+  resources.dos = {
     callbacks: { no: true }
   }
-  endpoints.tres = {
+  resources.tres = {
     callbacks: {}
   }
 
   clean()
 
-  expect(endpoints.uno.clean).toBe(true)
-  expect(endpoints.dos.clean).toBeUndefined()
-  expect(endpoints.tres.clean).toBe(true)
+  expect(resources.uno.clean).toBe(true)
+  expect(resources.dos.clean).toBeUndefined()
+  expect(resources.tres.clean).toBe(true)
 })
 
-test('set endpoint.clean does nothing if the cache is not full', () => {
+test('set resource.clean does nothing if the cache is not full', () => {
   conf.CACHE_SIZE = 14
-  endpoints.uno = {
+  resources.uno = {
     callbacks: {}
   }
-  endpoints.dos = {
+  resources.dos = {
     callbacks: { no: true }
   }
-  endpoints.tres = {
+  resources.tres = {
     callbacks: {}
   }
 
   clean()
 
-  expect(endpoints.uno.clean).toBeUndefined()
-  expect(endpoints.dos.clean).toBeUndefined()
-  expect(endpoints.tres.clean).toBeUndefined()
+  expect(resources.uno.clean).toBeUndefined()
+  expect(resources.dos.clean).toBeUndefined()
+  expect(resources.tres.clean).toBeUndefined()
 })
 
-test('removes the endpoints marked as clean', () => {
-  endpoints.uno = {
+test('removes the resources marked as clean', () => {
+  resources.uno = {
     url: 'uno',
     clean: true,
     plugin: {}
   }
-  endpoints.dos = {
+  resources.dos = {
     callbacks: { no: true }
   }
-  endpoints.tres = {
+  resources.tres = {
     callbacks: {}
   }
 
   clean()
 
-  expect(endpoints.uno).toBeUndefined()
-  expect(endpoints.dos.clean).toBeUndefined()
-  expect(endpoints.tres.clean).toBe(true)
+  expect(resources.uno).toBeUndefined()
+  expect(resources.dos.clean).toBeUndefined()
+  expect(resources.tres.clean).toBe(true)
 })
 
-test('calls endpoint.plugin.clean', () => {
+test('calls resource.plugin.clean', () => {
   conf.CACHE_SIZE = 0
   const pluginClean = jest.fn()
-  endpoints.uno = {
+  resources.uno = {
     url: 'uno',
     clean: true,
     plugin: {
@@ -75,14 +75,14 @@ test('calls endpoint.plugin.clean', () => {
   }
   clean()
   expect(pluginClean).toHaveBeenCalled()
-  expect(endpoints.uno).toBeUndefined()
+  expect(resources.uno).toBeUndefined()
 })
 
-test('it does not clean, if endpoint.plugin.clean returns truthy', () => {
+test('it does not clean, if resource.plugin.clean returns truthy', () => {
   conf.CACHE_SIZE = 0
   const pluginClean = jest.fn()
   pluginClean.mockReturnValue(true)
-  endpoints.uno = {
+  resources.uno = {
     url: 'uno',
     clean: true,
     plugin: {
@@ -92,5 +92,5 @@ test('it does not clean, if endpoint.plugin.clean returns truthy', () => {
   clean()
 
   expect(pluginClean).toHaveBeenCalled()
-  expect(endpoints.uno).not.toBeUndefined()
+  expect(resources.uno).not.toBeUndefined()
 })

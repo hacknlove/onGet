@@ -1,4 +1,4 @@
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 import { pospone } from '../pospone'
 import { refresh } from '../refresh'
 
@@ -6,12 +6,12 @@ jest.mock('../refresh')
 
 jest.useFakeTimers()
 
-test('if the endpoint has not intervals, it does nothing', () => {
+test('if the resource has not intervals, it does nothing', () => {
   pospone({})
   expect(clearTimeout).not.toHaveBeenCalled()
 })
 
-test('clears the timeout of the endpoint', () => {
+test('clears the timeout of the resource', () => {
   pospone({
     intervals: {},
     timeout: 123456
@@ -19,23 +19,23 @@ test('clears the timeout of the endpoint', () => {
   expect(clearTimeout).toHaveBeenCalledWith(123456)
 })
 
-test('If the endpoint has been removed do not stablish a new timeout', () => {
-  const endpoint = {
+test('If the resource has been removed do not stablish a new timeout', () => {
+  const resource = {
     intervals: {}
   }
-  pospone(endpoint)
+  pospone(resource)
 
-  expect(endpoint.timeout).toBeUndefined()
+  expect(resource.timeout).toBeUndefined()
 })
 
-test('if the endpoint exists, it stablish a new timeout', () => {
-  endpoints.test = true
-  const endpoint = {
+test('if the resource exists, it stablish a new timeout', () => {
+  resources.test = true
+  const resource = {
     url: 'test',
     intervals: {},
     minInterval: 90000
   }
-  pospone(endpoint)
+  pospone(resource)
   expect(setTimeout).toHaveBeenCalled()
   expect(setTimeout.mock.calls[0][1]).toBe(90000)
   jest.runAllTimers()

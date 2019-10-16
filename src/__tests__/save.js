@@ -1,30 +1,30 @@
 import { save } from '../save'
-import { endpoints, plugins } from '../conf'
+import { resources, plugins } from '../conf'
 
 describe('save', () => {
   it('works', () => {
-    endpoints.a = {
+    resources.a = {
       url: 'a',
       value: 'A',
       plugin: {
 
       }
     }
-    endpoints.b = {
+    resources.b = {
       url: 'b',
       value: 'B',
       plugin: {
-        saveEndpoint (url, savedEndpoint) {
-          savedEndpoint.preventSave = true
+        saveresource (url, savedresource) {
+          savedresource.preventSave = true
         }
       }
     }
-    endpoints.c = {
+    resources.c = {
       url: 'c',
       value: 'C',
       plugin: {
-        saveEndpoint (url, savedEndpoint) {
-          savedEndpoint.foo = 'bar'
+        saveresource (url, savedresource) {
+          savedresource.foo = 'bar'
         }
       }
     }
@@ -44,7 +44,7 @@ describe('save', () => {
       name: 'saveNothing'
     })
     expect(save()).toStrictEqual({
-      endpoints: {
+      resources: {
         a: {
           value: 'A'
         },

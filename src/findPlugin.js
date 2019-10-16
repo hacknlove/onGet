@@ -1,8 +1,9 @@
 import { plugins } from './conf'
 
 /**
- * Internal: Returns the first plugin whose regex matchs the url
- * @param {string} url endpoint's url
+ * Returns the first plugin whose regex matchs the url
+ * @private
+ * @param {string} url resource's url
  * @return plugin object
  */
 export function findPlugin (url) {

@@ -1,4 +1,4 @@
-import { endpoints } from '../src/conf'
+import { resources } from '../src/conf'
 import { isDifferent } from 'isdifferent'
 
 export var state = {}
@@ -34,36 +34,36 @@ export function getRelativeValue (url, n) {
 
 export function propagate (url) {
   const prefix = `${url}#`
-  Object.values(endpoints).forEach(endpoint => {
-    if (!endpoint.relative) {
+  Object.values(resources).forEach(resource => {
+    if (!resource.relative) {
       return
     }
-    if (!endpoint.url.startsWith(prefix)) {
+    if (!resource.url.startsWith(prefix)) {
       return
     }
-    const newValue = getRelativeValue(endpoint.relative.url, endpoint.relative.n)
-    if (isDifferent(newValue, endpoint.value)) {
-      endpoint.value = newValue
-      executeCallbacks(endpoint.url)
+    const newValue = getRelativeValue(resource.relative.url, resource.relative.n)
+    if (isDifferent(newValue, resource.value)) {
+      resource.value = newValue
+      executeCallbacks(resource.url)
     }
   })
 }
 
 export function executeCallbacks (url) {
-  const endpoint = endpoints[url]
-  if (!endpoint) {
+  const resource = resources[url]
+  if (!resource) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+  Object.values(resource.callbacks).forEach(cb => cb(resource.value))
 }
 
-export function updateEndpoint (url) {
-  const endpoint = endpoints[url]
-  if (!endpoint) {
+export function updateresource (url) {
+  const resource = resources[url]
+  if (!resource) {
     return
   }
   const history = state[url]
-  endpoint.value = history.history[history.cursor]
+  resource.value = history.history[history.cursor]
   executeCallbacks(url)
 }
 
@@ -80,27 +80,27 @@ const plugin = {
   },
 
   /**
-   * If the state has not value for this endpoint.url, creates a new updated state
-   * else, set endpoint.value according to the state
-   * @param {object} endpoint
+   * If the state has not value for this resource.url, creates a new updated state
+   * else, set resource.value according to the state
+   * @param {object} resource
    */
-  getEndpoint (endpoint) {
-    const relative = endpoint.url.match(/(.*)#(-?\d+)$/)
+  getResource (resource) {
+    const relative = resource.url.match(/(.*)#(-?\d+)$/)
 
     if (!relative) {
-      state[endpoint.url] = {
-        history: [endpoint.value],
+      state[resource.url] = {
+        history: [resource.value],
         cursor: 0
       }
       return
     }
 
-    endpoint.relative = {
+    resource.relative = {
       url: relative[1],
       n: relative[2] * 1
     }
 
-    endpoint.value = getRelativeValue(relative[1], relative[2] * 1)
+    resource.value = getRelativeValue(relative[1], relative[2] * 1)
   },
 
   get (url) {
@@ -115,24 +115,24 @@ const plugin = {
   },
 
   /**
-   * Updates the endpoint.value, and propagates up and down
-   * @params {object} endpoint
+   * Updates the resource.value, and propagates up and down
+   * @params {object} resource
    * @returns {undefined}
    */
-  set (endpoint) {
-    const relative = endpoint.relative
+  set (resource) {
+    const relative = resource.relative
 
     if (!relative) {
-      const history = state[endpoint.url]
-      if (!isDifferent(endpoint.value, history.history[history.cursor])) {
+      const history = state[resource.url]
+      if (!isDifferent(resource.value, history.history[history.cursor])) {
         return
       }
       if (history.cursor < history.history.length - 1) {
         history.history.splice(history.cursor + 1)
       }
-      history.history.push(endpoint.value)
+      history.history.push(resource.value)
       history.cursor++
-      propagate(endpoint.url)
+      propagate(resource.url)
       return
     }
 
@@ -151,47 +151,47 @@ const plugin = {
       return
     }
 
-    history.history[absolute] = endpoint.value
+    history.history[absolute] = resource.value
   },
 
   /**
    * Removes the history
-   * @param {object} endpoint
+   * @param {object} resource
    * @returns {undefined}
    */
-  clean (endpoint) {
-    const url = endpoint.url.replace(/#-?\d+$/, '')
-    if (!state[endpoint.url]) {
+  clean (resource) {
+    const url = resource.url.replace(/#-?\d+$/, '')
+    if (!state[resource.url]) {
       return
     }
 
-    if (endpoints[url] && !endpoints[url].clean) {
+    if (resources[url] && !resources[url].clean) {
       return
     }
 
-    if (Object.values(endpoints).some(endpoint => {
-      if (endpoint.clean) {
+    if (Object.values(resources).some(resource => {
+      if (resource.clean) {
         return false
       }
-      if (!endpoint.relative) {
+      if (!resource.relative) {
         return false
       }
-      if (endpoint.relative.url !== url) {
+      if (resource.relative.url !== url) {
         return false
       }
       return true
     })) {
       return
     }
-    delete state[endpoint.url]
+    delete state[resource.url]
   },
 
   start () {
     state = {}
   },
 
-  saveEndpoint (url, savedEndpoint) {
-    savedEndpoint.preventSave = true
+  saveresource (url, savedresource) {
+    savedresource.preventSave = true
   },
 
   save () {
@@ -231,7 +231,7 @@ const plugin = {
       }
       history.history[history.cursor] = value
 
-      updateEndpoint(url)
+      updateresource(url)
       propagate(url)
     },
     undo (url, n = 1) {
@@ -241,7 +241,7 @@ const plugin = {
         return
       }
       history.cursor = Math.max(0, history.cursor - n)
-      updateEndpoint(url)
+      updateresource(url)
       propagate(url)
     },
     redo (url, n = 1) {
@@ -251,7 +251,7 @@ const plugin = {
         return
       }
       history.cursor = Math.min(history.cursor + n, history.history.length - 1)
-      updateEndpoint(url)
+      updateresource(url)
       propagate(url)
     },
     goto (url, n) {
@@ -267,7 +267,7 @@ const plugin = {
           history.history.length - 1
         )
       )
-      updateEndpoint(url)
+      updateresource(url)
       propagate(url)
     },
     first (url) {

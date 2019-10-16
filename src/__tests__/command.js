@@ -1,5 +1,5 @@
 import { command } from '../command'
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 import { findPlugin } from '../findPlugin'
 
 jest.mock('../findPlugin')
@@ -9,17 +9,17 @@ jest.spyOn(console, 'warn').mockImplementation()
 
 describe('command', () => {
   beforeEach(() => {
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
     findPlugin.mockReturnValue({})
   })
 
-  it('calls findPlugin if there is no endpoint for the url', () => {
+  it('calls findPlugin if there is no resource for the url', () => {
     command('some url')
     expect(findPlugin).toHaveBeenCalledWith('some url')
   })
 
-  it('not call findPlugin if there is endpoint for the url', () => {
-    endpoints.someUrl = { plugin: {} }
+  it('not call findPlugin if there is resource for the url', () => {
+    resources.someUrl = { plugin: {} }
     command('someUrl')
     expect(findPlugin).not.toHaveBeenCalled()
   })

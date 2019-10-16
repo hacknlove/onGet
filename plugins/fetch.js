@@ -5,8 +5,8 @@ const plugin = {
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  async refresh (endpoint, eventHandler) {
-    const response = await fetch(endpoint.url).catch(__error => ({ __error }))
+  async refresh (resource, eventHandler) {
+    const response = await fetch(resource.url).catch(__error => ({ __error }))
     if (response.__error) {
       return eventHandler(response.__error)
     }

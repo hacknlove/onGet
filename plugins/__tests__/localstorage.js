@@ -1,11 +1,11 @@
 /* global localStorage */
-import { endpoints } from '../../src/conf'
+import { resources } from '../../src/conf'
 import plugin, { onChange } from '../localstorage.js'
 
 global.localStorage = {}
 
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
   Object.keys(localStorage).forEach(key => delete localStorage[key])
 })
 
@@ -32,37 +32,37 @@ describe('plugin', () => {
     })
   })
 
-  describe('getEndpoint', () => {
+  describe('getResource', () => {
     it('sets the key', () => {
-      const endpoint = {
+      const resource = {
         url: 'localStorage://someUrl'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
-      expect(endpoint.key).toBe('someUrl')
+      expect(resource.key).toBe('someUrl')
     })
 
     it('updates localStorage, if localStorage has not that key', () => {
-      const endpoint = {
+      const resource = {
         url: 'localStorage://someUrl',
         value: 'newValue'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
       expect(JSON.parse(localStorage.someUrl)).toBe('newValue')
-      expect(endpoint.value).toBe('newValue')
+      expect(resource.value).toBe('newValue')
     })
 
-    it('updates the endpoint, if localStorage has the key', () => {
+    it('updates the resource, if localStorage has the key', () => {
       localStorage.someUrl = '"oldValue"'
-      const endpoint = {
+      const resource = {
         url: 'localStorage://someUrl',
         value: 'newValue'
       }
-      plugin.getEndpoint(endpoint)
+      plugin.getResource(resource)
 
       expect(JSON.parse(localStorage.someUrl)).toBe('oldValue')
-      expect(endpoint.value).toBe('oldValue')
+      expect(resource.value).toBe('oldValue')
     })
   })
 
@@ -92,14 +92,14 @@ describe('plugin', () => {
   })
 
   describe('clean', () => {
-    it('calls endpoint.unsubscribeStorage if exists', () => {
-      const endpoint = {
+    it('calls resource.unsubscribeStorage if exists', () => {
+      const resource = {
         unsubscribeStorage: jest.fn()
       }
-      plugin.clean(endpoint)
-      expect(endpoint.unsubscribeStorage).toHaveBeenCalledWith()
+      plugin.clean(resource)
+      expect(resource.unsubscribeStorage).toHaveBeenCalledWith()
     })
-    it('does not break if endpoint.unsubscribeStorage not exists', () => {
+    it('does not break if resource.unsubscribeStorage not exists', () => {
       expect(() => plugin.clean({})).not.toThrow()
     })
   })
@@ -138,38 +138,38 @@ describe('onChange', () => {
     expect(global.removeEventListener).toHaveBeenCalledWith(listener)
   })
   describe('listener', () => {
-    var endpoint = {}
+    var resource = {}
     var listener
     beforeEach(() => {
-      endpoint = {}
+      resource = {}
       global.addEventListener = (e, l) => {
         listener = l
       }
       global.removeEventListener = true
-      onChange(endpoint)
+      onChange(resource)
     })
     it('does nothing if value has not changed', () => {
-      endpoint.key = 'someKey'
-      endpoint.value = 42
-      endpoint.callbacks = {
+      resource.key = 'someKey'
+      resource.value = 42
+      resource.callbacks = {
         nop: jest.fn()
 
       }
       localStorage.someKey = '42'
       listener()
-      expect(endpoint.callbacks.nop).not.toHaveBeenCalled()
+      expect(resource.callbacks.nop).not.toHaveBeenCalled()
     })
     it('sets the new value if has changed', () => {
-      endpoint.key = 'someKey'
-      endpoint.value = 42
-      endpoint.callbacks = {
+      resource.key = 'someKey'
+      resource.value = 42
+      resource.callbacks = {
         nop: jest.fn()
 
       }
       localStorage.someKey = '24'
       listener()
-      expect(endpoint.value).toBe(24)
-      expect(endpoint.callbacks.nop).toHaveBeenCalledWith(24)
+      expect(resource.value).toBe(24)
+      expect(resource.callbacks.nop).toHaveBeenCalledWith(24)
     })
   })
 })

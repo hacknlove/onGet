@@ -1,18 +1,18 @@
 import { refresh } from '../refresh'
 import { refreshRegExp } from '../refreshRegExp'
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 
 jest.mock('../refresh')
 
 describe('refreshRegExp', () => {
   it('call refresh for the urls that match the regexp', () => {
-    endpoints.a = {
+    resources.a = {
       url: 'a1'
     }
-    endpoints.b = {
+    resources.b = {
       url: 'b'
     }
-    endpoints.c = {
+    resources.c = {
       url: 'a2'
     }
     refreshRegExp(/^a/, 'force')

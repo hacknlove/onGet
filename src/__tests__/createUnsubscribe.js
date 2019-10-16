@@ -1,8 +1,8 @@
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 import { createUnsubscribe } from '../createUnsubscribe'
 
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
 })
 
 test('does not crash if it has been unsubscribed before', () => {
@@ -10,19 +10,19 @@ test('does not crash if it has been unsubscribed before', () => {
 })
 
 test('deletes the subscription', () => {
-  const endpoint = {
+  const resource = {
     callbacks: {
       test: true
     },
     plugin: {}
   }
-  createUnsubscribe(endpoint, 'test')()
+  createUnsubscribe(resource, 'test')()
 
-  expect(endpoint.callbacks.test).toBeUndefined()
+  expect(resource.callbacks.test).toBeUndefined()
 })
 
 test('deletes the interval, if has intervals', () => {
-  const endpoint = {
+  const resource = {
     callbacks: {
       test: true
     },
@@ -31,13 +31,13 @@ test('deletes the interval, if has intervals', () => {
     },
     plugin: {}
   }
-  createUnsubscribe(endpoint, 'test')()
+  createUnsubscribe(resource, 'test')()
 
-  expect(endpoint.intervals.test).toBeUndefined()
+  expect(resource.intervals.test).toBeUndefined()
 })
 
 test('Updates minInterval, if the removed interval is the minumum', () => {
-  const endpoint = {
+  const resource = {
     callbacks: {
       test: true
     },
@@ -47,13 +47,13 @@ test('Updates minInterval, if the removed interval is the minumum', () => {
     },
     plugin: {}
   }
-  createUnsubscribe(endpoint, 'test')()
+  createUnsubscribe(resource, 'test')()
 
-  expect(endpoint.minInterval).toBe(45)
+  expect(resource.minInterval).toBe(45)
 })
 
 test('Updates minInterval, if the removed interval is not the minumum', () => {
-  const endpoint = {
+  const resource = {
     callbacks: {
       test: true
     },
@@ -63,7 +63,7 @@ test('Updates minInterval, if the removed interval is not the minumum', () => {
     },
     plugin: {}
   }
-  createUnsubscribe(endpoint, 'test')()
+  createUnsubscribe(resource, 'test')()
 
-  expect(endpoint.minInterval).toBe(15)
+  expect(resource.minInterval).toBe(15)
 })

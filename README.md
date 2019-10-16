@@ -259,10 +259,10 @@ const plugin = {
 ### Hooks
 All hooks are optional. Define the ones you need to deal with your source.
 
-#### plugin.getEndpoint(endpoint) => undefined
-When `onGet(url, callback)` is executed, it checks if this url is being used, or has been used and is not cleaned), if not it calls the plugin hook `getEndpoint`
+#### plugin.getResource(resource) => undefined
+When `onGet(url, callback)` is executed, it checks if this url is being used, or has been used and is not cleaned), if not it calls the plugin hook `getResource`
 
-At this very first moment, the endpoint contains:
+At this very first moment, the resource contains:
 * url: with the url
 * plugin: with the whole plugin
 * value: as passed in `options.first` or undefined
@@ -270,17 +270,17 @@ At this very first moment, the endpoint contains:
 * intervals: an empty object with the different interval of each subscription (only if plugin has `checkInterval`)
 * last: `-Infinity` if the plugin has `threshold`
 
-You can use `plugin.getEndpoint` to add or change the attributes on the endpoint, so you can deal with the url whenever other plugin hooks were called.
+You can use `plugin.getResource` to add or change the attributes on the resource, so you can deal with the url whenever other plugin hooks were called.
 
-#### plugin.refresh(endpoint, eventHandler) => undefined
-It is called to check the source, and update the `endpoint.value`
+#### plugin.refresh(resource, eventHandler) => undefined
+It is called to check the source, and update the `resource.value`
 
 It is called by `refresh('url')`, and by the periodical checks.
 
-After you get the new value, you should execute `eventHandler(newValue)` and never update `endpoint.value` by yourself, because it is used to determine if it has changed.
+After you get the new value, you should execute `eventHandler(newValue)` and never update `resource.value` by yourself, because it is used to determine if it has changed.
 
-#### plugin.set(endpoint) => undefined
-When `set(url, value)` determines that the new value is different from the current one, it stablish the new `endpoint.value` and then executes the `plugin.set(endpoint)`
+#### plugin.set(resource) => undefined
+When `set(url, value)` determines that the new value is different from the current one, it stablish the new `resource.value` and then executes the `plugin.set(resource)`
 
 You can use `plugin.set` to update the source, if your source can be updated by the plugin, like localStorage, sessionStorage, or dotted, but unlike fetch.
 
@@ -289,12 +289,12 @@ You can use `plugin.set` to update the source, if your source can be updated by 
 
 If there is no cached value, but the plugin for the url has `plugin.get`, `get(url)` returns the response of executing `plugin.get(url)`
 
-To be transparent for the developer, It should return the same value that would be stored in the corresponding `endpoint.value`
+To be transparent for the developer, It should return the same value that would be stored in the corresponding `resource.value`
 
-#### plugin.clean(endpoint) => boolean
-When the garbage collector is going to delete the endpoint from `endpoints` and to stop the periodical check timer, it executes `plugin.clean(endpoint)`
+#### plugin.clean(resource) => boolean
+When the garbage collector is going to delete the resource from `resources` and to stop the periodical check timer, it executes `plugin.clean(resource)`
 
-That is your chance to clean the things up, or to return `true` and prevent the garbage collector from deleting the endpoint
+That is your chance to clean the things up, or to return `true` and prevent the garbage collector from deleting the resource
 
 ## Changes
 

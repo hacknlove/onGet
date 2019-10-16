@@ -9,16 +9,16 @@ function parseIfPossible (value) {
   }
 }
 
-export function onChange (endpoint) {
+export function onChange (resource) {
   if (!global.addEventListener || !global.removeEventListener) {
     return
   }
   function listener () {
-    if (localStorage[endpoint.key] === JSON.stringify(endpoint.value)) {
+    if (localStorage[resource.key] === JSON.stringify(resource.value)) {
       return
     }
-    endpoint.value = parseIfPossible(localStorage[endpoint.key])
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+    resource.value = parseIfPossible(localStorage[resource.key])
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value))
   }
   global.addEventListener('storage', listener)
   return () => {
@@ -29,27 +29,27 @@ export function onChange (endpoint) {
 const plugin = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  refresh (endpoint, eventHandler) {
-    eventHandler(parseIfPossible(localStorage[endpoint.key]))
+  refresh (resource, eventHandler) {
+    eventHandler(parseIfPossible(localStorage[resource.key]))
   },
-  getEndpoint (endpoint) {
-    endpoint.unsubscribeStorage = onChange(endpoint)
-    endpoint.key = endpoint.url.substr(PROTOCOLCUT)
+  getResource (resource) {
+    resource.unsubscribeStorage = onChange(resource)
+    resource.key = resource.url.substr(PROTOCOLCUT)
 
-    if (localStorage[endpoint.key] !== undefined) {
-      endpoint.value = parseIfPossible(localStorage[endpoint.key])
+    if (localStorage[resource.key] !== undefined) {
+      resource.value = parseIfPossible(localStorage[resource.key])
       return
     }
-    localStorage[endpoint.key] = JSON.stringify(endpoint.value)
+    localStorage[resource.key] = JSON.stringify(resource.value)
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
-  set (endpoint) {
-    localStorage[endpoint.key] = JSON.stringify(endpoint.value)
+  set (resource) {
+    localStorage[resource.key] = JSON.stringify(resource.value)
   },
-  clean (endpoint) {
-    endpoint.unsubscribeStorage && endpoint.unsubscribeStorage()
+  clean (resource) {
+    resource.unsubscribeStorage && resource.unsubscribeStorage()
   },
   start () {
     global.localStorage = {}

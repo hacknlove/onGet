@@ -12,7 +12,7 @@ var deepobject = require('@hacknlove/deepobject');
 const conf = {
   CACHE_SIZE: 100
 };
-const endpoints = {};
+const resources = {};
 const plugins = [];
 const setHooks = {
   before: [],
@@ -21,7 +21,7 @@ const setHooks = {
 
 /**
  * Internal: Returns the first plugin whose regex matchs the url
- * @param {string} url endpoint's url
+ * @param {string} url resource's url
  * @return plugin object
  */
 function findPlugin (url) {
@@ -29,34 +29,34 @@ function findPlugin (url) {
 }
 
 function command (url, command, ...params) {
-  const endpoint = endpoints[url] || {
+  const resource = resources[url] || {
     plugin: findPlugin(url)
   };
 
-  if (!endpoint.plugin.commands) {
+  if (!resource.plugin.commands) {
     console.warn('the plugin does not accept commands');
     return
   }
 
-  if (!endpoint.plugin.commands[command]) {
+  if (!resource.plugin.commands[command]) {
     console.warn('command not found');
     return
   }
 
-  return endpoint.plugin.commands[command](url, ...params)
+  return resource.plugin.commands[command](url, ...params)
 }
 
 /**
- * Returns the cached value for the endpoint
- * @param {string} url url of the endpoint
+ * Returns the cached value for the resource
+ * @param {string} url url of the resource
  * @param {boolean} onlyCached=true, set to false to force the plugin to obtain a value if none if cached
  * @returns {any} whatever value is cached, or undefined, (or the obtained value if onlyCached = false)
  */
 function get (url) {
-  const endpoint = endpoints[url];
-  if (endpoint) {
-    endpoint.clean = undefined;
-    return endpoints[url].value
+  const resource = resources[url];
+  if (resource) {
+    resource.clean = undefined;
+    return resources[url].value
   }
   const plugin = findPlugin(url);
   if (!plugin.get) {
@@ -79,30 +79,30 @@ function loadPlugins (savedPlugins) {
 }
 
 /**
- * restore the satate of the endpoints
- * @param {savedEndpoints} as returned by saveEndpoints, called by save
+ * restore the satate of the resources
+ * @param {savedresources} as returned by saveresources, called by save
  */
-function loadEndpoints (savedEndpoints) {
-  Object.keys(savedEndpoints).forEach(url => {
+function loadresources (savedresources) {
+  Object.keys(savedresources).forEach(url => {
     const plugin = findPlugin(url);
-    const endpoint = {
-      ...savedEndpoints[url],
+    const resource = {
+      ...savedresources[url],
       callbacks: {},
       url,
       plugin
     };
     if (plugin.checkInterval) {
-      endpoint.intervals = {};
-      endpoint.minInterval = Infinity;
+      resource.intervals = {};
+      resource.minInterval = Infinity;
     }
 
     if (plugin.threshold !== undefined) {
-      endpoint.last = -Infinity;
+      resource.last = -Infinity;
     }
     if (plugin.load) {
-      plugin.load(endpoint);
+      plugin.load(resource);
     }
-    endpoints[url] = endpoint;
+    resources[url] = resource;
   });
 }
 
@@ -110,156 +110,156 @@ function loadEndpoints (savedEndpoints) {
  * Loads a state
  * @param {object} data is an object representing the state in which the application will be, after loading it.
  */
-function load ({ endpoints, plugins }) {
+function load ({ resources, plugins }) {
   loadPlugins(plugins);
-  loadEndpoints(endpoints);
+  loadresources(resources);
 }
 
 /**
- * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
- * It is  intended to be called each time a new endpoint is created
+ * Cleans unused resources. The ones that has no callbacks, no method called recently.
+ * It is  intended to be called each time a new resource is created
  */
 function clean () {
-  const values = Object.values(endpoints);
+  const values = Object.values(resources);
 
   if (values.length < conf.CACHE_SIZE) {
     return
   }
 
-  values.forEach(endpoint => {
-    if (!endpoint.clean) {
-      if (Object.keys(endpoint.callbacks).length === 0) {
-        endpoint.clean = true;
+  values.forEach(resource => {
+    if (!resource.clean) {
+      if (Object.keys(resource.callbacks).length === 0) {
+        resource.clean = true;
       }
       return
     }
-    if (endpoint.plugin.clean && endpoint.plugin.clean(endpoint)) {
+    if (resource.plugin.clean && resource.plugin.clean(resource)) {
       return
     }
-    clearTimeout(endpoints[endpoint.url].timeout);
-    delete endpoints[endpoint.url];
+    clearTimeout(resources[resource.url].timeout);
+    delete resources[resource.url];
   });
 }
 
 /**
- * Creates if needed and returns the object that stores the callbacks, configuration and state of an endpoint
- * @param {string} url endpoint's url
+ * Creates if needed and returns the object that stores the callbacks, configuration and state of an resource
+ * @param {string} url resource's url
  * @params {any} [firstValue] is used as a firstValue, before any action was performed by the plugin
- * @returns {object} the endpoint
+ * @returns {object} the resource
  */
-function getEndpoint (url, firstValue) {
-  if (endpoints[url]) {
-    return endpoints[url]
+function getResource (url, firstValue) {
+  if (resources[url]) {
+    return resources[url]
   }
   setTimeout(clean);
   const plugin = findPlugin(url);
   if (!plugin) {
     throw new Error(`No plugin for ${url}`)
   }
-  const endpoint = {
+  const resource = {
     url,
     plugin,
     value: firstValue,
     callbacks: {}
   };
-  endpoints[url] = endpoint;
+  resources[url] = resource;
 
   if (plugin.checkInterval) {
-    endpoint.intervals = {};
-    endpoint.minInterval = Infinity;
+    resource.intervals = {};
+    resource.minInterval = Infinity;
   }
 
   if (plugin.threshold !== undefined) {
-    endpoint.last = -Infinity;
+    resource.last = -Infinity;
   }
 
-  if (plugin.getEndpoint) {
-    plugin.getEndpoint(endpoint);
+  if (plugin.getResource) {
+    plugin.getResource(resource);
   }
 
-  return endpoint
+  return resource
 }
 
 /**
  * Function factory that creats and returns unsubscribe functions
- * @param {object} endpoint from which unsubscribe
+ * @param {object} resource from which unsubscribe
  * @param {strink} sk key that identifies the subscription
  */
-function createUnsubscribe (endpoint, sk) {
+function createUnsubscribe (resource, sk) {
   return () => {
-    if (!endpoint.callbacks.hasOwnProperty(sk)) {
+    if (!resource.callbacks.hasOwnProperty(sk)) {
       return
     }
 
-    delete endpoint.callbacks[sk];
-    if (endpoint.intervals) {
-      delete endpoint.intervals[sk];
-      endpoint.minInterval = Math.min(...Object.values(endpoint.intervals));
+    delete resource.callbacks[sk];
+    if (resource.intervals) {
+      delete resource.intervals[sk];
+      resource.minInterval = Math.min(...Object.values(resource.intervals));
     }
   }
 }
 
 /**
- * Adds the callback to the endpoint, updates the min interval configuration, and returns the unsubscribe function
- * @param {string} url endpoint's url
- * @param {function} callback it will be called each time the value of the endpoint changes
+ * Adds the callback to the resource, updates the min interval configuration, and returns the unsubscribe function
+ * @param {string} url resource's url
+ * @param {function} callback it will be called each time the value of the resource changes
  * @param {number} [interval] max interval (milliseconds) to check for a new value
  * @return {function} unsubscribe function
  */
 function addNewSubscription (url, callback, interval) {
-  const endpoint = endpoints[url];
+  const resource = resources[url];
 
   var sk;
   do {
     sk = Math.random().toString(36).substr(2) + (Date.now() % 1000).toString(36);
-  } while (endpoint.callbacks[sk])
-  endpoint.callbacks[sk] = callback;
+  } while (resource.callbacks[sk])
+  resource.callbacks[sk] = callback;
 
-  if (endpoint.intervals) {
-    interval = interval || endpoint.plugin.checkInterval;
-    endpoint.intervals[sk] = interval;
-    endpoint.minInterval = Math.min(endpoint.minInterval, interval);
+  if (resource.intervals) {
+    interval = interval || resource.plugin.checkInterval;
+    resource.intervals[sk] = interval;
+    resource.minInterval = Math.min(resource.minInterval, interval);
   }
 
-  return createUnsubscribe(endpoint, sk)
+  return createUnsubscribe(resource, sk)
 }
 
 /**
- * Pospone the refresh of the endpoint
- * @param {object} endpoint endpoint whose refresh should be posponed, as returned by getEndpoint(url)
+ * Pospone the refresh of the resource
+ * @param {object} resource resource whose refresh should be posponed, as returned by getResource(url)
  * @returns undefined
  */
-function pospone (endpoint) {
-  if (!endpoint.intervals) {
+function pospone (resource) {
+  if (!resource.intervals) {
     return
   }
-  clearTimeout(endpoint.timeout);
-  if (!endpoints[endpoint.url]) {
+  clearTimeout(resource.timeout);
+  if (!resources[resource.url]) {
     return
   }
-  endpoint.last = Date.now();
-  endpoint.timeout = setTimeout(() => {
-    refresh(endpoint.url);
-  }, endpoint.minInterval);
+  resource.last = Date.now();
+  resource.timeout = setTimeout(() => {
+    refresh(resource.url);
+  }, resource.minInterval);
 }
 
 /**
  * Internal set, that does not call events
- * @param {object} endpoint to be updated
- * @param {*} value to update the endpoint with
- * @param {boolean} preventRefresh to avoid calling the endpoint callbacks
+ * @param {object} resource to be updated
+ * @param {*} value to update the resource with
+ * @param {boolean} preventRefresh to avoid calling the resource callbacks
  */
-function _set (endpoint, value, preventRefresh) {
-  if (!isdifferent.isDifferent(value, endpoint.value)) {
+function _set (resource, value, preventRefresh) {
+  if (!isdifferent.isDifferent(value, resource.value)) {
     return
   }
-  const oldValue = endpoint.value;
-  endpoint.value = value;
-  if (endpoint.plugin.set) {
-    endpoint.plugin.set(endpoint, oldValue, preventRefresh);
+  const oldValue = resource.value;
+  resource.value = value;
+  if (resource.plugin.set) {
+    resource.plugin.set(resource, oldValue, preventRefresh);
   }
   if (!preventRefresh) {
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value));
   }
 }
 
@@ -303,13 +303,13 @@ function insertHook (path, hook, where) {
 }
 
 /**
- * set a new cached value for an endpoint, and call the handlers. If the endpoint does not exists, it creates it.
- * @param {string} url  of the endpoint whose value set to
+ * set a new cached value for an resource, and call the handlers. If the resource does not exists, it creates it.
+ * @param {string} url  of the resource whose value set to
  * @param {any} value value to series
  * @param {object} options to determine the behaviour of the set, and to be passed to the hooks
  * @param {boolean} options.preventPospone if true, it prevents to pospone the next check
  * @param {boolean} event.preventHooks if true, prevent the hooks to be executed.
- * @param {boolean} event.preventRefresh if true, prevents the endpoint callbacks to be executed.
+ * @param {boolean} event.preventRefresh if true, prevents the resource callbacks to be executed.
  * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
  */
 function set (url, value, options = {}) {
@@ -321,15 +321,15 @@ function set (url, value, options = {}) {
   if (beforeResult.preventSet) {
     return
   }
-  const endpoint = endpoints[url];
+  const resource = resources[url];
   value = beforeResult.value;
   options.preventPospone = beforeResult.preventPospone;
 
-  if (!endpoint) {
-    const endpoint = getEndpoint(url, value);
-    if (endpoint.plugin.set) {
-      endpoint.value = value;
-      endpoint.plugin.set(endpoint);
+  if (!resource) {
+    const resource = getResource(url, value);
+    if (resource.plugin.set) {
+      resource.value = value;
+      resource.plugin.set(resource);
     }
     return executeHooks(setHooks.after, {
       ...options,
@@ -338,13 +338,13 @@ function set (url, value, options = {}) {
     })
   }
 
-  const oldValue = endpoint.value;
+  const oldValue = resource.value;
 
-  endpoint.clean = undefined;
-  if (endpoint.intervals && !options.preventPospone) {
-    pospone(endpoint);
+  resource.clean = undefined;
+  if (resource.intervals && !options.preventPospone) {
+    pospone(resource);
   }
-  _set(endpoint, value, beforeResult.preventRefresh);
+  _set(resource, value, beforeResult.preventRefresh);
   return executeHooks(setHooks.after, {
     ...options,
     url,
@@ -355,7 +355,7 @@ function set (url, value, options = {}) {
 
 /**
  * Insert a hook to be executed before doing the set. They can prevent the set, modify the value to be set, prevent to be set
- * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {string} path Pattern to check in which resources execute the hook
  * @param {BeforeSetHook} hook Function to be called
  */
 function beforeSet (path, hook) {
@@ -364,7 +364,7 @@ function beforeSet (path, hook) {
 
 /**
  * Insert a hook to be executed after doing the set. They  modify the value to be set
- * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHook} hook Function to be called
  */
 function afterSet (path, hook) {
@@ -375,10 +375,10 @@ function afterSet (path, hook) {
  * Function to be called before a set operation. They are executed synchrony and they can modify, even prevent, the set.
  * @function BeforeSetHook
  * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the endpoint that has received the set
+ * @param {string} event.url url of the resource that has received the set
  * @param {*} event.value The current value. It can be changed.
  * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
- * @param {boolean} event.preventRefresh set this to true to prevent the endpoint callbacks to be executed.
+ * @param {boolean} event.preventRefresh set this to true to prevent the resource callbacks to be executed.
  * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
  * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
 */
@@ -387,7 +387,7 @@ function afterSet (path, hook) {
  * Function to be called after a set operation. They are executed synchrony and they cannot modify the set.
  * @function afterSetHook
  * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the endpoint that has received the set
+ * @param {string} event.url url of the resource that has received the set
  * @param {*} event.oldValue The previous value
  * @param {*} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
@@ -396,22 +396,22 @@ function afterSet (path, hook) {
 
 /**
  * Obtain the current value and is different, update the cache and call the handlers
- * @param {string} url of the endpoints to be refreshed
+ * @param {string} url of the resources to be refreshed
  * @param {boolean} force to ignore the threshold and force a refresh no matter how close it is from the previous check
  * @returns {boolean} False if there is nothing to refresh, true otherwise
  */
 async function refresh (url, force = false) {
-  const endpoint = endpoints[url];
-  if (!endpoint) {
+  const resource = resources[url];
+  if (!resource) {
     return false
   }
-  endpoint.clean = undefined;
-  if (!force && endpoint.plugin.threshold !== undefined && Date.now() - endpoint.last < endpoint.plugin.threshold) {
+  resource.clean = undefined;
+  if (!force && resource.plugin.threshold !== undefined && Date.now() - resource.last < resource.plugin.threshold) {
     return
   }
-  pospone(endpoint);
-  endpoint.plugin.refresh(endpoint, async value => {
-    await _set(endpoint, value);
+  pospone(resource);
+  resource.plugin.refresh(resource, async value => {
+    await _set(resource, value);
   });
   return true
 }
@@ -429,15 +429,15 @@ function onGet (url, cb, options = {}) {
     first,
     interval
   } = options;
-  const endpoint = getEndpoint(url, first);
+  const resource = getResource(url, first);
 
   const unsubscribe = addNewSubscription(url, cb, interval);
-  endpoint.clean = undefined;
+  resource.clean = undefined;
 
-  if (endpoint.value !== undefined) {
-    cb(endpoint.value);
+  if (resource.value !== undefined) {
+    cb(resource.value);
   }
-  if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
+  if (Date.now() - resource.last > resource.plugin.threshold) {
     refresh(url);
   }
   return unsubscribe
@@ -452,14 +452,14 @@ function once (url, cb) {
 }
 
 /**
- * call refresh on every endpoint that matches the regular expression
- * @param {RegExp} regex to test the endpoints
+ * call refresh on every resource that matches the regular expression
+ * @param {RegExp} regex to test the resources
  * @param {boolean} force to pass to refresh
  */
 function refreshRegExp (regex, force) {
-  Object.values(endpoints).forEach(endpoint => {
-    if (regex.test(endpoint.url)) {
-      refresh(endpoint.url, force);
+  Object.values(resources).forEach(resource => {
+    if (regex.test(resource.url)) {
+      refresh(resource.url, force);
     }
   });
 }
@@ -468,7 +468,7 @@ function refreshRegExp (regex, force) {
  * Registers a plugin. Plugins are checked last registered first checked.
  * @param {object} plugin Plugin object to register
  * @param {string} plugin.name Name of the plugin, not really used
- * @param {RegExp} plugin.regex Regex to match the endpoint's url
+ * @param {RegExp} plugin.regex Regex to match the resource's url
  * @param {number} plugin.checkInterval amount of milliseconds to call refresh,
  * @param {number} plugin.threshold amount of millisecons in which a subsecuent call to get, or onGet, uses the cached value instead of calling refresh
  * @param {function} plugin.refresh function that is called to obtain the value
@@ -481,21 +481,21 @@ function registerPlugin (plugin) {
 /**
  * Internal
  *
- * @return {object} serializable with the minimun data to restore the endpoints
+ * @return {object} serializable with the minimun data to restore the resources
  */
-function savedEndpoints () {
+function savedresources () {
   const saved = {};
-  Object.values(endpoints).forEach(endpoint => {
-    const savedEndpoint = {
-      value: endpoint.value
+  Object.values(resources).forEach(resource => {
+    const savedresource = {
+      value: resource.value
     };
 
-    if (endpoint.plugin.saveEndpoint) {
-      endpoint.plugin.saveEndpoint(endpoint.url, savedEndpoint);
+    if (resource.plugin.saveresource) {
+      resource.plugin.saveresource(resource.url, savedresource);
     }
 
-    if (!savedEndpoint.preventSave) {
-      saved[endpoint.url] = savedEndpoint;
+    if (!savedresource.preventSave) {
+      saved[resource.url] = savedresource;
     }
   });
   return saved
@@ -525,7 +525,7 @@ function savedPlugins () {
  */
 function save () {
   return {
-    endpoints: savedEndpoints(),
+    resources: savedresources(),
     plugins: savedPlugins()
   }
 }
@@ -591,8 +591,8 @@ const plugin = {
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  async refresh (endpoint, eventHandler) {
-    const response = await fetch(endpoint.url).catch(__error => ({ __error }));
+  async refresh (resource, eventHandler) {
+    const response = await fetch(resource.url).catch(__error => ({ __error }));
     if (response.__error) {
       return eventHandler(response.__error)
     }
@@ -622,16 +622,16 @@ function parseIfPossible (value) {
   }
 }
 
-function onChange (endpoint) {
+function onChange (resource) {
   if (!global.addEventListener || !global.removeEventListener) {
     return
   }
   function listener () {
-    if (localStorage[endpoint.key] === JSON.stringify(endpoint.value)) {
+    if (localStorage[resource.key] === JSON.stringify(resource.value)) {
       return
     }
-    endpoint.value = parseIfPossible(localStorage[endpoint.key]);
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+    resource.value = parseIfPossible(localStorage[resource.key]);
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value));
   }
   global.addEventListener('storage', listener);
   return () => {
@@ -642,27 +642,27 @@ function onChange (endpoint) {
 const plugin$1 = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  refresh (endpoint, eventHandler) {
-    eventHandler(parseIfPossible(localStorage[endpoint.key]));
+  refresh (resource, eventHandler) {
+    eventHandler(parseIfPossible(localStorage[resource.key]));
   },
-  getEndpoint (endpoint) {
-    endpoint.unsubscribeStorage = onChange(endpoint);
-    endpoint.key = endpoint.url.substr(PROTOCOLCUT);
+  getResource (resource) {
+    resource.unsubscribeStorage = onChange(resource);
+    resource.key = resource.url.substr(PROTOCOLCUT);
 
-    if (localStorage[endpoint.key] !== undefined) {
-      endpoint.value = parseIfPossible(localStorage[endpoint.key]);
+    if (localStorage[resource.key] !== undefined) {
+      resource.value = parseIfPossible(localStorage[resource.key]);
       return
     }
-    localStorage[endpoint.key] = JSON.stringify(endpoint.value);
+    localStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
-  set (endpoint) {
-    localStorage[endpoint.key] = JSON.stringify(endpoint.value);
+  set (resource) {
+    localStorage[resource.key] = JSON.stringify(resource.value);
   },
-  clean (endpoint) {
-    endpoint.unsubscribeStorage && endpoint.unsubscribeStorage();
+  clean (resource) {
+    resource.unsubscribeStorage && resource.unsubscribeStorage();
   },
   start () {
     global.localStorage = {};
@@ -683,23 +683,23 @@ function parseIfPossible$1 (value) {
 const plugin$2 = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
-  refresh (endpoint, eventHandler) {
-    eventHandler(parseIfPossible$1(sessionStorage[endpoint.key]));
+  refresh (resource, eventHandler) {
+    eventHandler(parseIfPossible$1(sessionStorage[resource.key]));
   },
-  getEndpoint (endpoint) {
-    endpoint.key = endpoint.url.substr(PROTOCOLCUT$1);
+  getResource (resource) {
+    resource.key = resource.url.substr(PROTOCOLCUT$1);
 
-    if (sessionStorage[endpoint.key] !== undefined) {
-      endpoint.value = parseIfPossible$1(sessionStorage[endpoint.key]);
+    if (sessionStorage[resource.key] !== undefined) {
+      resource.value = parseIfPossible$1(sessionStorage[resource.key]);
       return
     }
-    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value);
+    sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
     return parseIfPossible$1(sessionStorage[url.substr(PROTOCOLCUT$1)])
   },
-  set (endpoint) {
-    sessionStorage[endpoint.key] = JSON.stringify(endpoint.value);
+  set (resource) {
+    sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
 
   start () {
@@ -740,36 +740,36 @@ function getRelativeValue (url, n) {
 
 function propagate (url) {
   const prefix = `${url}#`;
-  Object.values(endpoints).forEach(endpoint => {
-    if (!endpoint.relative) {
+  Object.values(resources).forEach(resource => {
+    if (!resource.relative) {
       return
     }
-    if (!endpoint.url.startsWith(prefix)) {
+    if (!resource.url.startsWith(prefix)) {
       return
     }
-    const newValue = getRelativeValue(endpoint.relative.url, endpoint.relative.n);
-    if (isdifferent.isDifferent(newValue, endpoint.value)) {
-      endpoint.value = newValue;
-      executeCallbacks(endpoint.url);
+    const newValue = getRelativeValue(resource.relative.url, resource.relative.n);
+    if (isdifferent.isDifferent(newValue, resource.value)) {
+      resource.value = newValue;
+      executeCallbacks(resource.url);
     }
   });
 }
 
 function executeCallbacks (url) {
-  const endpoint = endpoints[url];
-  if (!endpoint) {
+  const resource = resources[url];
+  if (!resource) {
     return
   }
-  Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  Object.values(resource.callbacks).forEach(cb => cb(resource.value));
 }
 
-function updateEndpoint (url) {
-  const endpoint = endpoints[url];
-  if (!endpoint) {
+function updateresource (url) {
+  const resource = resources[url];
+  if (!resource) {
     return
   }
   const history = state[url];
-  endpoint.value = history.history[history.cursor];
+  resource.value = history.history[history.cursor];
   executeCallbacks(url);
 }
 
@@ -786,27 +786,27 @@ const plugin$3 = {
   },
 
   /**
-   * If the state has not value for this endpoint.url, creates a new updated state
-   * else, set endpoint.value according to the state
-   * @param {object} endpoint
+   * If the state has not value for this resource.url, creates a new updated state
+   * else, set resource.value according to the state
+   * @param {object} resource
    */
-  getEndpoint (endpoint) {
-    const relative = endpoint.url.match(/(.*)#(-?\d+)$/);
+  getResource (resource) {
+    const relative = resource.url.match(/(.*)#(-?\d+)$/);
 
     if (!relative) {
-      state[endpoint.url] = {
-        history: [endpoint.value],
+      state[resource.url] = {
+        history: [resource.value],
         cursor: 0
       };
       return
     }
 
-    endpoint.relative = {
+    resource.relative = {
       url: relative[1],
       n: relative[2] * 1
     };
 
-    endpoint.value = getRelativeValue(relative[1], relative[2] * 1);
+    resource.value = getRelativeValue(relative[1], relative[2] * 1);
   },
 
   get (url) {
@@ -821,24 +821,24 @@ const plugin$3 = {
   },
 
   /**
-   * Updates the endpoint.value, and propagates up and down
-   * @params {object} endpoint
+   * Updates the resource.value, and propagates up and down
+   * @params {object} resource
    * @returns {undefined}
    */
-  set (endpoint) {
-    const relative = endpoint.relative;
+  set (resource) {
+    const relative = resource.relative;
 
     if (!relative) {
-      const history = state[endpoint.url];
-      if (!isdifferent.isDifferent(endpoint.value, history.history[history.cursor])) {
+      const history = state[resource.url];
+      if (!isdifferent.isDifferent(resource.value, history.history[history.cursor])) {
         return
       }
       if (history.cursor < history.history.length - 1) {
         history.history.splice(history.cursor + 1);
       }
-      history.history.push(endpoint.value);
+      history.history.push(resource.value);
       history.cursor++;
-      propagate(endpoint.url);
+      propagate(resource.url);
       return
     }
 
@@ -857,47 +857,47 @@ const plugin$3 = {
       return
     }
 
-    history.history[absolute] = endpoint.value;
+    history.history[absolute] = resource.value;
   },
 
   /**
    * Removes the history
-   * @param {object} endpoint
+   * @param {object} resource
    * @returns {undefined}
    */
-  clean (endpoint) {
-    const url = endpoint.url.replace(/#-?\d+$/, '');
-    if (!state[endpoint.url]) {
+  clean (resource) {
+    const url = resource.url.replace(/#-?\d+$/, '');
+    if (!state[resource.url]) {
       return
     }
 
-    if (endpoints[url] && !endpoints[url].clean) {
+    if (resources[url] && !resources[url].clean) {
       return
     }
 
-    if (Object.values(endpoints).some(endpoint => {
-      if (endpoint.clean) {
+    if (Object.values(resources).some(resource => {
+      if (resource.clean) {
         return false
       }
-      if (!endpoint.relative) {
+      if (!resource.relative) {
         return false
       }
-      if (endpoint.relative.url !== url) {
+      if (resource.relative.url !== url) {
         return false
       }
       return true
     })) {
       return
     }
-    delete state[endpoint.url];
+    delete state[resource.url];
   },
 
   start () {
     state = {};
   },
 
-  saveEndpoint (url, savedEndpoint) {
-    savedEndpoint.preventSave = true;
+  saveresource (url, savedresource) {
+    savedresource.preventSave = true;
   },
 
   save () {
@@ -937,7 +937,7 @@ const plugin$3 = {
       }
       history.history[history.cursor] = value;
 
-      updateEndpoint(url);
+      updateresource(url);
       propagate(url);
     },
     undo (url, n = 1) {
@@ -947,7 +947,7 @@ const plugin$3 = {
         return
       }
       history.cursor = Math.max(0, history.cursor - n);
-      updateEndpoint(url);
+      updateresource(url);
       propagate(url);
     },
     redo (url, n = 1) {
@@ -957,7 +957,7 @@ const plugin$3 = {
         return
       }
       history.cursor = Math.min(history.cursor + n, history.history.length - 1);
-      updateEndpoint(url);
+      updateresource(url);
       propagate(url);
     },
     goto (url, n) {
@@ -973,7 +973,7 @@ const plugin$3 = {
           history.history.length - 1
         )
       );
-      updateEndpoint(url);
+      updateresource(url);
       propagate(url);
     },
     first (url) {
@@ -1009,7 +1009,7 @@ const plugin$3 = {
 var state$1 = {};
 
 /**
- * For each endpoint whose url is a parent of url, update his value and call his callbacks
+ * For each resource whose url is a parent of url, update his value and call his callbacks
  *
  * dotted://foo.bar is a parent of dotted://foo.bar.buz
  * @param {string} url
@@ -1020,30 +1020,30 @@ function propagateUp (url) {
   if (!parentUrl) {
     return
   }
-  const endpoint = endpoints[parentUrl];
+  const resource = resources[parentUrl];
 
-  if (endpoint) {
-    endpoint.value = deepobject.getValue(state$1, endpoint.url);
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value));
+  if (resource) {
+    resource.value = deepobject.getValue(state$1, resource.url);
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value));
   }
   propagateUp(parentUrl);
 }
 
 /**
- * For each endpoint whose url is a child of url, if his value has changed, update it and call his callbacks
+ * For each resource whose url is a child of url, if his value has changed, update it and call his callbacks
  *
  * dotted://foo.bar.buz is a parent of dotted://foo.bar
  * @param {string} url
  * @returns {undefined}
  */
 function propagateDown (url) {
-  const parent = endpoints[url];
+  const parent = resources[url];
   const prefix = `${url}.`;
-  Object.keys(endpoints).forEach(childUrl => {
+  Object.keys(resources).forEach(childUrl => {
     if (!childUrl.startsWith(prefix)) {
       return
     }
-    const child = endpoints[childUrl];
+    const child = resources[childUrl];
     const newChildValue = deepobject.getValue(parent.value, childUrl.substr(url.length + 1));
 
     if (isdifferent.isDifferent(newChildValue, child.value)) {
@@ -1066,19 +1066,19 @@ var dotted = {
   },
 
   /**
-   * If the state has not value for this endpoint.url, creates a new updated state
-   * else, set endpoint.value according to the state
-   * @param {object} endpoint
+   * If the state has not value for this resource.url, creates a new updated state
+   * else, set resource.value according to the state
+   * @param {object} resource
    */
-  getEndpoint (endpoint) {
-    const actualValue = deepobject.getValue(state$1, endpoint.url);
+  getResource (resource) {
+    const actualValue = deepobject.getValue(state$1, resource.url);
     if (actualValue === undefined) {
-      state$1 = deepobject.setValue(state$1, endpoint.url, endpoint.value);
-      propagateUp(endpoint.url);
-      propagateDown(endpoint.url);
+      state$1 = deepobject.setValue(state$1, resource.url, resource.value);
+      propagateUp(resource.url);
+      propagateDown(resource.url);
       return
     }
-    endpoint.value = actualValue;
+    resource.value = actualValue;
   },
 
   /**
@@ -1091,35 +1091,35 @@ var dotted = {
   },
 
   /**
-   * Updates the endpoint.value, and propagates up and down
-   * @params {object} endpoint
+   * Updates the resource.value, and propagates up and down
+   * @params {object} resource
    * @returns {undefined}
    */
-  set (endpoint) {
-    state$1 = deepobject.setValue(state$1, endpoint.url, endpoint.value);
-    propagateUp(endpoint.url);
-    propagateDown(endpoint.url);
+  set (resource) {
+    state$1 = deepobject.setValue(state$1, resource.url, resource.value);
+    propagateUp(resource.url);
+    propagateDown(resource.url);
   },
 
   /**
-   * If there is no children endpoint, delete the value, and propagate up
-   * @param {object} endpoint
+   * If there is no children resource, delete the value, and propagate up
+   * @param {object} resource
    * @returns {undefined}
    */
-  clean (endpoint) {
-    const prefix = `${endpoint.url}.`;
-    if (Object.keys(endpoints).some(url => url.startsWith(prefix))) {
+  clean (resource) {
+    const prefix = `${resource.url}.`;
+    if (Object.keys(resources).some(url => url.startsWith(prefix))) {
       return
     }
-    propagateUp(endpoint.url);
+    propagateUp(resource.url);
   },
 
   start () {
     state$1 = {};
   },
 
-  saveEndpoint (url, savedEndpoint) {
-    savedEndpoint.preventSave = true;
+  saveresource (url, savedresource) {
+    savedresource.preventSave = true;
   },
 
   save () {
@@ -1150,7 +1150,7 @@ exports.beforeSet = beforeSet;
 exports.command = command;
 exports.conf = conf;
 exports.end = end;
-exports.endpoints = endpoints;
+exports.resources = resources;
 exports.get = get;
 exports.load = load;
 exports.onGet = onGet;

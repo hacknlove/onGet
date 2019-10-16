@@ -1,31 +1,31 @@
-import { endpoints } from '../conf'
-import { getEndpoint } from '../getEndpoint'
+import { resources } from '../conf'
+import { getResource } from '../getResource'
 import { findPlugin } from '../findPlugin'
 jest.mock('../findPlugin')
 
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
 })
 
-test('If exists the endpoint returns the endpoint', () => {
-  endpoints.test = Math.random()
-  expect(getEndpoint('test')).toEqual(endpoints.test)
+test('If exists the resource returns the resource', () => {
+  resources.test = Math.random()
+  expect(getResource('test')).toEqual(resources.test)
 })
 
-test('If exists the endpoint, does not call findPlugin', () => {
-  endpoints.test = Math.random()
-  getEndpoint('test')
+test('If exists the resource, does not call findPlugin', () => {
+  resources.test = Math.random()
+  getResource('test')
   expect(findPlugin).not.toHaveBeenCalled()
 })
 
-test('If not exists the endpoint, call findPlugin (plugin no exists, so throw)', () => {
-  expect(() => getEndpoint('test')).toThrow()
+test('If not exists the resource, call findPlugin (plugin no exists, so throw)', () => {
+  expect(() => getResource('test')).toThrow()
   expect(findPlugin).toHaveBeenCalled()
 })
 
-test('If not exists the endpoint, creates one', () => {
+test('If not exists the resource, creates one', () => {
   findPlugin.mockReturnValue({ name: 'voidplugin' })
-  expect(getEndpoint('test')).toEqual({
+  expect(getResource('test')).toEqual({
     url: 'test',
     plugin: {
       name: 'voidplugin'
@@ -35,36 +35,36 @@ test('If not exists the endpoint, creates one', () => {
   })
 })
 
-test('sets the endpoint in endpoints under url', () => {
+test('sets the resource in resources under url', () => {
   findPlugin.mockReturnValue({ name: 'voidplugin' })
-  expect(getEndpoint('testtest')).toEqual(endpoints.testtest)
+  expect(getResource('testtest')).toEqual(resources.testtest)
 })
 
-test('If the plugin has threshold, the endpoint has `last`', () => {
+test('If the plugin has threshold, the resource has `last`', () => {
   findPlugin.mockReturnValue({ threshold: 100 })
-  expect(getEndpoint('test').last).toBeTruthy()
+  expect(getResource('test').last).toBeTruthy()
 })
 
-test('If the plugin has checkInterval, the endpoint has `intervals`', () => {
+test('If the plugin has checkInterval, the resource has `intervals`', () => {
   findPlugin.mockReturnValue({ checkInterval: 100 })
-  expect(getEndpoint('test').intervals).toEqual({})
+  expect(getResource('test').intervals).toEqual({})
 })
 
-test('If the plugin has getEndpoint, is called', () => {
+test('If the plugin has getResource, is called', () => {
   const plugin = {
-    getEndpoint: jest.fn()
+    getResource: jest.fn()
   }
   findPlugin.mockReturnValue(plugin)
-  getEndpoint('test')
-  expect(plugin.getEndpoint).toHaveBeenCalled()
+  getResource('test')
+  expect(plugin.getResource).toHaveBeenCalled()
 })
 
-test('the plugin`s getEndpoint can modify the endpoint', () => {
+test('the plugin`s getResource can modify the resource', () => {
   findPlugin.mockReturnValue({
-    getEndpoint (endpoint) {
-      endpoint.modifyedByMe = true
+    getResource (resource) {
+      resource.modifyedByMe = true
     }
   })
 
-  expect(getEndpoint('test').modifyedByMe).toBe(true)
+  expect(getResource('test').modifyedByMe).toBe(true)
 })

@@ -1,22 +1,22 @@
 import { refresh } from '../refresh'
 import { _set } from '../set'
 import { pospone } from '../pospone'
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 
 jest.mock('../set')
 jest.mock('../pospone')
 
 describe('refresh', () => {
   beforeEach(() => {
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
   })
-  it('if the endpoint does not exists, it does nothing', () => {
+  it('if the resource does not exists, it does nothing', () => {
     refresh('nothing')
     expect(pospone).not.toHaveBeenCalled()
   })
 
   it('set clean to undefined', () => {
-    endpoints.test = {
+    resources.test = {
       clean: true,
       plugin: {
         refresh: jest.fn()
@@ -24,47 +24,47 @@ describe('refresh', () => {
     }
     refresh('test')
 
-    expect(endpoints.test.clean).toBeUndefined()
+    expect(resources.test.clean).toBeUndefined()
   })
 
   it('calls pospone', () => {
-    endpoints.test = {
+    resources.test = {
       plugin: {
         refresh: jest.fn()
       }
     }
     refresh('test')
-    expect(pospone).toHaveBeenCalledWith(endpoints.test)
+    expect(pospone).toHaveBeenCalledWith(resources.test)
   })
 
-  it('calls endpoint.plugin.refresh', () => {
-    endpoints.test = {
+  it('calls resource.plugin.refresh', () => {
+    resources.test = {
       plugin: {
         refresh: jest.fn()
       }
     }
     refresh('test')
-    expect(endpoints.test.plugin.refresh).toHaveBeenCalled()
-    expect(endpoints.test.plugin.refresh.mock.calls[0][0]).toBe(endpoints.test)
+    expect(resources.test.plugin.refresh).toHaveBeenCalled()
+    expect(resources.test.plugin.refresh.mock.calls[0][0]).toBe(resources.test)
   })
 
   it('if the plugin calls the callback, it calls set with url, and the returned value', () => {
-    endpoints.test = {
+    resources.test = {
       plugin: {
         refresh: jest.fn()
       }
     }
-    endpoints.test.plugin.refresh.mockImplementation((endpoint, handler) => {
+    resources.test.plugin.refresh.mockImplementation((resource, handler) => {
       handler('value')
     })
 
     refresh('test')
 
-    expect(_set).toHaveBeenCalledWith(endpoints.test, 'value')
+    expect(_set).toHaveBeenCalledWith(resources.test, 'value')
   })
 
   it('if refresh is called inside the plugin threshold, it does not refresh', () => {
-    endpoints['test url'] = {
+    resources['test url'] = {
       plugin: {
         threshold: 1000,
         refresh: jest.fn()
@@ -73,11 +73,11 @@ describe('refresh', () => {
     }
     refresh('test url')
     expect(pospone).not.toHaveBeenCalled()
-    expect(endpoints['test url'].plugin.refresh).not.toHaveBeenCalled()
+    expect(resources['test url'].plugin.refresh).not.toHaveBeenCalled()
   })
 
   it('if refresh is called inside the plugin threshold with force, it does refresh', () => {
-    endpoints['test url'] = {
+    resources['test url'] = {
       plugin: {
         threshold: 1000,
         refresh: jest.fn()
@@ -86,11 +86,11 @@ describe('refresh', () => {
     }
     refresh('test url', true)
     expect(pospone).toHaveBeenCalled()
-    expect(endpoints['test url'].plugin.refresh).toHaveBeenCalled()
+    expect(resources['test url'].plugin.refresh).toHaveBeenCalled()
   })
 
   it('if refresh is called outside the plugin threshold, it refresh', () => {
-    endpoints['test url'] = {
+    resources['test url'] = {
       plugin: {
         threshold: 1000,
         refresh: jest.fn()
@@ -99,6 +99,6 @@ describe('refresh', () => {
     }
     refresh('test url')
     expect(pospone).toHaveBeenCalled()
-    expect(endpoints['test url'].plugin.refresh).toHaveBeenCalled()
+    expect(resources['test url'].plugin.refresh).toHaveBeenCalled()
   })
 })

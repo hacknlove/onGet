@@ -1,20 +1,21 @@
-import { endpoints } from './conf'
+import { resources } from './conf'
 import { refresh } from './refresh'
 /**
- * Pospone the refresh of the endpoint
- * @param {object} endpoint endpoint whose refresh should be posponed, as returned by getEndpoint(url)
+ * Pospone the refresh of the resource
+ * @private
+ * @param {object} resource resource whose refresh should be posponed, as returned by getResource(url)
  * @returns undefined
  */
-export function pospone (endpoint) {
-  if (!endpoint.intervals) {
+export function pospone (resource) {
+  if (!resource.intervals) {
     return
   }
-  clearTimeout(endpoint.timeout)
-  if (!endpoints[endpoint.url]) {
+  clearTimeout(resource.timeout)
+  if (!resources[resource.url]) {
     return
   }
-  endpoint.last = Date.now()
-  endpoint.timeout = setTimeout(() => {
-    refresh(endpoint.url)
-  }, endpoint.minInterval)
+  resource.last = Date.now()
+  resource.timeout = setTimeout(() => {
+    refresh(resource.url)
+  }, resource.minInterval)
 }

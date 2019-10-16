@@ -1,6 +1,6 @@
 /* global localStorage sessionStorage */
 // Integration
-import { onGet, set, get, refresh, endpoints } from '../../'
+import { onGet, set, get, refresh, resources } from '../../'
 
 global.localStorage = {}
 global.sessionStorage = {}
@@ -13,7 +13,7 @@ describe('dotted', () => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
   })
 
   describe('onGet', () => {
@@ -51,7 +51,7 @@ describe('dotted', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('dotted://foo.bar.hello', cb, { first: 'world' }))
       expect(cb).toHaveBeenCalledWith('world')
@@ -129,7 +129,7 @@ describe('localstorage', () => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
     Object.keys(localStorage).forEach(key => delete localStorage[key])
   })
 
@@ -169,7 +169,7 @@ describe('localstorage', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('localStorage://key', cb))
       await set('localStorage://key', 'mars')
@@ -197,13 +197,13 @@ describe('localstorage', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       localStorage.key = 'earth'
       unsubscribes.push(onGet('localStorage://key', cb))
 
       localStorage.key = 'mars'
-      endpoints['localStorage://key'].last = -Infinity
+      resources['localStorage://key'].last = -Infinity
       await refresh('localStorage://key')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')
@@ -225,7 +225,7 @@ describe('sessionstorage', () => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
     Object.keys(sessionStorage).forEach(key => delete sessionStorage[key])
   })
 
@@ -265,7 +265,7 @@ describe('sessionstorage', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('sessionStorage://key', cb))
       await set('sessionStorage://key', 'mars')
@@ -293,14 +293,14 @@ describe('sessionstorage', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       sessionStorage.key = 'earth'
       unsubscribes.push(onGet('sessionStorage://key', cb))
 
       sessionStorage.key = 'mars'
 
-      endpoints['sessionStorage://key'].last = -Infinity
+      resources['sessionStorage://key'].last = -Infinity
       await refresh('sessionStorage://key')
       jest.runAllTimers()
       expect(cb).toHaveBeenCalledWith('mars')

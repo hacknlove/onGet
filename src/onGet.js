@@ -1,30 +1,36 @@
-import { getEndpoint } from './getEndpoint'
+import { getResource } from './getResource'
 import { addNewSubscription } from './addNewSubscription'
 import { refresh } from './refresh'
 
 /**
- * Set a handler to be called each time the value of the url changes
- * @param {string} url The value to subscribe to
- * @param {function} cb handler to be called
+ * Set a handler to be called each time the value of resource at the url changes
+ * @param {string} url The resource to subscribe to
+ * @param {handler} cb handler to be called
  * @param {object} options Optional parameters
- * @param {integer} options.interval seconds to refresh the value
- * @param {any} options.first first value to pass to the plugin
+ * @param {integer} options.interval seconds check for a change on the resorce's value, (if supported by the plugin)
+ * @param {any} options.first first value to initiate the resorce with
+ * @return {function} unsubscribe function
  */
 export function onGet (url, cb, options = {}) {
   const {
     first,
     interval
   } = options
-  const endpoint = getEndpoint(url, first)
+  const resource = getResource(url, first)
 
   const unsubscribe = addNewSubscription(url, cb, interval)
-  endpoint.clean = undefined
+  resource.clean = undefined
 
-  if (endpoint.value !== undefined) {
-    cb(endpoint.value)
+  if (resource.value !== undefined) {
+    cb(resource.value)
   }
-  if (Date.now() - endpoint.last > endpoint.plugin.threshold) {
+  if (Date.now() - resource.last > resource.plugin.threshold) {
     refresh(url)
   }
   return unsubscribe
 }
+
+/**
+ * @callback handler
+ * @param {object} resource at the url
+*/

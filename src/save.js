@@ -1,23 +1,23 @@
-import { endpoints, plugins } from './conf'
+import { resources, plugins } from './conf'
 
 /**
  * Internal
  *
- * @return {object} serializable with the minimun data to restore the endpoints
+ * @return {object} serializable with the minimun data to restore the resources
  */
-export function savedEndpoints () {
+export function savedresources () {
   const saved = {}
-  Object.values(endpoints).forEach(endpoint => {
-    const savedEndpoint = {
-      value: endpoint.value
+  Object.values(resources).forEach(resource => {
+    const savedresource = {
+      value: resource.value
     }
 
-    if (endpoint.plugin.saveEndpoint) {
-      endpoint.plugin.saveEndpoint(endpoint.url, savedEndpoint)
+    if (resource.plugin.saveresource) {
+      resource.plugin.saveresource(resource.url, savedresource)
     }
 
-    if (!savedEndpoint.preventSave) {
-      saved[endpoint.url] = savedEndpoint
+    if (!savedresource.preventSave) {
+      saved[resource.url] = savedresource
     }
   })
   return saved
@@ -47,7 +47,7 @@ export function savedPlugins () {
  */
 export function save () {
   return {
-    endpoints: savedEndpoints(),
+    resources: savedresources(),
     plugins: savedPlugins()
   }
 }

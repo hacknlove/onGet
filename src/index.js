@@ -1,5 +1,5 @@
 import { command } from './command'
-import { conf, endpoints, plugins } from './conf'
+import { conf, resources, plugins } from './conf'
 import { get } from './get'
 import { load } from './load'
 import { once } from './once'
@@ -29,7 +29,7 @@ export {
   command,
   conf,
   end,
-  endpoints,
+  resources,
   get,
   load,
   once,

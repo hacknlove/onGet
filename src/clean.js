@@ -1,27 +1,28 @@
-import { conf, endpoints } from './conf'
+import { conf, resources } from './conf'
 
 /**
- * Cleans unused endpoints. The ones that has no callbacks, no method called recently.
- * It is  intended to be called each time a new endpoint is created
+ * Cleans unused resources. The ones that has no callbacks, no method called recently.
+ * It is  intended to be called each time a new resource is created
+ * @private
  */
 export function clean () {
-  const values = Object.values(endpoints)
+  const values = Object.values(resources)
 
   if (values.length < conf.CACHE_SIZE) {
     return
   }
 
-  values.forEach(endpoint => {
-    if (!endpoint.clean) {
-      if (Object.keys(endpoint.callbacks).length === 0) {
-        endpoint.clean = true
+  values.forEach(resource => {
+    if (!resource.clean) {
+      if (Object.keys(resource.callbacks).length === 0) {
+        resource.clean = true
       }
       return
     }
-    if (endpoint.plugin.clean && endpoint.plugin.clean(endpoint)) {
+    if (resource.plugin.clean && resource.plugin.clean(resource)) {
       return
     }
-    clearTimeout(endpoints[endpoint.url].timeout)
-    delete endpoints[endpoint.url]
+    clearTimeout(resources[resource.url].timeout)
+    delete resources[resource.url]
   })
 }

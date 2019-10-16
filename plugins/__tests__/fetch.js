@@ -1,11 +1,11 @@
 /* global fetch */
-import { endpoints } from '../../src/conf'
+import { resources } from '../../src/conf'
 import plugin from '../fetch'
 
 global.fetch = jest.fn()
 
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
 })
 
 describe('plugin', () => {

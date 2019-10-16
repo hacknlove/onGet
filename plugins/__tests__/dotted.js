@@ -1,6 +1,6 @@
 import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
 import { isDifferent } from 'isdifferent'
-import { endpoints } from '../../src/conf'
+import { resources } from '../../src/conf'
 import plugin, { propagateUp, propagateDown } from '../dotted'
 
 const deepobject = jest.requireActual('@hacknlove/deepobject')
@@ -13,7 +13,7 @@ jest.mock('@hacknlove/deepobject')
 jest.spyOn(global.console, 'warn').mockImplementation()
 
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
   setValue.mockReturnValue({})
 })
 
@@ -26,12 +26,12 @@ describe('propagateUp', () => {
     propagateUp('noParent')
     expect(getValue).not.toHaveBeenCalled()
   })
-  it('does not break if does not exists the parent endpoint', () => {
+  it('does not break if does not exists the parent resource', () => {
     propagateUp('parent.child')
     expect(getValue).not.toHaveBeenCalled()
   })
   it('calls propagateUp(parentUrl)', () => {
-    endpoints.parent = {
+    resources.parent = {
       url: 'parent',
       callbacks: {}
     }
@@ -40,16 +40,16 @@ describe('propagateUp', () => {
   })
   it('updates parent value', () => {
     getValue.mockReturnValue('newParentValue')
-    endpoints.parent = {
+    resources.parent = {
       callbacks: {}
     }
     propagateUp('parent.child')
 
-    expect(endpoints.parent.value).toBe('newParentValue')
+    expect(resources.parent.value).toBe('newParentValue')
   })
   it('calls parent callbacks', () => {
     getValue.mockReturnValue('newParentValue')
-    endpoints.parent = {
+    resources.parent = {
       callbacks: {
         one: jest.fn(),
         two: jest.fn()
@@ -57,55 +57,55 @@ describe('propagateUp', () => {
     }
     propagateUp('parent.child')
     jest.runAllTimers()
-    expect(endpoints.parent.callbacks.one).toHaveBeenCalledWith('newParentValue')
-    expect(endpoints.parent.callbacks.two).toHaveBeenCalledWith('newParentValue')
+    expect(resources.parent.callbacks.one).toHaveBeenCalledWith('newParentValue')
+    expect(resources.parent.callbacks.two).toHaveBeenCalledWith('newParentValue')
   })
 })
 
 describe('propagateDown', () => {
-  it('if no child endpoints do nothing', () => {
-    endpoints.noChild = {}
+  it('if no child resources do nothing', () => {
+    resources.noChild = {}
     propagateDown('parent')
     expect(getValue).not.toHaveBeenCalled()
   })
   it('use the right relative deepDottedKey', () => {
-    endpoints['parent.grand.child'] = {
+    resources['parent.grand.child'] = {
     }
-    endpoints.parent = {
+    resources.parent = {
     }
     propagateDown('parent')
-    expect(getValue).toHaveBeenCalledWith(endpoints.parent.value, 'grand.child')
+    expect(getValue).toHaveBeenCalledWith(resources.parent.value, 'grand.child')
   })
 
   it('it sets the child value', () => {
-    endpoints['parent.grand.child'] = {
+    resources['parent.grand.child'] = {
       callbacks: {}
     }
-    endpoints.parent = {
+    resources.parent = {
     }
     getValue.mockReturnValue('newChildValue')
     isDifferent.mockReturnValue(true)
     propagateDown('parent')
 
-    expect(endpoints['parent.grand.child'].value).toBe('newChildValue')
+    expect(resources['parent.grand.child'].value).toBe('newChildValue')
   })
 
   it('it calls the child callbacks', () => {
-    endpoints['parent.grand.child'] = {
+    resources['parent.grand.child'] = {
       callbacks: {
         one: jest.fn(),
         two: jest.fn()
       }
     }
-    endpoints.parent = {
+    resources.parent = {
     }
     getValue.mockReturnValue('newChildValue')
     isDifferent.mockReturnValue(true)
     propagateDown('parent')
     jest.runAllTimers()
 
-    expect(endpoints['parent.grand.child'].callbacks.one).toHaveBeenCalledWith('newChildValue')
-    expect(endpoints['parent.grand.child'].callbacks.two).toHaveBeenCalledWith('newChildValue')
+    expect(resources['parent.grand.child'].callbacks.one).toHaveBeenCalledWith('newChildValue')
+    expect(resources['parent.grand.child'].callbacks.two).toHaveBeenCalledWith('newChildValue')
   })
 })
 
@@ -130,11 +130,11 @@ describe('plugin', () => {
     })
   })
 
-  describe('getEndpoint', () => {
+  describe('getResource', () => {
     it('updates the state if undefined', () => {
       getValue.mockReturnValue(undefined)
       setValue.mockReturnValue({}) // To not break other tests
-      plugin.getEndpoint({
+      plugin.getResource({
         url: 'dotted://some.new.key',
         value: 'newValue'
       })
@@ -143,12 +143,12 @@ describe('plugin', () => {
 
     it('updates the value if there is one in the state', () => {
       getValue.mockReturnValue('oldValue')
-      const endpoint = {
+      const resource = {
         url: 'dotted://some.new.key',
         value: 'newValue'
       }
-      plugin.getEndpoint(endpoint)
-      expect(endpoint.value).toBe('oldValue')
+      plugin.getResource(resource)
+      expect(resource.value).toBe('oldValue')
     })
   })
 
@@ -162,21 +162,21 @@ describe('plugin', () => {
 
   describe('set', () => {
     it('updates the state', () => {
-      const endpoint = {
+      const resource = {
         url: 'dotted://some.new.key',
         value: 'newValue'
       }
       setValue.mockReturnValue({})
-      plugin.set(endpoint)
+      plugin.set(resource)
       expect(setValue).toHaveBeenCalledWith({}, 'dotted://some.new.key', 'newValue')
     })
 
     it('propagates up', () => {
-      endpoints['dotted://some.new.key.foo.fii'] = {
+      resources['dotted://some.new.key.foo.fii'] = {
         url: 'dotted://some.new.key.foo.fii',
         value: 'newValue'
       }
-      endpoints['dotted://some'] = {
+      resources['dotted://some'] = {
         url: 'dotted://some',
         callbacks: {
           one: jest.fn()
@@ -184,42 +184,42 @@ describe('plugin', () => {
         value: 'oldValue'
       }
       getValue.mockReturnValue('newValue')
-      plugin.set(endpoints['dotted://some.new.key.foo.fii'])
+      plugin.set(resources['dotted://some.new.key.foo.fii'])
       setValue.mockReturnValue({})
       jest.runAllTimers()
-      expect(endpoints['dotted://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
+      expect(resources['dotted://some'].callbacks.one).toHaveBeenLastCalledWith('newValue')
     })
 
     it('propagates down', () => {
-      endpoints['dotted://some'] = {
+      resources['dotted://some'] = {
         url: 'dotted://some',
         value: 'newValue'
       }
-      endpoints['dotted://some.new.key'] = {
+      resources['dotted://some.new.key'] = {
         url: 'dotted://some.new.key',
         callbacks: {
           one: jest.fn()
         },
         value: 'oldValue'
       }
-      plugin.set(endpoints['dotted://some'])
+      plugin.set(resources['dotted://some'])
       getValue.mockReturnValue('newValue')
       setValue.mockReturnValue({})
       jest.runAllTimers()
-      expect(endpoints['dotted://some.new.key'].callbacks.one).toHaveBeenLastCalledWith('newValue')
+      expect(resources['dotted://some.new.key'].callbacks.one).toHaveBeenLastCalledWith('newValue')
     })
   })
 
   describe('clean', () => {
     it('does nothing if there is children', () => {
-      endpoints['dotted://some.deep.child.foo.bar'] = {}
+      resources['dotted://some.deep.child.foo.bar'] = {}
       plugin.clean({
         url: 'dotted://some.deep.child'
       })
       expect(setTimeout).not.toHaveBeenCalled()
     })
     it('propagateUp if there is no children', () => {
-      endpoints['dotted://some.deep'] = {
+      resources['dotted://some.deep'] = {
         url: 'dotted://some.deep',
         callbacks: {}
       }
@@ -264,11 +264,11 @@ describe('plugin', () => {
     })
   })
 
-  describe('saveEndpoint', () => {
+  describe('saveresource', () => {
     it('set skip', () => {
-      const savedEndpoint = {}
-      plugin.saveEndpoint('', savedEndpoint)
-      expect(savedEndpoint.preventSave).toBe(true)
+      const savedresource = {}
+      plugin.saveresource('', savedresource)
+      expect(savedresource.preventSave).toBe(true)
     })
   })
 })

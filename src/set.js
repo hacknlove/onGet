@@ -1,26 +1,26 @@
 import { isDifferent } from 'isdifferent'
-import { endpoints, setHooks } from './conf'
-import { getEndpoint } from './getEndpoint'
+import { resources, setHooks } from './conf'
+import { getResource } from './getResource'
 import { pospone } from './pospone'
 import pathToRegExp from 'path-to-regexp'
 
 /**
  * Internal set, that does not call events
- * @param {object} endpoint to be updated
- * @param {*} value to update the endpoint with
- * @param {boolean} preventRefresh to avoid calling the endpoint callbacks
+ * @param {object} resource to be updated
+ * @param {*} value to update the resource with
+ * @param {boolean} preventRefresh to avoid calling the resource callbacks
  */
-export function _set (endpoint, value, preventRefresh) {
-  if (!isDifferent(value, endpoint.value)) {
+export function _set (resource, value, preventRefresh) {
+  if (!isDifferent(value, resource.value)) {
     return
   }
-  const oldValue = endpoint.value
-  endpoint.value = value
-  if (endpoint.plugin.set) {
-    endpoint.plugin.set(endpoint, oldValue, preventRefresh)
+  const oldValue = resource.value
+  resource.value = value
+  if (resource.plugin.set) {
+    resource.plugin.set(resource, oldValue, preventRefresh)
   }
   if (!preventRefresh) {
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value))
   }
 }
 
@@ -64,13 +64,13 @@ export function insertHook (path, hook, where) {
 }
 
 /**
- * set a new cached value for an endpoint, and call the handlers. If the endpoint does not exists, it creates it.
- * @param {string} url  of the endpoint whose value set to
+ * set a new cached value for an resource, and call the handlers. If the resource does not exists, it creates it.
+ * @param {string} url  of the resource whose value set to
  * @param {any} value value to series
  * @param {object} options to determine the behaviour of the set, and to be passed to the hooks
  * @param {boolean} options.preventPospone if true, it prevents to pospone the next check
  * @param {boolean} event.preventHooks if true, prevent the hooks to be executed.
- * @param {boolean} event.preventRefresh if true, prevents the endpoint callbacks to be executed.
+ * @param {boolean} event.preventRefresh if true, prevents the resource callbacks to be executed.
  * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
  */
 export function set (url, value, options = {}) {
@@ -82,15 +82,15 @@ export function set (url, value, options = {}) {
   if (beforeResult.preventSet) {
     return
   }
-  const endpoint = endpoints[url]
+  const resource = resources[url]
   value = beforeResult.value
   options.preventPospone = beforeResult.preventPospone
 
-  if (!endpoint) {
-    const endpoint = getEndpoint(url, value)
-    if (endpoint.plugin.set) {
-      endpoint.value = value
-      endpoint.plugin.set(endpoint)
+  if (!resource) {
+    const resource = getResource(url, value)
+    if (resource.plugin.set) {
+      resource.value = value
+      resource.plugin.set(resource)
     }
     return executeHooks(setHooks.after, {
       ...options,
@@ -99,13 +99,13 @@ export function set (url, value, options = {}) {
     })
   }
 
-  const oldValue = endpoint.value
+  const oldValue = resource.value
 
-  endpoint.clean = undefined
-  if (endpoint.intervals && !options.preventPospone) {
-    pospone(endpoint)
+  resource.clean = undefined
+  if (resource.intervals && !options.preventPospone) {
+    pospone(resource)
   }
-  _set(endpoint, value, beforeResult.preventRefresh)
+  _set(resource, value, beforeResult.preventRefresh)
   return executeHooks(setHooks.after, {
     ...options,
     url,
@@ -116,7 +116,7 @@ export function set (url, value, options = {}) {
 
 /**
  * Insert a hook to be executed before doing the set. They can prevent the set, modify the value to be set, prevent to be set
- * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {string} path Pattern to check in which resources execute the hook
  * @param {BeforeSetHook} hook Function to be called
  */
 export function beforeSet (path, hook) {
@@ -125,7 +125,7 @@ export function beforeSet (path, hook) {
 
 /**
  * Insert a hook to be executed after doing the set. They  modify the value to be set
- * @param {string} path Pattern to check in which endpoints execute the hook
+ * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHook} hook Function to be called
  */
 export function afterSet (path, hook) {
@@ -136,10 +136,10 @@ export function afterSet (path, hook) {
  * Function to be called before a set operation. They are executed synchrony and they can modify, even prevent, the set.
  * @function BeforeSetHook
  * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the endpoint that has received the set
+ * @param {string} event.url url of the resource that has received the set
  * @param {*} event.value The current value. It can be changed.
  * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
- * @param {boolean} event.preventRefresh set this to true to prevent the endpoint callbacks to be executed.
+ * @param {boolean} event.preventRefresh set this to true to prevent the resource callbacks to be executed.
  * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
  * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
 */
@@ -148,7 +148,7 @@ export function afterSet (path, hook) {
  * Function to be called after a set operation. They are executed synchrony and they cannot modify the set.
  * @function afterSetHook
  * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the endpoint that has received the set
+ * @param {string} event.url url of the resource that has received the set
  * @param {*} event.oldValue The previous value
  * @param {*} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.

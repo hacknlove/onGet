@@ -1,10 +1,10 @@
-import { load, loadEndpoints, loadPlugins } from '../load'
-import { endpoints, plugins } from '../conf'
+import { load, loadresources, loadPlugins } from '../load'
+import { resources, plugins } from '../conf'
 
 describe('loadPlugins', () => {
   beforeEach(() => {
     plugins.length = 0
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
   })
 
   it('execute plugin.load', () => {
@@ -26,12 +26,12 @@ describe('loadPlugins', () => {
   })
 })
 
-describe('loadEndpoints', () => {
+describe('loadresources', () => {
   beforeEach(() => {
     plugins.length = 0
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
   })
-  it('loads the endpoints', () => {
+  it('loads the resources', () => {
     plugins.push({
       regex: /^a/,
       checkInterval: 100,
@@ -39,11 +39,11 @@ describe('loadEndpoints', () => {
     })
     plugins.push({
       regex: /^b/,
-      load (endpoint) {
-        endpoint.value += ':)'
+      load (resource) {
+        resource.value += ':)'
       }
     })
-    loadEndpoints({
+    loadresources({
       a: {
         value: 'A'
       },
@@ -51,18 +51,18 @@ describe('loadEndpoints', () => {
         value: 'B'
       }
     })
-    expect(endpoints.a.intervals).toStrictEqual({})
-    expect(endpoints.b.value).toBe('B:)')
+    expect(resources.a.intervals).toStrictEqual({})
+    expect(resources.b.value).toBe('B:)')
   })
 })
 describe('load', () => {
   beforeEach(() => {
     plugins.length = 0
-    Object.keys(endpoints).forEach(key => delete endpoints[key])
+    Object.keys(resources).forEach(key => delete resources[key])
   })
   it('works', () => {
     expect(() => load({
-      endpoints: {},
+      resources: {},
       plugins: {}
     })).not.toThrow()
   })

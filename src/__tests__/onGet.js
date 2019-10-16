@@ -1,29 +1,29 @@
-import { getEndpoint } from '../getEndpoint'
+import { getResource } from '../getResource'
 import { addNewSubscription } from '../addNewSubscription'
-import { endpoints } from '../conf'
+import { resources } from '../conf'
 import { onGet } from '../onGet'
 import { refresh } from '../refresh'
 
-jest.mock('../getEndpoint')
+jest.mock('../getResource')
 jest.mock('../addNewSubscription')
 jest.mock('../refresh')
 beforeEach(() => {
-  Object.keys(endpoints).forEach(key => delete endpoints[key])
+  Object.keys(resources).forEach(key => delete resources[key])
 })
 
-test('call getEndpoint with parameters url and first', () => {
-  getEndpoint.mockReturnValue({
+test('call getResource with parameters url and first', () => {
+  getResource.mockReturnValue({
     plugin: {}
   })
 
   onGet('someUrl', 'callback', { first: 'first' })
 
-  expect(getEndpoint).toHaveBeenCalled()
-  expect(getEndpoint).toHaveBeenCalledWith('someUrl', 'first')
+  expect(getResource).toHaveBeenCalled()
+  expect(getResource).toHaveBeenCalledWith('someUrl', 'first')
 })
 
 test('call and returns addNewSubscription with parameters url, cb and interval', () => {
-  getEndpoint.mockReturnValue({
+  getResource.mockReturnValue({
     plugin: {}
   })
   addNewSubscription.mockReturnValue('unsubscribe')
@@ -35,15 +35,15 @@ test('call and returns addNewSubscription with parameters url, cb and interval',
 })
 
 test('sets clean to undefined', () => {
-  getEndpoint.mockReturnValue({
+  getResource.mockReturnValue({
     plugin: {},
     clean: true
   })
   expect(onGet().clean).toBeUndefined()
 })
 
-test('calls callback if endpoint.value != undefined', () => {
-  getEndpoint.mockReturnValue({
+test('calls callback if resource.value != undefined', () => {
+  getResource.mockReturnValue({
     plugin: {},
     value: 'ok testing'
   })
@@ -54,7 +54,7 @@ test('calls callback if endpoint.value != undefined', () => {
 })
 
 test('calls refresh if it is called outside the threshold', () => {
-  getEndpoint.mockReturnValue({
+  getResource.mockReturnValue({
     plugin: {
       threshold: 1000
     },
@@ -68,7 +68,7 @@ test('calls refresh if it is called outside the threshold', () => {
 })
 
 test('does not call refresh if it is called inside the threshold', () => {
-  getEndpoint.mockReturnValue({
+  getResource.mockReturnValue({
     plugin: {
       threshold: 1000
     },

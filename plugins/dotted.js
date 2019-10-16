@@ -1,11 +1,11 @@
 import { getValue, setValue, deleteValue } from '@hacknlove/deepobject'
 import { isDifferent } from 'isdifferent'
-import { endpoints } from '../src/conf'
+import { resources } from '../src/conf'
 
 export var state = {}
 
 /**
- * For each endpoint whose url is a parent of url, update his value and call his callbacks
+ * For each resource whose url is a parent of url, update his value and call his callbacks
  *
  * dotted://foo.bar is a parent of dotted://foo.bar.buz
  * @param {string} url
@@ -16,30 +16,30 @@ export function propagateUp (url) {
   if (!parentUrl) {
     return
   }
-  const endpoint = endpoints[parentUrl]
+  const resource = resources[parentUrl]
 
-  if (endpoint) {
-    endpoint.value = getValue(state, endpoint.url)
-    Object.values(endpoint.callbacks).forEach(cb => cb(endpoint.value))
+  if (resource) {
+    resource.value = getValue(state, resource.url)
+    Object.values(resource.callbacks).forEach(cb => cb(resource.value))
   }
   propagateUp(parentUrl)
 }
 
 /**
- * For each endpoint whose url is a child of url, if his value has changed, update it and call his callbacks
+ * For each resource whose url is a child of url, if his value has changed, update it and call his callbacks
  *
  * dotted://foo.bar.buz is a parent of dotted://foo.bar
  * @param {string} url
  * @returns {undefined}
  */
 export function propagateDown (url) {
-  const parent = endpoints[url]
+  const parent = resources[url]
   const prefix = `${url}.`
-  Object.keys(endpoints).forEach(childUrl => {
+  Object.keys(resources).forEach(childUrl => {
     if (!childUrl.startsWith(prefix)) {
       return
     }
-    const child = endpoints[childUrl]
+    const child = resources[childUrl]
     const newChildValue = getValue(parent.value, childUrl.substr(url.length + 1))
 
     if (isDifferent(newChildValue, child.value)) {
@@ -62,19 +62,19 @@ export default {
   },
 
   /**
-   * If the state has not value for this endpoint.url, creates a new updated state
-   * else, set endpoint.value according to the state
-   * @param {object} endpoint
+   * If the state has not value for this resource.url, creates a new updated state
+   * else, set resource.value according to the state
+   * @param {object} resource
    */
-  getEndpoint (endpoint) {
-    const actualValue = getValue(state, endpoint.url)
+  getResource (resource) {
+    const actualValue = getValue(state, resource.url)
     if (actualValue === undefined) {
-      state = setValue(state, endpoint.url, endpoint.value)
-      propagateUp(endpoint.url)
-      propagateDown(endpoint.url)
+      state = setValue(state, resource.url, resource.value)
+      propagateUp(resource.url)
+      propagateDown(resource.url)
       return
     }
-    endpoint.value = actualValue
+    resource.value = actualValue
   },
 
   /**
@@ -87,35 +87,35 @@ export default {
   },
 
   /**
-   * Updates the endpoint.value, and propagates up and down
-   * @params {object} endpoint
+   * Updates the resource.value, and propagates up and down
+   * @params {object} resource
    * @returns {undefined}
    */
-  set (endpoint) {
-    state = setValue(state, endpoint.url, endpoint.value)
-    propagateUp(endpoint.url)
-    propagateDown(endpoint.url)
+  set (resource) {
+    state = setValue(state, resource.url, resource.value)
+    propagateUp(resource.url)
+    propagateDown(resource.url)
   },
 
   /**
-   * If there is no children endpoint, delete the value, and propagate up
-   * @param {object} endpoint
+   * If there is no children resource, delete the value, and propagate up
+   * @param {object} resource
    * @returns {undefined}
    */
-  clean (endpoint) {
-    const prefix = `${endpoint.url}.`
-    if (Object.keys(endpoints).some(url => url.startsWith(prefix))) {
+  clean (resource) {
+    const prefix = `${resource.url}.`
+    if (Object.keys(resources).some(url => url.startsWith(prefix))) {
       return
     }
-    propagateUp(endpoint.url)
+    propagateUp(resource.url)
   },
 
   start () {
     state = {}
   },
 
-  saveEndpoint (url, savedEndpoint) {
-    savedEndpoint.preventSave = true
+  saveresource (url, savedresource) {
+    savedresource.preventSave = true
   },
 
   save () {

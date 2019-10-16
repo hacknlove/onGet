@@ -1,8 +1,9 @@
-import { endpoints, plugins } from './conf'
+import { resources, plugins } from './conf'
 import { findPlugin } from './findPlugin'
 
 /**
  * Restore the state of the plugins
+ * @private
  * @param {object} savedPlugins as returned by savePlugins, called by save
  */
 export function loadPlugins (savedPlugins) {
@@ -15,30 +16,31 @@ export function loadPlugins (savedPlugins) {
 }
 
 /**
- * restore the satate of the endpoints
- * @param {savedEndpoints} as returned by saveEndpoints, called by save
+ * restore the satate of the resources
+ * @private
+ * @param {savedresources} as returned by saveresources, called by save
  */
-export function loadEndpoints (savedEndpoints) {
-  Object.keys(savedEndpoints).forEach(url => {
+export function loadresources (savedresources) {
+  Object.keys(savedresources).forEach(url => {
     const plugin = findPlugin(url)
-    const endpoint = {
-      ...savedEndpoints[url],
+    const resource = {
+      ...savedresources[url],
       callbacks: {},
       url,
       plugin
     }
     if (plugin.checkInterval) {
-      endpoint.intervals = {}
-      endpoint.minInterval = Infinity
+      resource.intervals = {}
+      resource.minInterval = Infinity
     }
 
     if (plugin.threshold !== undefined) {
-      endpoint.last = -Infinity
+      resource.last = -Infinity
     }
     if (plugin.load) {
-      plugin.load(endpoint)
+      plugin.load(resource)
     }
-    endpoints[url] = endpoint
+    resources[url] = resource
   })
 }
 
@@ -46,7 +48,7 @@ export function loadEndpoints (savedEndpoints) {
  * Loads a state
  * @param {object} data is an object representing the state in which the application will be, after loading it.
  */
-export function load ({ endpoints, plugins }) {
+export function load ({ resources, plugins }) {
   loadPlugins(plugins)
-  loadEndpoints(endpoints)
+  loadresources(resources)
 }

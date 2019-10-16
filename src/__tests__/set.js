@@ -1,105 +1,105 @@
 import { set, insertHook, beforeSet, afterSet, executeHooks } from '../set'
 import { isDifferent } from 'isdifferent'
-import { endpoints, setHooks } from '../conf'
-import { getEndpoint } from '../getEndpoint'
+import { resources, setHooks } from '../conf'
+import { getResource } from '../getResource'
 import { pospone } from '../pospone'
 
 jest.mock('isdifferent')
-jest.mock('../getEndpoint')
+jest.mock('../getResource')
 jest.mock('../pospone')
 jest.useFakeTimers()
 describe('set', () => {
-  it('If the endpoint does not exist, getEndPoint should be called', async () => {
-    const endpoint = { plugin: {} }
-    getEndpoint.mockReturnValue(endpoint)
+  it('If the resource does not exist, getResource should be called', async () => {
+    const resource = { plugin: {} }
+    getResource.mockReturnValue(resource)
 
     set('test', 'value')
-    expect(getEndpoint).toHaveBeenCalledWith('test', 'value')
+    expect(getResource).toHaveBeenCalledWith('test', 'value')
     expect(isDifferent).not.toHaveBeenCalled()
   })
 
   it('If the plugin has the hook set, it is called', async () => {
-    const endpoint = {
+    const resource = {
       plugin: {
         set: jest.fn()
       }
     }
-    getEndpoint.mockReturnValue(endpoint)
+    getResource.mockReturnValue(resource)
 
     set('test', 'value')
 
-    expect(endpoint.value).toBe('value')
+    expect(resource.value).toBe('value')
 
-    expect(endpoint.plugin.set).toHaveBeenCalledWith(endpoint)
+    expect(resource.plugin.set).toHaveBeenCalledWith(resource)
 
     expect(isDifferent).not.toHaveBeenCalled()
   })
 
   it('set clean to undefined', async () => {
-    endpoints.test = {
+    resources.test = {
       clean: true
     }
 
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
 
     set('test')
 
-    expect(endpoints.test.clean).toBeUndefined()
+    expect(resources.test.clean).toBeUndefined()
   })
 
-  it('if endpoint has no intervals, do no set last neither call pospone', async () => {
-    endpoints.test = {}
-    getEndpoint.mockReturnValue(endpoints.test)
+  it('if resource has no intervals, do no set last neither call pospone', async () => {
+    resources.test = {}
+    getResource.mockReturnValue(resources.test)
     set('test')
-    expect(endpoints.test.last).toBeUndefined()
+    expect(resources.test.last).toBeUndefined()
     expect(pospone).not.toHaveBeenCalled()
   })
 
   it('it call pospone', async () => {
-    endpoints.test = {
+    resources.test = {
       intervals: {}
     }
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
     set('test')
-    expect(pospone).toHaveBeenCalledWith(endpoints.test)
+    expect(pospone).toHaveBeenCalledWith(resources.test)
   })
 
   it('do not call pospone', async () => {
-    endpoints.test = {
+    resources.test = {
       intervals: {}
     }
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
     set('test', undefined, { preventPospone: true })
     expect(pospone).not.toHaveBeenCalled()
   })
 
   it('if value is not different do not set the new value', async () => {
-    endpoints.test = {
+    resources.test = {
       value: 'old'
     }
     isDifferent.mockReturnValue(false)
 
     set('test', 'new')
 
-    expect(endpoints.test.value).toBe('old')
+    expect(resources.test.value).toBe('old')
   })
 
   it('if value is different set the new value', async () => {
-    endpoints.test = {
+    resources.test = {
       value: 'old',
       callbacks: {},
       plugin: {}
     }
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
     isDifferent.mockReturnValue(true)
 
     set('test', 'new')
 
-    expect(endpoints.test.value).toBe('new')
+    expect(resources.test.value).toBe('new')
   })
 
   it('if value is different and there is callbacks, call the callbacks', async () => {
-    endpoints.test = {
+    resources.test = {
       value: 'old',
       callbacks: {
         uno: jest.fn(),
@@ -107,18 +107,18 @@ describe('set', () => {
       },
       plugin: {}
     }
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
     isDifferent.mockReturnValue(true)
 
     set('test', 'new')
     jest.runAllTimers()
 
-    expect(endpoints.test.callbacks.uno).toHaveBeenCalledWith('new')
-    expect(endpoints.test.callbacks.dos).toHaveBeenCalledWith('new')
+    expect(resources.test.callbacks.uno).toHaveBeenCalledWith('new')
+    expect(resources.test.callbacks.dos).toHaveBeenCalledWith('new')
   })
 
   it('if value is different and there is plugin.set, call plugin.set', async () => {
-    endpoints.test = {
+    resources.test = {
       value: 'old',
       callbacks: {
       },
@@ -126,12 +126,12 @@ describe('set', () => {
         set: jest.fn()
       }
     }
-    getEndpoint.mockReturnValue(endpoints.test)
+    getResource.mockReturnValue(resources.test)
     isDifferent.mockReturnValue(true)
 
     set('test', 'new')
 
-    expect(endpoints.test.plugin.set).toHaveBeenCalledWith(endpoints.test, 'old', undefined)
+    expect(resources.test.plugin.set).toHaveBeenCalledWith(resources.test, 'old', undefined)
   })
 })
 
@@ -306,14 +306,14 @@ describe('hooks', () => {
     it('does not set', async () => {
       beforeSet('/url', event => { event.preventSet = true })
       set('/url', 'value')
-      expect(getEndpoint).not.toHaveBeenCalled()
+      expect(getResource).not.toHaveBeenCalled()
     })
   })
 
   describe('preventRefresh', () => {
     it('does not call the callbacks', async () => {
       beforeSet('/url', event => { event.preventRefresh = true })
-      endpoints['/url'] = {
+      resources['/url'] = {
         value: 'old',
         callbacks: {
           uno: jest.fn()
@@ -322,8 +322,8 @@ describe('hooks', () => {
       }
 
       set('/url', 'new value')
-      expect(endpoints['/url'].value).toBe('new value')
-      expect(endpoints['/url'].callbacks.uno).not.toHaveBeenCalled()
+      expect(resources['/url'].value).toBe('new value')
+      expect(resources['/url'].callbacks.uno).not.toHaveBeenCalled()
     })
   })
 })
