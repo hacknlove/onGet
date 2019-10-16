@@ -36,7 +36,7 @@ test('deletes the interval, if has intervals', () => {
   expect(resource.intervals.test).toBeUndefined()
 })
 
-test('Updates minInterval, if the removed interval is the minumum', () => {
+test('Updates minInterval, if the removed interval is the minimum', () => {
   const resource = {
     callbacks: {
       test: true
@@ -52,7 +52,7 @@ test('Updates minInterval, if the removed interval is the minumum', () => {
   expect(resource.minInterval).toBe(45)
 })
 
-test('Updates minInterval, if the removed interval is not the minumum', () => {
+test('Updates minInterval, if the removed interval is not the minimum', () => {
   const resource = {
     callbacks: {
       test: true

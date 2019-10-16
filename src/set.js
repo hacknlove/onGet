@@ -152,5 +152,5 @@ export function afterSet (path, hook) {
  * @param {*} event.oldValue The previous value
  * @param {*} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
- * @param {boolean} event.preventPospone Indicates thet next periodical check has been posponed
+ * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
 */

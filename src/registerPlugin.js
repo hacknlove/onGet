@@ -6,7 +6,7 @@ import { plugins } from './conf'
  * @param {string} plugin.name Name of the plugin, not really used
  * @param {RegExp} plugin.regex Regex to match the resource's url
  * @param {number} plugin.checkInterval amount of milliseconds to call refresh,
- * @param {number} plugin.threshold amount of millisecons in which a subsecuent call to get, or onGet, uses the cached value instead of calling refresh
+ * @param {number} plugin.threshold amount of milliseconds in which a subsequent call to get, or onGet, uses the cached value instead of calling refresh
  * @param {function} plugin.refresh function that is called to obtain the value
  * @returns {undefined} undefined
  */

@@ -5,7 +5,6 @@ import plugin from '../sessionstorage.js'
 global.sessionStorage = {}
 
 beforeEach(() => {
-
   Object.keys(resources).forEach(key => delete resources[key])
   Object.keys(sessionStorage).forEach(key => delete sessionStorage[key])
 })

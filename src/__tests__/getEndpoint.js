@@ -62,9 +62,9 @@ test('If the plugin has getResource, is called', () => {
 test('the plugin`s getResource can modify the resource', () => {
   findPlugin.mockReturnValue({
     getResource (resource) {
-      resource.modifyedByMe = true
+      resource.modifiedByMe = true
     }
   })
 
-  expect(getResource('test').modifyedByMe).toBe(true)
+  expect(getResource('test').modifiedByMe).toBe(true)
 })

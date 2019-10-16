@@ -4,7 +4,6 @@ import { findPlugin } from '../findPlugin'
 
 jest.mock('../findPlugin')
 
-
 jest.spyOn(console, 'warn').mockImplementation()
 
 describe('command', () => {
