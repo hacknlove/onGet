@@ -1,18 +1,28 @@
-# working in progress on the readme and docks.
-
------
-
 # onGet
 
-The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications.
+The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is using a sort of virtual client-side API.
 
 ## Why
 
-Because It does not feel right when you end up with a lot of boilerplate code, a lot of unnecessary complexity and a big lack of liberty.
+Because It does not feel right when you end up with a lot of boilerplate code, a lot of unnecessary complexity, a big lack of liberty and too much coupling.
 
 Reactive State shared across your components should be as efficient, transparent, fun to work with, and less intrusive as possible.
 
-## Examples
+A virtual client-side API feels so natural that you will end up with a more understandable and scalable and manteinable code.
+
+## Characteristics
+
+1. It allows you to design a sort of virtual client-side CRUDy API that organize your application state as url accesible resorces
+2. Then your application can access, change, and suscribe to this resources through global methods and urls that you can share as literals, constants or even pass around as variables that changes dinamically, that's up to you and your application needs.
+3. "Batteries included" Philosophy, to deal with diverse kinds of origins and stores for your resources.
+4. It is extensible through plugins, so you can add a new kind of resources that would do whatever you dream of.
+5. If you do server-side rendering or prerendering, you can use serialize the state and share it with the client
+6. You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB
+
+## Documentation
+
+
+## Full Examples
 
 Forked from https://github.com/reduxjs/redux/tree/master/examples
 
@@ -25,35 +35,98 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * Async [source](/examples/async) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
 * Universal [source](/examples/universal)
 
-## Quick view
-
-1. It allows you to design a sort of virtual client-side CRUDy API that organize your application state as url accesible resorces
-2. Then your application can access, change, and suscribe to this resources through global methods and urls that you can share as literals, constants or even pass around as variables that changes dinamically, that's up to you and your application needs.
-3. "Batteries included" Philosophy, to deal with diverse kinds of origins and stores for your resources.
-4. It is extensible through plugins, so you can add a new kind of resources that would do whatever you dream of.
-5. If you do server-side rendering or prerendering, you can use serialize the state and share it with the client
-6. You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB
 
 ## Basic Usage. Examples
 
-### Using a subscription
+### Set and get the value of a resource
 ```js
-import { onGet } from 'onget'
+import { get, set } from 'onget'
 
-// call onGet to subscribe to the url
-const unsubscribe = onGet('dotted://hello', value => {
-  // This will be called each time the value of the resource changes
+get('history://foo') // undefined
+
+set('history://foo', 'bar')
+
+get('history://foo') // 'bar'
+
+```
+
+### Subscribe to a resource
+```js
+import { onGet, set } from 'onget'
+
+const unsubscribe = onGet('dotted://hello', value => { // handler
   console.log(value)
 }, {
-  first: 'word' // You can set a first value, that will be used if there is no one, or if the evaluation of real value is asynchronous
+  first: 'word' // Optionally set a first value only if the response has no value yet
 })
 
-// You can set a new value, and the handler will be called
-set('dotted://hello', 'Earth')
+set('dotted://hello', 'Earth') // The handler will be executed
 
-// You can unsubscribe
-unsubscribe()
+unsubscribe() // You can unsubscribe
 
-// You can set a new value, and now the handler will not be called
-set('dotted://hello', 'Mars')
+set('dotted://hello', 'Mars') // The handler will not be executed
 ```
+
+### React hook
+```js
+import React from 'react'
+import { useOnGet } from 'onget'
+
+export function MyComponent () {
+  const myValue = useOnGet('dotted://myResource')
+
+  return (
+    <p>{myValue}</p>
+  )
+}
+```
+
+### Modify the behavior of `set`
+
+```js
+import { beforeSet, set } from 'onget'
+
+beforeSet('localstorage://day', context => {
+  if (![
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday'
+  ].includes(value)) {
+    context.preventSet = true // prevent the set
+  }
+})
+beforeSet('sessionStorage://count/:item', context => {
+  context.value = parseInt(context.value) // modify the value to be set
+})
+
+set('localStorage://day', 'monday') // localStorage.day => 'monday'
+set('localStorage://day', 'fooday') // localStorage.day => 'monday'
+set('sessionStorage://count/happyness', '42') // sessionStorage['count/happyness'] => 42
+set('sessionStorage://count/life', 12.3) // sessionStorage.day => 12
+```
+
+
+### Execute some function after the set
+```js
+import { afterSet, set } from 'onget'
+
+afterSet('/api/name', context => {
+  fetch('/api/name', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: context.value
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+})
+
+set('/api/name', 'johndoe') // a HTTP POST request will be done
+```
+
+
