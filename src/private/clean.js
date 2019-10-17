@@ -2,7 +2,7 @@ import { conf, resources } from '../lib/conf'
 
 /**
  * Cleans unused resources. The ones that has no callbacks, no method called recently.
- * It is  intended to be called each time a new resource is created
+ * It is  intended to be called each time a new resource is created.
  * @private
  */
 export function clean () {

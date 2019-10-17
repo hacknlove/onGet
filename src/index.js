@@ -1,3 +1,8 @@
+/**
+ * The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.
+ * @module onGet
+ * @namespace onGet
+*/
 import { command } from './lib/command'
 import { conf, resources, plugins } from './lib/conf'
 import { get } from './lib/get'

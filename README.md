@@ -1,6 +1,6 @@
 # onGet
 
-The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is using a sort of virtual client-side API.
+The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.
 
 ## Why
 
@@ -8,16 +8,18 @@ Because It does not feel right when you end up with a lot of boilerplate code, a
 
 Reactive State shared across your components should be as efficient, transparent, fun to work with, and less intrusive as possible.
 
-A virtual client-side API feels so natural that you will end up with a more understandable and scalable and manteinable code.
+A virtual client-side API feels so natural that you will end up with a more understandable and scalable and mantainable code.
 
 ## Characteristics
 
-1. It allows you to design a sort of virtual client-side CRUDy API that organize your application state as url accesible resorces
-2. Then your application can access, change, and suscribe to this resources through global methods and urls that you can share as literals, constants or even pass around as variables that changes dinamically, that's up to you and your application needs.
-3. "Batteries included" Philosophy, to deal with diverse kinds of origins and stores for your resources.
-4. It is extensible through plugins, so you can add a new kind of resources that would do whatever you dream of.
-5. If you do server-side rendering or prerendering, you can use serialize the state and share it with the client
-6. You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB
+1. It allows you to design a sort of client-side CRUDy API that organize your application state as url-accessible resources.
+2. Then your application can access, change, and subscribe to this resources through urls.
+3. It follows a "Batteries included" Philosophy, to help you deal with undoable histories, deep states, remote APIs, localStorage and sessionStorage.
+4. It is extensible through plugins, so you can add a new kind of resources to fit your needs.
+5. You can add transformations and validations to the values you set to the resources.
+6. You use expressjs-like paths to add more functionality to your API
+6. If you do server-side rendering or prerendering, you can use serialize the state and share it with the client.
+7. You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB
 
 ## Documentation
 
@@ -128,5 +130,3 @@ afterSet('/api/name', context => {
 
 set('/api/name', 'johndoe') // a HTTP POST request will be done
 ```
-
-

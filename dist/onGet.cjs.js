@@ -157,7 +157,7 @@ function clean () {
  * Creates if needed and returns the object that stores the callbacks, configuration and state of an resource
  * @private
  * @param {string} url resource's url
- * @params {any} [firstValue] is used as a firstValue, before any action was performed by the plugin
+ * @param {any} [firstValue] is used as a firstValue, before any action was performed by the plugin
  * @returns {object} the resource
  */
 function getResource (url, firstValue) {
@@ -857,7 +857,7 @@ const plugin$3 = {
 
   /**
    * Updates the resource.value, and propagates up and down
-   * @params {object} resource
+   * @param {object} resource
    * @returns {undefined}
    */
   set (resource) {
@@ -1127,7 +1127,7 @@ var dotted = {
 
   /**
    * Updates the resource.value, and propagates up and down
-   * @params {object} resource
+   * @param {object} resource
    * @returns {undefined}
    */
   set (resource) {

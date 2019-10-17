@@ -1,9 +1,9 @@
 import { refresh } from '../refresh'
-import { _set } from '../set'
+import { _set } from '../../private/set'
 import { pospone } from '../../private/pospone'
 import { resources } from '../conf'
 
-jest.mock('../set')
+jest.mock('../../private/set')
 jest.mock('../../private/pospone')
 
 describe('refresh', () => {

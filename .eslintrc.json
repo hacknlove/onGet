@@ -4,7 +4,8 @@
 	},
 	"extends": [
 		"standard",
-    "plugin:jest/recommended"
+		"plugin:jest/recommended",
+		"plugin:jsdoc/recommended"
   ],
 	"globals": {
 		"Atomics": "readonly",
@@ -15,7 +16,8 @@
 		"sourceType": "module"
   },
   "plugins": [
-    "jest"
+		"jest",
+		"jsdoc"
   ],
 	"rules": {
 		"no-prototype-builtins": 0,

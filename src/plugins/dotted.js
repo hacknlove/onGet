@@ -8,6 +8,7 @@ export var state = {}
  * For each resource whose url is a parent of url, update his value and call his callbacks
  *
  * dotted://foo.bar is a parent of dotted://foo.bar.buz
+ * @private
  * @param {string} url
  * @returns {undefined}
  */
@@ -29,6 +30,7 @@ export function propagateUp (url) {
  * For each resource whose url is a child of url, if his value has changed, update it and call his callbacks
  *
  * dotted://foo.bar.buz is a parent of dotted://foo.bar
+ * @private
  * @param {string} url
  * @returns {undefined}
  */
@@ -88,7 +90,7 @@ export default {
 
   /**
    * Updates the resource.value, and propagates up and down
-   * @params {object} resource
+   * @param {object} resource
    * @returns {undefined}
    */
   set (resource) {

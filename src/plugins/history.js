@@ -116,7 +116,7 @@ const plugin = {
 
   /**
    * Updates the resource.value, and propagates up and down
-   * @params {object} resource
+   * @param {object} resource
    * @returns {undefined}
    */
   set (resource) {

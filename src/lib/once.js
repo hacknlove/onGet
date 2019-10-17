@@ -5,7 +5,7 @@ import { onGet } from './onGet'
  *
  * @param {string} url
  * @param {onceHandler} handler
- * @returns
+ * @returns {function} an unsubscribe function
  */
 export function once (url, handler) {
   const unsubscribe = onGet(url, value => {

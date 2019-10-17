@@ -1,5 +1,5 @@
 import { resources } from './conf'
-import { _set } from './set'
+import { _set } from '../private//set'
 import { pospone } from '../private/pospone'
 
 /**
