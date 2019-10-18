@@ -6,6 +6,7 @@ import { executeHooks } from '../private/setHooks'
 
 /**
  * set a new cached value for an resource, and call the handlers. If the resource does not exists, it creates it.
+ *
  * @param {string} url  of the resource whose value set to.
  * @param {any} value value to series.
  * @param {object} options to determine the behaviour of the set, and to be passed to the hooks.
@@ -33,11 +34,12 @@ export function set (url, value, options = {}) {
       resource.value = value
       resource.plugin.set(resource)
     }
-    return executeHooks(setHooks.after, {
+    executeHooks(setHooks.after, {
       ...options,
       url,
       value
     })
+    return
   }
 
   const oldValue = resource.value
@@ -47,7 +49,7 @@ export function set (url, value, options = {}) {
     pospone(resource)
   }
   _set(resource, value, beforeResult.preventRefresh)
-  return executeHooks(setHooks.after, {
+  executeHooks(setHooks.after, {
     ...options,
     url,
     oldValue,

@@ -14,8 +14,8 @@ describe('save', () => {
       url: 'b',
       value: 'B',
       plugin: {
-        saveresource (url, savedresource) {
-          savedresource.preventSave = true
+        saveResource (url, savedResource) {
+          savedResource.preventSave = true
         }
       }
     }
@@ -23,8 +23,8 @@ describe('save', () => {
       url: 'c',
       value: 'C',
       plugin: {
-        saveresource (url, savedresource) {
-          savedresource.foo = 'bar'
+        saveResource (url, savedResource) {
+          savedResource.foo = 'bar'
         }
       }
     }

@@ -190,8 +190,8 @@ const plugin = {
     state = {}
   },
 
-  saveresource (url, savedresource) {
-    savedresource.preventSave = true
+  saveResource (url, savedResource) {
+    savedResource.preventSave = true
   },
 
   save () {

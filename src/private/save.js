@@ -4,19 +4,19 @@ import { resources, plugins } from '../lib/conf'
  * @private
  * @return {object} serializable with the minimun data to restore the resources.
  */
-export function savedresources () {
+export function savedResources () {
   const saved = {}
   Object.values(resources).forEach(resource => {
-    const savedresource = {
+    const savedResource = {
       value: resource.value
     }
 
-    if (resource.plugin.saveresource) {
-      resource.plugin.saveresource(resource.url, savedresource)
+    if (resource.plugin.saveResource) {
+      resource.plugin.saveResource(resource.url, savedResource)
     }
 
-    if (!savedresource.preventSave) {
-      saved[resource.url] = savedresource
+    if (!savedResource.preventSave) {
+      saved[resource.url] = savedResource
     }
   })
   return saved

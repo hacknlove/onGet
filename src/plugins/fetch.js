@@ -5,10 +5,10 @@ const plugin = {
   regex: /^./,
   checkInterval: 30000,
   threshold: 500,
-  async refresh (resource, eventHandler) {
+  async refresh (resource) {
     const response = await fetch(resource.url).catch(__error => ({ __error }))
     if (response.__error) {
-      return eventHandler(response.__error)
+      return response.__error
     }
     const raw = await response.text()
     let value
@@ -17,7 +17,7 @@ const plugin = {
     } catch (e) {
       value = raw
     }
-    eventHandler(value)
+    return value
   },
   start () {
     plugin.checkInterval = undefined

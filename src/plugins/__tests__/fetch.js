@@ -22,9 +22,8 @@ describe('plugin', () => {
   describe('refresh calls eventHandler', () => {
     it('with error if fetch reject', async () => {
       fetch.mockImplementation(() => Promise.reject('error'))
-      const eventHandler = jest.fn()
-      await plugin.refresh('some url', eventHandler)
-      expect(eventHandler).toHaveBeenCalledWith('error')
+      const response = await plugin.refresh('some url')
+      expect(response).toBe('error')
     })
 
     it('with json if fetch resolve', async () => {
@@ -33,9 +32,8 @@ describe('plugin', () => {
           return Promise.resolve('{"ok": true }')
         }
       }))
-      const eventHandler = jest.fn()
-      await plugin.refresh('some url', eventHandler)
-      expect(eventHandler).toHaveBeenCalledWith({ ok: true })
+      const value = await plugin.refresh('some url')
+      expect(value).toStrictEqual({ ok: true })
     })
 
     it('with text if fetch resolve but json fails', async () => {
@@ -44,9 +42,8 @@ describe('plugin', () => {
           return Promise.resolve('RAW BODY')
         }
       }))
-      const eventHandler = jest.fn()
-      await plugin.refresh('some url', eventHandler)
-      expect(eventHandler).toHaveBeenCalledWith('RAW BODY')
+      const value = await plugin.refresh('some url')
+      expect(value).toBe('RAW BODY')
     })
   })
 

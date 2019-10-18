@@ -29,8 +29,8 @@ export function onChange (resource) {
 const plugin = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
-  refresh (resource, eventHandler) {
-    eventHandler(parseIfPossible(localStorage[resource.key]))
+  refresh (resource) {
+    return parseIfPossible(localStorage[resource.key])
   },
   getResource (resource) {
     resource.unsubscribeStorage = onChange(resource)

@@ -26,9 +26,7 @@ describe('plugin', () => {
   describe('refresh calls eventHandler', () => {
     it('with the value', () => {
       sessionStorage.test = 'newValue'
-      const eventHandler = jest.fn()
-      plugin.refresh({ key: 'test' }, eventHandler)
-      expect(eventHandler).toHaveBeenCalledWith('newValue')
+      expect(plugin.refresh({ key: 'test' })).toBe('newValue')
     })
   })
 
@@ -102,7 +100,7 @@ describe('plugin', () => {
   //   })
   // })
 
-  // describe('saveresource', () => {
+  // describe('saveResource', () => {
 
   // })
 

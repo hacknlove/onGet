@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest --watch ./src",
     "coverage": "jest --coverage  ./src",
-    "document": "rm -r docs; esdoc",
+    "document": "rm -r docs; jsdoc --recurse --verbose ./src",
     "build": "./CI/build.sh"
   },
   "publishConfig": {
@@ -51,7 +51,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
-    "jsdoc": "^3.6.3",
+    "jsdoc": "^3.5.5",
     "react": "^16.10.2",
     "react-test-renderer": "^16.10.2",
     "rollup": "^1.24.0",

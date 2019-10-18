@@ -2,39 +2,41 @@ import pathToRegExp from 'path-to-regexp'
 
 /**
  * Execute all the hooks that match an url
+ *
  * @private
- * @param {array} where array to search for the hook
- * @param {object} event object to be passed to the hook
- * @return {object} the event object, it might be modified by the hooks
+ * @param {Array} where array to search for the hook
+ * @param {object} context object to be passed to the hook
+ * @returns {object} the context object, it might be modified by the hooks
  */
-export function executeHooks (where, event) {
+export function executeHooks (where, context) {
   for (let i = 0, z = where.length; i < z; i++) {
-    if (event.preventHooks) {
+    if (context.preventHooks) {
       break
     }
     const [regex, keys, cb] = where[i]
-    const match = event.url.match(regex)
+    const match = context.url.match(regex)
     if (!match) {
       continue
     }
-    event.params = {}
+    context.params = {}
     for (let i = 1; i < match.length; i++) {
-      event.params[keys[i - 1].name] = match[1]
+      context.params[keys[i - 1].name] = match[1]
     }
 
-    cb(event)
+    cb(context)
   }
 
-  return event
+  return context
 }
 
 /**
  * Prepares the regex that match the path patters, and insert the hook in the indicated array
+ *
  * @private
  * @param {string} path the same format of express. (path-to-regexp)
- * @param {(afterSetHook|BeforeSetHook)} hook Function to be called at hook time
- * @param {array} where array to insert the hook in
-*/
+ * @param {afterSetHook|BeforeSetHook} hook Function to be called at hook time
+ * @param {Array} where array to insert the hook in
+ */
 export function insertHook (path, hook, where) {
   const keys = []
   const regex = pathToRegExp(path, keys)

@@ -26,9 +26,7 @@ describe('plugin', () => {
   describe('refresh calls eventHandler', () => {
     it('with the value', () => {
       localStorage.test = 'newValue'
-      const eventHandler = jest.fn()
-      plugin.refresh({ key: 'test' }, eventHandler)
-      expect(eventHandler).toHaveBeenCalledWith('newValue')
+      expect(plugin.refresh({ key: 'test' })).toBe('newValue')
     })
   })
 

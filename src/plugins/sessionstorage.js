@@ -13,7 +13,7 @@ const plugin = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
   refresh (resource, eventHandler) {
-    eventHandler(parseIfPossible(sessionStorage[resource.key]))
+    return parseIfPossible(sessionStorage[resource.key])
   },
   getResource (resource) {
     resource.key = resource.url.substr(PROTOCOLCUT)

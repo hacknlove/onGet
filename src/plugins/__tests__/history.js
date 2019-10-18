@@ -917,11 +917,11 @@ describe('plugin', () => {
     })
   })
 
-  describe('saveresource', () => {
+  describe('saveResource', () => {
     it('set skip', () => {
-      const savedresource = {}
-      plugin.saveresource('', savedresource)
-      expect(savedresource.preventSave).toBe(true)
+      const savedResource = {}
+      plugin.saveResource('', savedResource)
+      expect(savedResource.preventSave).toBe(true)
     })
   })
 })

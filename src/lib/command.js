@@ -2,13 +2,16 @@ import { resources } from './conf'
 import { findPlugin } from '../private/findPlugin'
 
 /**
- * Executes a command defined in a plugin, for an url
+ * @summary Executes a command defined in a plugin, for an url
  *
- * @memberof onGet
  * @param {string} url the resource url
  * @param {string} command the command name
- * @param {any} params the parameters to the command
+ * @param {...any} params the parameters to the command
  * @returns {any} The returned value of the plugin's command call
+ * @example
+ * import { command } from 'onget'
+ *
+ * command('history://contact-form', 'undo')
  */
 export function command (url, command, ...params) {
   const resource = resources[url] || {

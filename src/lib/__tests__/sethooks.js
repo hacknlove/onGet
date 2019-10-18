@@ -1,5 +1,6 @@
 import { set } from '../set'
-import { beforeSet, afterSet } from '../setHooks'
+import { afterSet } from '../afterSet'
+import { beforeSet } from '../beforeSet'
 import { insertHook, executeHooks } from '../../private/setHooks'
 import { resources, setHooks } from '../conf'
 import { getResource } from '../../private/getResource'

@@ -10,19 +10,18 @@ describe('refresh', () => {
   beforeEach(() => {
     Object.keys(resources).forEach(key => delete resources[key])
   })
-  it('if the resource does not exists, it does nothing', () => {
-    refresh('nothing')
-    expect(pospone).not.toHaveBeenCalled()
+  it('if the resource does not exists, it does nothing', async () => {
+    expect(await refresh('nothing')).toBe(false)
   })
 
-  it('set clean to undefined', () => {
+  it('set clean to undefined', async () => {
     resources.test = {
       clean: true,
       plugin: {
         refresh: jest.fn()
       }
     }
-    refresh('test')
+    await refresh('test')
 
     expect(resources.test.clean).toBeUndefined()
   })
@@ -48,17 +47,17 @@ describe('refresh', () => {
     expect(resources.test.plugin.refresh.mock.calls[0][0]).toBe(resources.test)
   })
 
-  it('if the plugin calls the callback, it calls set with url, and the returned value', () => {
+  it('if the plugin calls the callback, it calls set with url, and the returned value', async () => {
     resources.test = {
       plugin: {
         refresh: jest.fn()
       }
     }
-    resources.test.plugin.refresh.mockImplementation((resource, handler) => {
-      handler('value')
+    resources.test.plugin.refresh.mockImplementation(resource => {
+      return 'value'
     })
 
-    refresh('test')
+    await refresh('test')
 
     expect(_set).toHaveBeenCalledWith(resources.test, 'value')
   })
