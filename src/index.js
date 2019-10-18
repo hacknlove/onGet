@@ -31,10 +31,11 @@ registerPlugin(history)
 registerPlugin(dotted)
 
 export {
+  afterSet,
+  beforeSet,
   command,
   conf,
   end,
-  resources,
   get,
   load,
   once,
@@ -43,8 +44,9 @@ export {
   refresh,
   refreshRegExp,
   registerPlugin,
+  resources,
   save,
-  set, beforeSet, afterSet,
+  set,
   start,
   useOnGet,
   waitUntil
