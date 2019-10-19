@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest --watch ./src",
     "coverage": "jest --coverage  ./src",
-    "document": "rm -r docs; jsdoc --recurse --verbose ./src",
+    "document": "rm -r docs; jsdoc -c ./jsdoc.config.json",
     "build": "./CI/build.sh"
   },
   "publishConfig": {
