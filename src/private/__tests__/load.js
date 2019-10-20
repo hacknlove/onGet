@@ -34,12 +34,15 @@ describe('loadResources', () => {
   it('loads the resources', () => {
     plugins.push({
       regex: /^a/,
-      checkInterval: 100,
-      threshold: 100
+      conf: {
+        checkInterval: 100,
+        threshold: 100
+      }
     })
     plugins.push({
       regex: /^b/,
-      load (resource) {
+      conf: {},
+      loadResource (resource) {
         resource.value += ':)'
       }
     })

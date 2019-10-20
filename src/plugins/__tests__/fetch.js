@@ -1,5 +1,5 @@
 /* global fetch */
-import { resources } from '../../lib/conf'
+import { resources, conf } from '../../lib/conf'
 import plugin from '../fetch'
 
 global.fetch = jest.fn()
@@ -49,11 +49,11 @@ describe('plugin', () => {
 
   describe('start', () => {
     it('disable periodical checks', () => {
-      expect(plugin.checkInterval).not.toBeUndefined()
-      expect(plugin.threshold).not.toBeUndefined()
+      expect(conf.plugins.fetch.checkInterval).not.toBeUndefined()
+      expect(conf.plugins.fetch.threshold).not.toBeUndefined()
       plugin.start()
-      expect(plugin.checkInterval).toBeUndefined()
-      expect(plugin.threshold).toBeUndefined()
+      expect(conf.plugins.fetch.checkInterval).toBeUndefined()
+      expect(conf.plugins.fetch.threshold).toBeUndefined()
     })
   })
 })

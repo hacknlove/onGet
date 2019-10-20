@@ -2,9 +2,8 @@ import { setHooks } from './conf'
 import { insertHook } from '../private/setHooks'
 
 /**
- * @summary Execute a function before a `set` operation
- *
- * @description Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path. From inside the handler it is possible to prevent the next afterSet handlers to be executed.
+ * Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
+ * From inside the handler it is possible to prevent the next afterSet handlers to be executed.
  *
  * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHandler} hook Function to be called
@@ -41,4 +40,5 @@ export function afterSet (path, hook) {
  * @param {any} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
  * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
+ * @see afterSet
  */

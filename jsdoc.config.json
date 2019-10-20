@@ -8,7 +8,8 @@
 	"opts": {
 		"template": "../onget-jsdoc",
 		"destination": "./docs/",
-		"recurse": true
+		"recurse": true,
+		"readme": "README.md"
 	},
 	"tags": {
 		"allowUnknownTags" : true
@@ -39,6 +40,6 @@
 	"markdown": {
 		"parser": "gfm",
 		"hardwrap": true,
-		"tags": ["examples"]
+		"tags": ["examples", "description"]
 	}
 }

@@ -1,10 +1,9 @@
 /* global fetch */
+import { conf } from '../lib/conf'
 
-const plugin = {
+export default {
   name: 'fetch',
   regex: /^./,
-  checkInterval: 30000,
-  threshold: 500,
   async refresh (resource) {
     const response = await fetch(resource.url).catch(__error => ({ __error }))
     if (response.__error) {
@@ -20,9 +19,7 @@ const plugin = {
     return value
   },
   start () {
-    plugin.checkInterval = undefined
-    plugin.threshold = undefined
+    conf.plugins.fetch.checkInterval = undefined
+    conf.plugins.fetch.threshold = undefined
   }
 }
-
-export default plugin

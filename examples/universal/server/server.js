@@ -36,7 +36,7 @@ async function handleRender (req, res) {
 
   set('dotted://counter', 5)
   set('/api/v1/counter', counter)
-
+  console.log(save())
   const html = renderToString(
     <App/>
   )

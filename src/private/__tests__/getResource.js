@@ -23,12 +23,13 @@ test('If not exists the resource, call findPlugin (plugin no exists, so throw)',
   expect(findPlugin).toHaveBeenCalled()
 })
 
-test('If not exists the resource, creates one', () => {
-  findPlugin.mockReturnValue({ name: 'voidplugin' })
+test('If the resource not exists, creates one', () => {
+  findPlugin.mockReturnValue({ name: 'voidplugin', conf: {} })
   expect(getResource('test')).toEqual({
     url: 'test',
     plugin: {
-      name: 'voidplugin'
+      name: 'voidplugin',
+      conf: {}
     },
     value: undefined,
     callbacks: {}
@@ -36,22 +37,23 @@ test('If not exists the resource, creates one', () => {
 })
 
 test('sets the resource in resources under url', () => {
-  findPlugin.mockReturnValue({ name: 'voidplugin' })
+  findPlugin.mockReturnValue({ name: 'voidplugin', conf: {} })
   expect(getResource('testtest')).toEqual(resources.testtest)
 })
 
 test('If the plugin has threshold, the resource has `last`', () => {
-  findPlugin.mockReturnValue({ threshold: 100 })
+  findPlugin.mockReturnValue({ conf: { threshold: 100 } })
   expect(getResource('test').last).toBeTruthy()
 })
 
 test('If the plugin has checkInterval, the resource has `intervals`', () => {
-  findPlugin.mockReturnValue({ checkInterval: 100 })
+  findPlugin.mockReturnValue({ conf: { checkInterval: 100 } })
   expect(getResource('test').intervals).toEqual({})
 })
 
 test('If the plugin has getResource, is called', () => {
   const plugin = {
+    conf: {},
     getResource: jest.fn()
   }
   findPlugin.mockReturnValue(plugin)
@@ -61,6 +63,7 @@ test('If the plugin has getResource, is called', () => {
 
 test('the plugin`s getResource can modify the resource', () => {
   findPlugin.mockReturnValue({
+    conf: {},
     getResource (resource) {
       resource.modifiedByMe = true
     }

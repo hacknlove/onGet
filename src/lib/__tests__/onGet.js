@@ -13,7 +13,9 @@ beforeEach(() => {
 
 test('call getResource with parameters url and first', () => {
   getResource.mockReturnValue({
-    plugin: {}
+    plugin: {
+      conf: {}
+    }
   })
 
   onGet('someUrl', 'callback', { first: 'first' })
@@ -24,7 +26,9 @@ test('call getResource with parameters url and first', () => {
 
 test('call and returns addNewSubscription with parameters url, cb and interval', () => {
   getResource.mockReturnValue({
-    plugin: {}
+    plugin: {
+      conf: {}
+    }
   })
   addNewSubscription.mockReturnValue('unsubscribe')
 
@@ -36,7 +40,9 @@ test('call and returns addNewSubscription with parameters url, cb and interval',
 
 test('sets clean to undefined', () => {
   getResource.mockReturnValue({
-    plugin: {},
+    plugin: {
+      conf: {}
+    },
     clean: true
   })
   expect(onGet().clean).toBeUndefined()
@@ -44,7 +50,9 @@ test('sets clean to undefined', () => {
 
 test('calls callback if resource.value != undefined', () => {
   getResource.mockReturnValue({
-    plugin: {},
+    plugin: {
+      conf: {}
+    },
     value: 'ok testing'
   })
   const callback = jest.fn().mockReturnValue('ok testing')
@@ -56,7 +64,9 @@ test('calls callback if resource.value != undefined', () => {
 test('calls refresh if it is called outside the threshold', () => {
   getResource.mockReturnValue({
     plugin: {
-      threshold: 1000
+      conf: {
+        threshold: 1000
+      }
     },
     value: 'ok testing',
     last: Date.now() - 10000
@@ -70,7 +80,9 @@ test('calls refresh if it is called outside the threshold', () => {
 test('does not call refresh if it is called inside the threshold', () => {
   getResource.mockReturnValue({
     plugin: {
-      threshold: 1000
+      conf: {
+        threshold: 1000
+      }
     },
     value: 'ok testing',
     last: Date.now() - 100

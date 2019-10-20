@@ -18,6 +18,7 @@ describe('refresh', () => {
     resources.test = {
       clean: true,
       plugin: {
+        conf: {},
         refresh: jest.fn()
       }
     }
@@ -29,6 +30,7 @@ describe('refresh', () => {
   it('calls pospone', () => {
     resources.test = {
       plugin: {
+        conf: {},
         refresh: jest.fn()
       }
     }
@@ -39,6 +41,7 @@ describe('refresh', () => {
   it('calls resource.plugin.refresh', () => {
     resources.test = {
       plugin: {
+        conf: {},
         refresh: jest.fn()
       }
     }
@@ -50,6 +53,7 @@ describe('refresh', () => {
   it('if the plugin calls the callback, it calls set with url, and the returned value', async () => {
     resources.test = {
       plugin: {
+        conf: {},
         refresh: jest.fn()
       }
     }
@@ -65,7 +69,9 @@ describe('refresh', () => {
   it('if refresh is called inside the plugin threshold, it does not refresh', () => {
     resources['test url'] = {
       plugin: {
-        threshold: 1000,
+        conf: {
+          threshold: 1000
+        },
         refresh: jest.fn()
       },
       last: Date.now()
@@ -78,7 +84,9 @@ describe('refresh', () => {
   it('if refresh is called inside the plugin threshold with force, it does refresh', () => {
     resources['test url'] = {
       plugin: {
-        threshold: 1000,
+        conf: {
+          threshold: 1000
+        },
         refresh: jest.fn()
       },
       last: Date.now()
@@ -91,7 +99,9 @@ describe('refresh', () => {
   it('if refresh is called outside the plugin threshold, it refresh', () => {
     resources['test url'] = {
       plugin: {
-        threshold: 1000,
+        conf: {
+          threshold: 1000
+        },
         refresh: jest.fn()
       },
       last: Date.now() - 1001

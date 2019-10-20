@@ -17,6 +17,7 @@ export function loadPlugins (savedPlugins) {
 
 /**
  * restore the satate of the resources
+ *
  * @private
  * @param {savedResources} as returned by saveResources, called by save
  */
@@ -29,16 +30,16 @@ export function loadResources (savedResources) {
       url,
       plugin
     }
-    if (plugin.checkInterval) {
+    if (plugin.conf.checkInterval) {
       resource.intervals = {}
       resource.minInterval = Infinity
     }
 
-    if (plugin.threshold !== undefined) {
+    if (plugin.conf.threshold !== undefined) {
       resource.last = -Infinity
     }
-    if (plugin.load) {
-      plugin.load(resource)
+    if (plugin.loadResource) {
+      plugin.loadResource(resource)
     }
     resources[url] = resource
   })

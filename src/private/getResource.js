@@ -26,12 +26,12 @@ export function getResource (url, firstValue) {
   }
   resources[url] = resource
 
-  if (plugin.checkInterval) {
+  if (plugin.conf.checkInterval) {
     resource.intervals = {}
     resource.minInterval = Infinity
   }
 
-  if (plugin.threshold !== undefined) {
+  if (plugin.conf.threshold !== undefined) {
     resource.last = -Infinity
   }
 

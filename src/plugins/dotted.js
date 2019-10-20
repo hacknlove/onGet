@@ -52,7 +52,7 @@ export function propagateDown (url) {
 }
 
 export default {
-  name: 'state',
+  name: 'dotted',
   regex: /^dotted:\/\/./,
 
   /**

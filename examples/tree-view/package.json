@@ -9,7 +9,7 @@
     "react-scripts": "^3.0.0"
   },
   "dependencies": {
-    "onget": "git+ssh://git@github.com/hacknlove/onGet.git#dev",
+    "onget": "^2.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },

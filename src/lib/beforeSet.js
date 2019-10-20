@@ -2,12 +2,13 @@ import { setHooks } from './conf'
 import { insertHook } from '../private/setHooks'
 
 /**
- * @summary Attach a handler for an express-like path, that will be executed each before any set operation on the resources whose url match that path.
- *
- * @description From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
+ * Attach a handler for an express-like path, that will be executed before any set operation on the resources whose url match that path.
+ * From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
  *
  * @param {string} path express-like path to check in which resources execute the hook
  * @param {BeforeSetHandler} hook Function to be called
+ * @see set
+ * @see afterSet
  * @example
  *  import { beforeSet, set } from 'onget'
  *
@@ -38,4 +39,5 @@ export function beforeSet (path, hook) {
  * @param {boolean} event.preventRefresh set this to true to prevent the resource callbacks to be executed.
  * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
  * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
+ * @see beforeSet
  */

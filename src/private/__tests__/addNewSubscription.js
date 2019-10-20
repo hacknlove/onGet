@@ -35,12 +35,14 @@ test('insert the interval, if the resource has intervals', () => {
   expect(Object.values(resources.test.intervals)[0]).toBe(45)
 })
 
-test('if interval not passed, uses plugin.checkInterval', () => {
+test('if interval not passed, uses plugin.conf.checkInterval', () => {
   resources.test = {
     callbacks: {},
     intervals: {},
     plugin: {
-      checkInterval: 23
+      conf: {
+        checkInterval: 23
+      }
     }
   }
   addNewSubscription('test', 'callback')

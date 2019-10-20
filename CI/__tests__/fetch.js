@@ -6,7 +6,7 @@ plugins.forEach(plugin => {
   if (plugin.name !== 'fetch') {
     return
   }
-  plugin.checkInterval = 100
+  plugin.conf.checkInterval = 100
 })
 
 global.fetch = jest.fn()

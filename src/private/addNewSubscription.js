@@ -3,11 +3,12 @@ import { createUnsubscribe } from './createUnsubscribe'
 
 /**
  * Adds the callback to the resource, updates the min interval configuration, and returns the unsubscribe function
+ *
  * @private
  * @param {string} url resource's url
- * @param {function} callback it will be called each time the value of the resource changes
+ * @param {Function} callback it will be called each time the value of the resource changes
  * @param {number} [interval] max interval (milliseconds) to check for a new value
- * @return {function} unsubscribe function
+ * @returns {Function} unsubscribe function
  */
 export function addNewSubscription (url, callback, interval) {
   const resource = resources[url]
@@ -19,7 +20,7 @@ export function addNewSubscription (url, callback, interval) {
   resource.callbacks[sk] = callback
 
   if (resource.intervals) {
-    interval = interval || resource.plugin.checkInterval
+    interval = interval || resource.plugin.conf.checkInterval
     resource.intervals[sk] = interval
     resource.minInterval = Math.min(resource.minInterval, interval)
   }

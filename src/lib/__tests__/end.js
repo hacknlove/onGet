@@ -3,12 +3,6 @@ import { plugins, serverInstances } from '../conf'
 import { Promise } from 'bluebird'
 global.Promise = Promise
 
-function asyncwait (n) {
-  return new Promise(resolve => {
-    setTimeout(resolve, n)
-  })
-}
-
 beforeEach(() => {
   plugins.length = 0
   serverInstances.length = 0

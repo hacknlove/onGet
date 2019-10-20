@@ -2,12 +2,13 @@ import { resources } from './conf'
 import { findPlugin } from '../private/findPlugin'
 
 /**
- * @summary Executes a command defined in a plugin, for an url
+ * Executes a command defined in a plugin, for an url
  *
  * @param {string} url the resource url
  * @param {string} command the command name
- * @param {...any} params the parameters to the command
+ * @param {...any} [params] the parameters to the command
  * @returns {any} The returned value of the plugin's command call
+ * @see commandPlugin
  * @example
  * import { command } from 'onget'
  *
