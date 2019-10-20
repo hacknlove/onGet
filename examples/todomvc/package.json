@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "onget": "^1.1.2",
+    "onget": "^2.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "reselect": "^4.0.0",

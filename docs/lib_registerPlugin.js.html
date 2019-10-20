@@ -1,41 +1,698 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: lib/registerPlugin.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <title>Source: lib/registerPlugin.js</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: lib/registerPlugin.js</h1>
-
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"onget","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    </script>
     
 
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">onget</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="conf">
+            <span class="title">
+                <a href="conf.html">conf</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="afterSet">
+            <span class="title">
+                <a href="global.html#afterSet">afterSet</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="afterSetHandler">
+            <span class="title">
+                <a href="global.html#afterSetHandler">afterSetHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="beforeSet">
+            <span class="title">
+                <a href="global.html#beforeSet">beforeSet</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="BeforeSetHandler">
+            <span class="title">
+                <a href="global.html#BeforeSetHandler">BeforeSetHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="cleanPluginHandler">
+            <span class="title">
+                <a href="global.html#cleanPluginHandler">cleanPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="command">
+            <span class="title">
+                <a href="global.html#command">command</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="commandPlugin">
+            <span class="title">
+                <a href="global.html#commandPlugin">commandPlugin</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="end">
+            <span class="title">
+                <a href="global.html#end">end</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="get">
+            <span class="title">
+                <a href="global.html#get">get</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="getPluginHandler">
+            <span class="title">
+                <a href="global.html#getPluginHandler">getPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="getResourcePluginHandler">
+            <span class="title">
+                <a href="global.html#getResourcePluginHandler">getResourcePluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="handler">
+            <span class="title">
+                <a href="global.html#handler">handler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="load">
+            <span class="title">
+                <a href="global.html#load">load</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="loadPluginHandler">
+            <span class="title">
+                <a href="global.html#loadPluginHandler">loadPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="loadResourcePluginHandler">
+            <span class="title">
+                <a href="global.html#loadResourcePluginHandler">loadResourcePluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="once">
+            <span class="title">
+                <a href="global.html#once">once</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="onceHandler">
+            <span class="title">
+                <a href="global.html#onceHandler">onceHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="onGet">
+            <span class="title">
+                <a href="global.html#onGet">onGet</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Plugin">
+            <span class="title">
+                <a href="global.html#Plugin">Plugin</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="refresh">
+            <span class="title">
+                <a href="global.html#refresh">refresh</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="refreshPluginHandler">
+            <span class="title">
+                <a href="global.html#refreshPluginHandler">refreshPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="refreshRegExp">
+            <span class="title">
+                <a href="global.html#refreshRegExp">refreshRegExp</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="registerPlugin">
+            <span class="title">
+                <a href="global.html#registerPlugin">registerPlugin</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="save">
+            <span class="title">
+                <a href="global.html#save">save</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="savePluginHandler">
+            <span class="title">
+                <a href="global.html#savePluginHandler">savePluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="saveResourcePluginHandler">
+            <span class="title">
+                <a href="global.html#saveResourcePluginHandler">saveResourcePluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="set">
+            <span class="title">
+                <a href="global.html#set">set</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="setPluginHandler">
+            <span class="title">
+                <a href="global.html#setPluginHandler">setPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="start">
+            <span class="title">
+                <a href="global.html#start">start</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="startPluginHandler">
+            <span class="title">
+                <a href="global.html#startPluginHandler">startPluginHandler</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="useOnGet">
+            <span class="title">
+                <a href="global.html#useOnGet">useOnGet</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="waitUntil">
+            <span class="title">
+                <a href="global.html#waitUntil">waitUntil</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="lib_registerPlugin.js.html">Source: lib/registerPlugin.js</h1>
+        
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { plugins } from './conf'
+            <pre class="prettyprint source "><code>import { plugins, conf } from './conf'
 
 /**
- * @summary Registers a plugin
- *
- * @description When it comes to decide which plugins deals with an URL, the last registered ones are checked first. The check order is the inverted order of registration.
+ * Registers a plugin
+ * When it comes to decide which plugin deals with an URL, the last registered ones are checked first. In other words, the check order is the inverted order of registration.
  *
  * @param {Plugin} plugin Plugin object to register
  */
- export function registerPlugin (plugin) {
+export function registerPlugin (plugin) {
+  conf.plugins[plugin.name] = conf.plugins[plugin.name] || {}
+  plugin.conf = conf.plugins[plugin.name]
   plugins.unshift(plugin)
 }
 
@@ -43,12 +700,11 @@
  * @typedef {object} Plugin
  * @property {string} name Name of the Plugin. It must be unique. Mandatory for load and save.
  * @property {RegExp} regex Regex to match the resource's url
- * @property {number} [checkInterval] Default amount of milliseconds to reevaluate the resource. Mandatory for plugins that reevaluates the resource periodically.
- * @property {number} [threshold] Amount of milliseconds to in which a subsequent call to get, or onGet, uses the cached value instead of revaluating the resource. Mandatory for plugins that reevaluates the resource periodically.
  * @property {cleanPluginHandler} [clean] Cleans up everything that is no more needed. Called by the garbage collector when it wants to clean a resource.
  * @property {getPluginHandler} [get] evaluates the value of the resource. Only synchronous evaluations.
- * @property {getResourceHandler} [getResource] handler to the hook `getResource` that is called to
- * @property {loadResource} [load]
+ * @property {getResourcePluginHandler} [getResource] handler to the hook `getResource` that is called to
+ * @property {loadPluginHandler} [load]
+ * @property {loadResourcePluginHandler} [loadResource]
  * @property {savePluginHandler} [save]
  * @property {saveResourcePluginHandler} [saveResource] handler
  * @property {setPluginHandler} [set] establishes a new value for the resource.
@@ -58,84 +714,109 @@
  * @property {commandPlugin} [commands.someCommandName]
  * @property {commandPlugin} [commands.someOtherCommandName]
  * @property {commandPlugin} [commands.etc]
+ * @see registerPlugin
  */
 /**
+ * Cleans all the stuff related with the resource that will not be needed after the garbage collector cleans the resource.
+ * It can prevent the garbage collector to clean the resource returning true
+ *
  * @callback cleanPluginHandler
- *
- * @summary Cleans all the stuff related with the resource that will not be needed after the garbage collector cleans the resource.
- *
- * @description It can prevent the garbage collector to clean the resource returning true
- *
  * @param {Resource} resource The resource to be cleaned
  * @returns {boolean} Return true to prevent the garbage collector to clean the state
+ * @see registerPlugin
  */
 /**
+ * @callback commandPlugin
+ * @param {string} url - The url of the resorce in which apply the command
+ * @param {...any} [params] - Whatever params that are needed by the command
+ * @returns {any} - Whatever value the command needs to return
+ * @see command
+ * @see registerPlugin
+ */
+/**
+ * Evaluates the value of the resource
+ * The evaluation must be done synchronously
+ *
  * @callback getPluginHandler
- *
- * @summary Evaluates the value of the resource
- *
- * @description The evaluation must be done synchronously
- *
  * @param {Resource} resource The resource whose value is going to be evaluated
  * @returns {any} the value of the resource
+ * @see get
+ * @see registerPlugin
  */
 /**
- * @callback getResourceHandler
- * @summary It should set things up for the plugin to deal with the resource.
+ * It should set things up for the plugin to deal with the resource.
+ * The plugin is allowed to add or modify properties to the resource
  *
- * @description The plugin is allowed to add or modify properties to the resource
- *
+ * @callback getResourcePluginHandler
  * @param {Resource} resource The resource that is being initialized
+ * @see registerPlugin
  */
 /**
- * @callback loadResource
+ * Restores the plugin state from a previous saved one
  *
- * @summary Restores a resource from a previous saved one
- *
- * @description If the plugin add keys to the resource at ist initialization, it might use this to do it at its restoration.
- *
+ * @callback loadPluginHandler
  * @params {Resource} resource
- */
- /**
-  * @callback savePluginHandler
-  *
-  * @summary Allows to save the state of the plugin, to be eventually loaded and restored.
-  *
-  * @returns {any} Whatever serializable that the plugin needs to restore its current state.
- */
- /**
-  * @callback saveResourcePluginHandler
-  *
-  * @summary Allows the plugin to save the state of a resource.
-  *
-  * @description The save system stores the url and the value of the resource. If the plugin needs to store something else there in the object that represents the state of the resource in order to be able to restore it later, it needs to update this object with this handler.
-  *
-  * @param {string} url The url of the resource
-  * @param {object} saveResource The object that represent the state of the resource.
- */
- /**
-  * @callback setPluginHandler
-  *
-  * @summary Allows the plugin to update the resource when a set operation is being performed
-  *
-  * @description For instance, the localStorage plugin maps the urls with values stored at localStorage, so when a set operation is made, the plugin updates localstorage to the value of `resource.value`, using this handler.
-  *
-  * @param {resource}
- */
- /**
-  * @callback startPluginHandler
-  *
-  * @summary Reset everything to get a fresh and clean state.
-  *
-  * @description In universal applications, It is needed to reset the state each time a new html is prerrendered.
+ * @see load
+ * @see save
+ * @see savePluginHandler
+ * @see registerPlugin
  */
 /**
- * @callback refreshPluginHandler
- * @summary It should reevaluate the resource and return his new value.
+ * Restores a resource from a previous saved one
+ * If the plugin add keys to the resource at ist initialization, it might use this to do it at its restoration.
  *
- * @description It must not update the value itself. The value must be returned to be updated by onget, to check if is different and trigger the subscriptions and callbacks.
+ * @callback loadResourcePluginHandler
+ * @params {Resource} resource
+ * @see load
+ * @see save
+ * @see saveResourcePluginHandler
+ * @see registerPlugin
+ */
+/**
+ * Allows to save the state of the plugin, to be eventually loaded and restored.
+ *
+ * @callback savePluginHandler
+ * @returns {any} Whatever serializable that the plugin needs to restore its current state.
+ * @see save
+ * @see registerPlugin
+ */
+/**
+ * Allows the plugin to save the state of a resource.
+ * The save system stores the url and the value of the resource. If the plugin needs to store something else there in the object that represents the state of the resource in order to be able to restore it later, it needs to update this object with this handler.
+ *
+ * @callback saveResourcePluginHandler
+ * @param {string} url The url of the resource
+ * @param {object} saveResource The object that represent the state of the resource.
+ * @see save
+ * @see registerPlugin
+ */
+/**
+ * Allows the plugin to update the resource when a set operation is being performed
+ *
+ * @callback setPluginHandler
+ * @description For instance, the localStorage plugin maps the urls with values stored at localStorage, so when a set operation is made, the plugin updates localstorage to the value of `resource.value`, using this handler.
+ *
+ * @param {Resource} resource
+ * @see set
+ * @see registerPlugin
+ */
+/**
+ * Reset everything to get a fresh and clean state.
+ *
+ * @callback startPluginHandler
+ * @description In universal applications, It is needed to reset the state each time a new html is prerrendered.
+ * @see load
+ * @see registerPlugin
+ */
+/**
+ * It should reevaluate the resource and return his new value.
+ * It must not update the value itself. The value must be returned to be updated by onget, to check if is different and trigger the subscriptions and callbacks.
+ *
+ * @callback refreshPluginHandler
  * @async
  * @param {Resource} resource The resource that needs to reevaluate
+ * @see refresh
+ * @see registerPlugin
  */
 </code></pre>
         </article>
@@ -144,19 +825,17 @@
 
 
 
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Oct 20 2019 12:14:18 GMT+0200 (GMT+02:00)
+        </footer>
+    </div>
 </div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="conf.html">conf</a></li></ul><h3>Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Oct 18 2019 20:07:34 GMT+0200 (GMT+02:00)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
 </body>
 </html>

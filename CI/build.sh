@@ -4,7 +4,7 @@ rm -r ./dist
 set -e
 
 echo ------- testing: unit -------
-npx jest ./src/__tests__
+npx jest ./src
 
 echo ------- Building dist -------
 npx rollup -c

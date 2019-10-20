@@ -2,13 +2,6 @@
 
 ## The onGet way of solving the Redux examples
 
-### Counter-vanilla
-Small example to show how onGet can be used without any build system.
-
-* [source](/examples/counter-vanilla)
-* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter-vanilla)
-
-
 ### Counter
 Simple, yet powerfull. See how easily can create two different counters.
 
@@ -55,3 +48,9 @@ Simple yet powerfull. It is beautiful.
 
 * [source](/examples/async)
 * [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
+
+### Universal
+
+Server side prerrendering
+
+* [source](/examples/universal)

@@ -1,12 +1,12 @@
 /* global fetch */
 // Integration
-import { onGet, set, get, refresh, endpoints, plugins } from '../../'
+import { onGet, set, get, refresh, resources, plugins } from '../../'
 
 plugins.forEach(plugin => {
   if (plugin.name !== 'fetch') {
     return
   }
-  plugin.checkInterval = 100
+  plugin.conf.checkInterval = 100
 })
 
 global.fetch = jest.fn()
@@ -15,7 +15,7 @@ const unsubscribes = []
 describe('fetch', () => {
   beforeEach(() => {
     fetch.mockImplementation(() => Promise.resolve({
-      async json () {
+      async text () {
         return Promise.resolve('fetch response')
       }
     }))
@@ -25,12 +25,12 @@ describe('fetch', () => {
     while (unsubscribes.length) {
       unsubscribes.pop()()
     }
-    Object.keys(endpoints).forEach(key => {
-      clearTimeout(endpoints.timeout)
-      delete endpoints[key]
+    Object.keys(resources).forEach(key => {
+      clearTimeout(resources.timeout)
+      delete resources[key]
     })
     fetch.mockImplementation(() => Promise.resolve({
-      async json () {
+      async text () {
         return Promise.resolve('fetch response')
       }
     }))
@@ -68,10 +68,10 @@ describe('fetch', () => {
   })
 
   describe('set', () => {
-    it('triggers the callbacks of the endpoint', async () => {
+    it('triggers the callbacks of the resource', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
-      set('key', 'mars')
+      await set('key', 'mars')
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(cb).toHaveBeenCalledWith('mars')
     })
@@ -79,7 +79,7 @@ describe('fetch', () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
       await new Promise(resolve => setTimeout(resolve, 10))
-      set('key', 'fetch response')
+      await set('key', 'fetch response')
       await new Promise(resolve => setTimeout(resolve, 10))
       expect(cb.mock.calls.length).toBe(1)
     })
@@ -97,13 +97,13 @@ describe('fetch', () => {
   })
 
   describe('refresh', () => {
-    it('triggers the callbacks of the endpoint if the value has changed', async () => {
+    it('triggers the callbacks of the resource if the value has changed', async () => {
       const cb = jest.fn()
       unsubscribes.push(onGet('key', cb))
       await new Promise(resolve => setTimeout(resolve, 10))
-      endpoints.key.last = -Infinity
+      resources.key.last = -Infinity
       fetch.mockImplementation(() => Promise.resolve({
-        async json () {
+        async text () {
           return Promise.resolve('new response')
         }
       }))
