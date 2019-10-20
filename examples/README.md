@@ -48,3 +48,9 @@ Simple yet powerfull. It is beautiful.
 
 * [source](/examples/async)
 * [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
+
+### Universal
+
+Server side prerrendering
+
+* [source](/examples/universal)

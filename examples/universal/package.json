@@ -10,7 +10,7 @@
     "@babel/polyfill": "^7.6.0",
     "@babel/register": "^7.6.2",
     "express": "^4.17.1",
-    "onget": "git+ssh://git@github.com/hacknlove/onGet.git#dev",
+    "onget": "^2.0.0",
     "qs": "^6.9.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
