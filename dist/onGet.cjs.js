@@ -12,9 +12,20 @@ var deepobject = require('@hacknlove/deepobject');
 /**
  * @namespace
  * @property {number} CACHE_SIZE - The garbage colector is inactive when the amount of resources is less than CACHE_SIZE
+ * @property {object} plugins - Stores the plugins configuration
+ * @property {object} plugins.fetch - The configuration for the fetch plugin
+ * @property {number} plugins.fetch.checkInterval - Size of the interval, in milliseconds, to check for new values doing a GET request
+ * @property {number} plugins.fetch.threshold - Size of the windows, in milliseconds, in which a call to `get`, `onGet`, `refresh` or `useOnGet` will use the cached value instead of make a fetch
+ * @property {object} plugins.anyCustomPluginName - Whatever configuration object that were needed by the plugin named `anyCustomPluginName`
  */
 const conf = {
-  CACHE_SIZE: 100
+  CACHE_SIZE: 100,
+  plugins: {
+    fetch: {
+      checkInterval: 30000,
+      threshold: 500
+    }
+  }
 };
 
 const resources = {};
@@ -37,12 +48,13 @@ function findPlugin (url) {
 }
 
 /**
- * @summary Executes a command defined in a plugin, for an url
+ * Executes a command defined in a plugin, for an url
  *
  * @param {string} url the resource url
  * @param {string} command the command name
- * @param {...any} params the parameters to the command
+ * @param {...any} [params] the parameters to the command
  * @returns {any} The returned value of the plugin's command call
+ * @see commandPlugin
  * @example
  * import { command } from 'onget'
  *
@@ -67,9 +79,8 @@ function command (url, command, ...params) {
 }
 
 /**
- * @summary Returns the value of a resource
- *
- * @description If the resource has not been used yet, so it has no value cached, the plugin that deals with its url could evaluate the value. This is only possible when the evaluation is synchronous and the plugins has the `get` method defined.
+ * Returns the value of a resource
+ * If the resource has not been used yet, so it has no value cached, the plugin that deals with its url could evaluate the value. This is only possible when the evaluation is synchronous and the plugins has the `get` method defined.
  *
  * @param {string} url url of the resource
  * @returns {any} the cached value is exists, or an evaluated value if plugin.get exists
@@ -108,6 +119,7 @@ function loadPlugins (savedPlugins) {
 
 /**
  * restore the satate of the resources
+ *
  * @private
  * @param {savedResources} as returned by saveResources, called by save
  */
@@ -120,25 +132,25 @@ function loadResources (savedResources) {
       url,
       plugin
     };
-    if (plugin.checkInterval) {
+    if (plugin.conf.checkInterval) {
       resource.intervals = {};
       resource.minInterval = Infinity;
     }
 
-    if (plugin.threshold !== undefined) {
+    if (plugin.conf.threshold !== undefined) {
       resource.last = -Infinity;
     }
-    if (plugin.load) {
-      plugin.load(resource);
+    if (plugin.loadResource) {
+      plugin.loadResource(resource);
     }
     resources[url] = resource;
   });
 }
 
 /**
- * @summary Restores the state of the resources and plugins to a previous saved one.
+ * Restores the state of the resources and plugins to a previous saved one.
+ * It is intended to be used in universal applications, that prerender the html clientside, to make the client state reflects the prerendered state.
  *
- * @description It is intended to be used in universal applications, that prerender the html clientside, to make the client state reflects the prerendered state.
  * @param {object} data is an object representing the state in which the application will be, after loading it.
  * @see save
  * @example
@@ -202,12 +214,12 @@ function getResource (url, firstValue) {
   };
   resources[url] = resource;
 
-  if (plugin.checkInterval) {
+  if (plugin.conf.checkInterval) {
     resource.intervals = {};
     resource.minInterval = Infinity;
   }
 
-  if (plugin.threshold !== undefined) {
+  if (plugin.conf.threshold !== undefined) {
     resource.last = -Infinity;
   }
 
@@ -240,11 +252,12 @@ function createUnsubscribe (resource, sk) {
 
 /**
  * Adds the callback to the resource, updates the min interval configuration, and returns the unsubscribe function
+ *
  * @private
  * @param {string} url resource's url
- * @param {function} callback it will be called each time the value of the resource changes
+ * @param {Function} callback it will be called each time the value of the resource changes
  * @param {number} [interval] max interval (milliseconds) to check for a new value
- * @return {function} unsubscribe function
+ * @returns {Function} unsubscribe function
  */
 function addNewSubscription (url, callback, interval) {
   const resource = resources[url];
@@ -256,7 +269,7 @@ function addNewSubscription (url, callback, interval) {
   resource.callbacks[sk] = callback;
 
   if (resource.intervals) {
-    interval = interval || resource.plugin.checkInterval;
+    interval = interval || resource.plugin.conf.checkInterval;
     resource.intervals[sk] = interval;
     resource.minInterval = Math.min(resource.minInterval, interval);
   }
@@ -306,10 +319,10 @@ function pospone (resource) {
 }
 
 /**
- * @summary Check if the value of a resource has changed, and execute the subscriptions if so
+ * Check if the value of a resource has changed, and execute the subscriptions if so.
+ * It makes the plugin reevaluate the value of the resorce, in those plugins that make periodical evaluations, or that uses some source that could have been changed with a `set` operation on the resource, like `localStorage` or `sessionStorage`
  *
- * @description It makes the plugin reevaluate the value of the resorce, in those plugins that make periodical evaluations, or that uses some source that could have been changed with a `set` operation on the resource, like `localStorage` or `sessionStorage`
- *
+ * @async
  * @param {string} url of the resources to be refreshed
  * @param {boolean} force Some plugins could include a debounce system te avoid reevaluate the value too much. Set force to true to ignore the threshold and force a check no matter how close it is from the previous one
  * @returns {boolean} False if there is nothing to refresh (the plugin does not support refresh or there is no resource with that url), true otherwise.
@@ -329,7 +342,7 @@ function pospone (resource) {
  *    refresh(`/api/stock/${context.params.item}`)
  * })
  */
-async function refresh (url, force = false) {
+function refresh (url, force = false) {
   const resource = resources[url];
   if (!resource) {
     return false
@@ -338,26 +351,26 @@ async function refresh (url, force = false) {
   if (!resource.plugin.refresh) {
     return
   }
-  if (!force && resource.plugin.threshold !== undefined && Date.now() - resource.last < resource.plugin.threshold) {
+  if (!force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
     return
   }
-  pospone(resource);
-  _set(resource, await resource.plugin.refresh(resource));
+  pospone(resource)
+  ;(async () => _set(resource, await resource.plugin.refresh(resource)))();
   return true
 }
 
 /**
- * @summary Set a handler to be called each time the value of a resource changes
- *
- * @description The handler is attached to a resource, (not to a path that could match several resources), and it will be called after the value changes.
- *
+ * Set a handler to be called each time the value of a resource changes
+ * The handler is attached to a resource, (not to a path that could match several resources), and it will be called after the value changes.
  * If the value has changed because of a `set` operation, `context.preventRefresh` could prevent the handler to be executed if it were set to true by any `beforeSet` or `afterSet` handler.
+ *
  * @param {string} url The resource to subscribe to
  * @param {handler} cb handler to be called
  * @param {object} [options={}] subscription's options
  * @param {any} options.first first value to initiate the resorce with
  * @param {number} options.interval Some plugins, evaluates periodically the value of the resource. Tha actual amount of milliseconds will be the minimum `options.interval` of every `option.interval`s of every subscriptions on the resource
- * @returns {function} unsubscribe function
+ * @returns {Function} unsubscribe function
+ * @see useOnGet
  * @example
  * import { onGet } from 'onget'
  * onGet('/api/posts', value => {
@@ -379,7 +392,7 @@ function onGet (url, cb, options = {}) {
   if (resource.value !== undefined) {
     cb(resource.value);
   }
-  if (Date.now() - resource.last > resource.plugin.threshold) {
+  if (Date.now() - resource.last > resource.plugin.conf.threshold) {
     refresh(url);
   }
   return unsubscribe
@@ -391,14 +404,17 @@ function onGet (url, cb, options = {}) {
 */
 
 /**
- * @summary Attach a handler, that will be executed at most once, to the eventual change the the value of resource.
- *
- * @description The handler is attached to a resource, not to a path that could match several resources, and it will be called after the value changes.
+ * Attach a handler, that will be executed at most once, to the eventual change the the value of resource.
+ * The handler is attached to a resource, not to a path that could match several resources, and it will be called after the value changes.
  *
  * If the value has changed because of a `set` operation, `context.preventRefresh` could prevent the handler to be executed if it were set to true by any `beforeSet` or `afterSet` handler.
+ *
  * @param {string} url The url of a single resource.
  * @param {onceHandler} handler function that will be executed the first time the resource's value changes
  * @returns {Function} a detach function that could be called to detach the handler
+ * @see waitUntil
+ * @see onGet
+ * @see useOnGet
  * @example
  * import { once, set } from 'onget'
  *
@@ -440,13 +456,14 @@ function refreshRegExp (regex, force) {
 }
 
 /**
- * @summary Registers a plugin
- *
- * @description When it comes to decide which plugins deals with an URL, the last registered ones are checked first. The check order is the inverted order of registration.
+ * Registers a plugin
+ * When it comes to decide which plugin deals with an URL, the last registered ones are checked first. In other words, the check order is the inverted order of registration.
  *
  * @param {Plugin} plugin Plugin object to register
  */
- function registerPlugin (plugin) {
+function registerPlugin (plugin) {
+  conf.plugins[plugin.name] = conf.plugins[plugin.name] || {};
+  plugin.conf = conf.plugins[plugin.name];
   plugins.unshift(plugin);
 }
 
@@ -454,12 +471,11 @@ function refreshRegExp (regex, force) {
  * @typedef {object} Plugin
  * @property {string} name Name of the Plugin. It must be unique. Mandatory for load and save.
  * @property {RegExp} regex Regex to match the resource's url
- * @property {number} [checkInterval] Default amount of milliseconds to reevaluate the resource. Mandatory for plugins that reevaluates the resource periodically.
- * @property {number} [threshold] Amount of milliseconds to in which a subsequent call to get, or onGet, uses the cached value instead of revaluating the resource. Mandatory for plugins that reevaluates the resource periodically.
  * @property {cleanPluginHandler} [clean] Cleans up everything that is no more needed. Called by the garbage collector when it wants to clean a resource.
  * @property {getPluginHandler} [get] evaluates the value of the resource. Only synchronous evaluations.
- * @property {getResourceHandler} [getResource] handler to the hook `getResource` that is called to
- * @property {loadResource} [load]
+ * @property {getResourcePluginHandler} [getResource] handler to the hook `getResource` that is called to
+ * @property {loadPluginHandler} [load]
+ * @property {loadResourcePluginHandler} [loadResource]
  * @property {savePluginHandler} [save]
  * @property {saveResourcePluginHandler} [saveResource] handler
  * @property {setPluginHandler} [set] establishes a new value for the resource.
@@ -469,84 +485,109 @@ function refreshRegExp (regex, force) {
  * @property {commandPlugin} [commands.someCommandName]
  * @property {commandPlugin} [commands.someOtherCommandName]
  * @property {commandPlugin} [commands.etc]
+ * @see registerPlugin
  */
 /**
+ * Cleans all the stuff related with the resource that will not be needed after the garbage collector cleans the resource.
+ * It can prevent the garbage collector to clean the resource returning true
+ *
  * @callback cleanPluginHandler
- *
- * @summary Cleans all the stuff related with the resource that will not be needed after the garbage collector cleans the resource.
- *
- * @description It can prevent the garbage collector to clean the resource returning true
- *
  * @param {Resource} resource The resource to be cleaned
  * @returns {boolean} Return true to prevent the garbage collector to clean the state
+ * @see registerPlugin
  */
 /**
+ * @callback commandPlugin
+ * @param {string} url - The url of the resorce in which apply the command
+ * @param {...any} [params] - Whatever params that are needed by the command
+ * @returns {any} - Whatever value the command needs to return
+ * @see command
+ * @see registerPlugin
+ */
+/**
+ * Evaluates the value of the resource
+ * The evaluation must be done synchronously
+ *
  * @callback getPluginHandler
- *
- * @summary Evaluates the value of the resource
- *
- * @description The evaluation must be done synchronously
- *
  * @param {Resource} resource The resource whose value is going to be evaluated
  * @returns {any} the value of the resource
+ * @see get
+ * @see registerPlugin
  */
 /**
- * @callback getResourceHandler
- * @summary It should set things up for the plugin to deal with the resource.
+ * It should set things up for the plugin to deal with the resource.
+ * The plugin is allowed to add or modify properties to the resource
  *
- * @description The plugin is allowed to add or modify properties to the resource
- *
+ * @callback getResourcePluginHandler
  * @param {Resource} resource The resource that is being initialized
+ * @see registerPlugin
  */
 /**
- * @callback loadResource
+ * Restores the plugin state from a previous saved one
  *
- * @summary Restores a resource from a previous saved one
- *
- * @description If the plugin add keys to the resource at ist initialization, it might use this to do it at its restoration.
- *
+ * @callback loadPluginHandler
  * @params {Resource} resource
- */
- /**
-  * @callback savePluginHandler
-  *
-  * @summary Allows to save the state of the plugin, to be eventually loaded and restored.
-  *
-  * @returns {any} Whatever serializable that the plugin needs to restore its current state.
- */
- /**
-  * @callback saveResourcePluginHandler
-  *
-  * @summary Allows the plugin to save the state of a resource.
-  *
-  * @description The save system stores the url and the value of the resource. If the plugin needs to store something else there in the object that represents the state of the resource in order to be able to restore it later, it needs to update this object with this handler.
-  *
-  * @param {string} url The url of the resource
-  * @param {object} saveResource The object that represent the state of the resource.
- */
- /**
-  * @callback setPluginHandler
-  *
-  * @summary Allows the plugin to update the resource when a set operation is being performed
-  *
-  * @description For instance, the localStorage plugin maps the urls with values stored at localStorage, so when a set operation is made, the plugin updates localstorage to the value of `resource.value`, using this handler.
-  *
-  * @param {resource}
- */
- /**
-  * @callback startPluginHandler
-  *
-  * @summary Reset everything to get a fresh and clean state.
-  *
-  * @description In universal applications, It is needed to reset the state each time a new html is prerrendered.
+ * @see load
+ * @see save
+ * @see savePluginHandler
+ * @see registerPlugin
  */
 /**
- * @callback refreshPluginHandler
- * @summary It should reevaluate the resource and return his new value.
+ * Restores a resource from a previous saved one
+ * If the plugin add keys to the resource at ist initialization, it might use this to do it at its restoration.
  *
- * @description It must not update the value itself. The value must be returned to be updated by onget, to check if is different and trigger the subscriptions and callbacks.
+ * @callback loadResourcePluginHandler
+ * @params {Resource} resource
+ * @see load
+ * @see save
+ * @see saveResourcePluginHandler
+ * @see registerPlugin
+ */
+/**
+ * Allows to save the state of the plugin, to be eventually loaded and restored.
+ *
+ * @callback savePluginHandler
+ * @returns {any} Whatever serializable that the plugin needs to restore its current state.
+ * @see save
+ * @see registerPlugin
+ */
+/**
+ * Allows the plugin to save the state of a resource.
+ * The save system stores the url and the value of the resource. If the plugin needs to store something else there in the object that represents the state of the resource in order to be able to restore it later, it needs to update this object with this handler.
+ *
+ * @callback saveResourcePluginHandler
+ * @param {string} url The url of the resource
+ * @param {object} saveResource The object that represent the state of the resource.
+ * @see save
+ * @see registerPlugin
+ */
+/**
+ * Allows the plugin to update the resource when a set operation is being performed
+ *
+ * @callback setPluginHandler
+ * @description For instance, the localStorage plugin maps the urls with values stored at localStorage, so when a set operation is made, the plugin updates localstorage to the value of `resource.value`, using this handler.
+ *
+ * @param {Resource} resource
+ * @see set
+ * @see registerPlugin
+ */
+/**
+ * Reset everything to get a fresh and clean state.
+ *
+ * @callback startPluginHandler
+ * @description In universal applications, It is needed to reset the state each time a new html is prerrendered.
+ * @see load
+ * @see registerPlugin
+ */
+/**
+ * It should reevaluate the resource and return his new value.
+ * It must not update the value itself. The value must be returned to be updated by onget, to check if is different and trigger the subscriptions and callbacks.
+ *
+ * @callback refreshPluginHandler
  * @async
  * @param {Resource} resource The resource that needs to reevaluate
+ * @see refresh
+ * @see registerPlugin
  */
 
 /**
@@ -701,12 +742,13 @@ function set (url, value, options = {}) {
 }
 
 /**
- * @summary Attach a handler for an express-like path, that will be executed each before any set operation on the resources whose url match that path.
- *
- * @description From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
+ * Attach a handler for an express-like path, that will be executed before any set operation on the resources whose url match that path.
+ * From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
  *
  * @param {string} path express-like path to check in which resources execute the hook
  * @param {BeforeSetHandler} hook Function to be called
+ * @see set
+ * @see afterSet
  * @example
  *  import { beforeSet, set } from 'onget'
  *
@@ -737,15 +779,17 @@ function beforeSet (path, hook) {
  * @param {boolean} event.preventRefresh set this to true to prevent the resource callbacks to be executed.
  * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
  * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
+ * @see beforeSet
  */
 
 /**
- * @summary Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
- *
- * @description From inside the handler it is possible to prevent the next afterSet handlers to be executed.
+ * Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
+ * From inside the handler it is possible to prevent the next afterSet handlers to be executed.
  *
  * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHandler} hook Function to be called
+ * @see set
+ * @see beforeSet
  * @example
  * import { afterSet, refresh } from 'onget'
  *
@@ -777,6 +821,7 @@ function afterSet (path, hook) {
  * @param {any} event.value The current value
  * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
  * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
+ * @see afterSet
  */
 
 /**
@@ -801,9 +846,14 @@ async function start () {
 }
 
 /**
- * @summary Indicates that the prerrendering has finished and allows the next prerrendering to begin
+ * Indicates that the prerrendering has finished and allows the next prerrendering to begin.
+ * It is used in server-side prerrendering along with `start`
+ *
+ * @see start
  */
 function end () {
+  Object.keys(resources).forEach(key => delete resources[key]);
+
   plugins.forEach(plugin => {
     if (plugin.end) {
       plugin.end();
@@ -857,11 +907,9 @@ function waitUntil (url, condition = value => value) {
 
 /* global fetch */
 
-const plugin = {
+var fetch$1 = {
   name: 'fetch',
   regex: /^./,
-  checkInterval: 30000,
-  threshold: 500,
   async refresh (resource) {
     const response = await fetch(resource.url).catch(__error => ({ __error }));
     if (response.__error) {
@@ -877,8 +925,8 @@ const plugin = {
     return value
   },
   start () {
-    plugin.checkInterval = undefined;
-    plugin.threshold = undefined;
+    conf.plugins.fetch.checkInterval = undefined;
+    conf.plugins.fetch.threshold = undefined;
   }
 };
 
@@ -910,7 +958,7 @@ function onChange (resource) {
   }
 }
 
-const plugin$1 = {
+const plugin = {
   name: 'localStorage',
   regex: /^localStorage:\/\/./i,
   refresh (resource) {
@@ -951,7 +999,7 @@ function parseIfPossible$1 (value) {
   }
 }
 
-const plugin$2 = {
+const plugin$1 = {
   name: 'sessionStorage',
   regex: /^sessionStorage:\/\/./i,
   refresh (resource, eventHandler) {
@@ -985,8 +1033,8 @@ function cleanUrlAndGetHistory (url, command, ...params) {
   if (history) {
     return history
   }
-  if (command && url === 'history://' && plugin$3.commands[command]) {
-    Object.keys(state).forEach(url => plugin$3.commands[command](url, ...params));
+  if (command && url === 'history://' && plugin$2.commands[command]) {
+    Object.keys(state).forEach(url => plugin$2.commands[command](url, ...params));
   }
 }
 
@@ -1044,7 +1092,7 @@ function updateresource (url) {
   executeCallbacks(url);
 }
 
-const plugin$3 = {
+const plugin$2 = {
   name: 'history',
   regex: /^history:\/\/./,
 
@@ -1248,10 +1296,10 @@ const plugin$3 = {
       propagate(url);
     },
     first (url) {
-      plugin$3.commands.undo(url, Infinity);
+      plugin$2.commands.undo(url, Infinity);
     },
     last (url) {
-      plugin$3.commands.redo(url, Infinity);
+      plugin$2.commands.redo(url, Infinity);
     },
     length (url) {
       const history = cleanUrlAndGetHistory(url);
@@ -1327,7 +1375,7 @@ function propagateDown (url) {
 }
 
 var dotted = {
-  name: 'state',
+  name: 'dotted',
   regex: /^dotted:\/\/./,
 
   /**
@@ -1412,10 +1460,10 @@ var dotted = {
   }
 };
 
+registerPlugin(fetch$1);
 registerPlugin(plugin);
 registerPlugin(plugin$1);
 registerPlugin(plugin$2);
-registerPlugin(plugin$3);
 registerPlugin(dotted);
 
 exports.afterSet = afterSet;
