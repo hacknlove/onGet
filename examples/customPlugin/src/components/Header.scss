@@ -1,0 +1,38 @@
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #ffffffee;
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 2rem;
+    align-items: center;
+    height: 4rem;
+    padding: 0 1rem;
+
+    box-shadow: 0px 1px 3px 1px var(--highlight);
+
+    img {
+        height: 2.5rem;
+    }
+    span {
+        font-size: 1rem;
+    }
+    svg {
+        transition: color .2s, transform .2s;
+        cursor: pointer;
+        &:hover {
+            color: var(--highlight);
+        }
+    }
+    &.open {
+        svg {
+            color: var(--highlight);
+            transform: rotate(45deg);
+        }
+    }
+
+}

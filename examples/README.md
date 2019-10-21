@@ -36,7 +36,7 @@ Using a REST api  as remote source for the local state
 
 ### Tree-view
 
-I could use the same approach of the redux state, to store the tree, but I wanted to show stress-test the dotted plugin, with thousends of differents subscriptions and changes propagating up and down the tree.
+I could use the same approach of the redux state, to store the tree, but I wanted to stress-test the dotted plugin, with hundreds of different subscriptions and changes propagating up and down the tree.
 
 
 * [source](/examples/tree-view)
@@ -54,3 +54,11 @@ Simple yet powerfull. It is beautiful.
 Server side prerrendering
 
 * [source](/examples/universal)
+
+### customPlugin
+
+It shows how custom plugins can be registered to abstract and ease things
+
+
+* [source](/examples/customPlugin)
+* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/customPlugin)

@@ -36,6 +36,7 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * Tree-view [source](/examples/tree-view) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view)
 * Async [source](/examples/async) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
 * Universal [source](/examples/universal)
+* customPlugin [source](/examples/customPlugin) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/customPlugin)
 
 
 ## Basic Usage. Examples
