@@ -1454,10 +1454,16 @@ var dotted = {
   }
 };
 
+var fast = {
+  name: 'fast',
+  regex: /^fast:\/\/./
+};
+
 registerPlugin(fetch$1);
 registerPlugin(plugin);
 registerPlugin(plugin$1);
 registerPlugin(plugin$2);
 registerPlugin(dotted);
+registerPlugin(fast);
 
 export { afterSet, beforeSet, command, conf, end, get, load, onGet, once, plugins, refresh, refreshRegExp, registerPlugin, resources, save, set, start, useOnGet, waitUntil };

@@ -21,12 +21,14 @@ import localStorage from './plugins/localstorage'
 import sessionStorate from './plugins/sessionstorage'
 import history from './plugins/history'
 import dotted from './plugins/dotted'
+import fast from './plugins/fast'
 
 registerPlugin(fetch)
 registerPlugin(localStorage)
 registerPlugin(sessionStorate)
 registerPlugin(history)
 registerPlugin(dotted)
+registerPlugin(fast)
 
 export {
   afterSet,

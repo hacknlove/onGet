@@ -316,3 +316,74 @@ describe('sessionstorage', () => {
     })
   })
 })
+
+describe('fast', () => {
+  beforeEach(() => {
+    while (unsubscribes.length) {
+      unsubscribes.pop()()
+    }
+    Object.keys(resources).forEach(key => delete resources[key])
+  })
+
+  describe('onGet', () => {
+    it('should not call cb if there is no initial value', () => {
+      const cb = jest.fn()
+      unsubscribes.push(onGet('fast://foo', cb))
+
+      expect(cb).not.toHaveBeenCalled()
+    })
+
+    it('should call cb with the initial value', () => {
+      const cb = jest.fn()
+      unsubscribes.push(onGet('fast://foo', cb, { first: 'world' }))
+
+      expect(cb).toHaveBeenCalledWith('world')
+    })
+
+    it('should call cb with the current value, if exists', () => {
+      set('fast://foo', 'mars')
+      const cb = jest.fn()
+
+      unsubscribes.push(onGet('fast://foo', cb))
+
+      expect(cb).toHaveBeenCalledWith('mars')
+    })
+
+    it('should call cb with the current value, even if pass a different initial one', async () => {
+      await set('fast://foo', 'mars')
+      const cb = jest.fn()
+
+      unsubscribes.push(onGet('fast://foo', cb, { first: 'world' }))
+
+      expect(cb).toHaveBeenCalledWith('mars')
+    })
+  })
+
+  describe('set', () => {
+    it('triggers the callbacks of the resource', async () => {
+      const cb = jest.fn()
+      unsubscribes.push(onGet('fast://foo', cb, { first: 'world' }))
+      expect(cb).toHaveBeenCalledWith('world')
+      set('fast://foo', 'mars')
+      expect(cb).toHaveBeenCalledWith('mars')
+    })
+
+    it('does not trigger the callbacks if the value is the same', async () => {
+      const cb = jest.fn()
+      unsubscribes.push(onGet('fast://foo', cb, { first: 'world' }))
+      expect(cb).toHaveBeenCalledWith('world')
+      set('fast://foo', 'world')
+
+      jest.runAllTimers()
+
+      expect(cb.mock.calls.length).toBe(1)
+    })
+  })
+
+  describe('get', () => {
+    it('returns the value for a url', async () => {
+      set('fast://foo', 'mars')
+      expect(get('fast://foo')).toBe('mars')
+    })
+  })
+})
