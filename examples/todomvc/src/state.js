@@ -1,8 +1,8 @@
 import { get, set, useOnGet } from 'onget'
 import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from './constants/TodoFilters'
 
-export const TODOS_URL = 'dotted://todos'
-export const FILTER_URL = 'dotted://filter'
+export const TODOS_URL = 'fast://todos'
+export const FILTER_URL = 'fast://filter'
 
 export function completeAllTodos () {
   const todos = get(TODOS_URL)
@@ -40,11 +40,11 @@ export function saveTodo (id, text) {
     return deleteTodo(id)
   }
 
-  const todos = get('dotted://todos')
+  const todos = get(TODOS_URL)
   if (text.length === 0) {
     deleteTodo(id)
   } else {
-    set('dotted://todos', todos.map(todo => {
+    set(TODOS_URL, todos.map(todo => {
       if (todo.id === id) {
         todo.text = text
       }
@@ -54,8 +54,8 @@ export function saveTodo (id, text) {
 }
 
 export function completeTodo (id) {
-  const todos = get('dotted://todos')
-  set('dotted://todos', todos.map(todo => {
+  const todos = get(TODOS_URL)
+  set(TODOS_URL, todos.map(todo => {
     if (todo.id === id) {
       return { ...todo, completed: !todo.completed }
     }
@@ -64,8 +64,8 @@ export function completeTodo (id) {
 }
 
 export function deleteTodo (id) {
-  const todos = get('dotted://todos')
-  set('dotted://todos', todos.filter(todo => todo.id !== id))
+  const todos = get(TODOS_URL)
+  set(TODOS_URL, todos.filter(todo => todo.id !== id))
 }
 
 export function useCount () {

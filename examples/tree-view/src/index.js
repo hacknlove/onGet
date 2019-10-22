@@ -5,10 +5,8 @@ import Node from './containers/Node'
 import { set } from 'onget'
 
 const tree = generateTree()
-
 set('dotted://tree', tree)
-
 render(
-  <Node path="0" doNotRemove={true} />,
+  <Node id={0} />,
   document.getElementById('root')
 )

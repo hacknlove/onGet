@@ -5,7 +5,9 @@
 	"extends": [
 		"standard",
 		"plugin:jest/recommended",
-		"plugin:jsdoc/recommended"
+		"plugin:jsdoc/recommended",
+    "eslint:recommended",
+    "plugin:react/recommended"
   ],
 	"globals": {
 		"Atomics": "readonly",
@@ -21,6 +23,7 @@
   ],
 	"rules": {
 		"no-prototype-builtins": 0,
-		"prefer-promise-reject-errors": 0
+		"prefer-promise-reject-errors": 0,
+		"react/prop-types": 0
   }
 }

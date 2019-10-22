@@ -34,7 +34,7 @@ app.use(webpackHotMiddleware(compiler))
 async function handleRender (req, res) {
   await start()
 
-  set('dotted://counter', 5)
+  set('fast://counter', 5)
   set('/api/v1/counter', counter)
   console.log(save())
   const html = renderToString(
@@ -50,13 +50,11 @@ async function handleRender (req, res) {
 app.get('/', handleRender)
 
 const renderFullPage = (html, preloadedState) => {
-  console.log(preloadedState)
-
   return `
     <!doctype html>
     <html>
       <head>
-        <title>Redux Universal Example</title>
+        <title>onGet Universal Example</title>
       </head>
       <body>
         <div id="app">${html}</div>

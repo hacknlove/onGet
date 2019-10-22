@@ -5,7 +5,7 @@ import { useOnGet } from 'onget'
 
 export default function App () {
   const options = ['reactjs', 'frontend']
-  const subReddit = useOnGet('dotted://subReddit', { first: options[0] })
+  const subReddit = useOnGet('fast://subReddit', { first: options[0] })
 
   const url = `https://www.reddit.com/r/${subReddit}.json`
 

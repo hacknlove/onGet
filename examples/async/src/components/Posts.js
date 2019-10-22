@@ -1,6 +1,12 @@
 import React from 'react'
 import { useOnGet, set, refresh, get } from 'onget'
 
+/**
+ * React hook that returns the list of posts
+ *
+ * @param {string} url - Url of the reddit endpoint
+ * @returns {object} processed data to show the post list
+ */
 function useOnReddit (url) {
   const json = useOnGet(url, {
     firstIfUrlChanges: true
@@ -16,6 +22,11 @@ function useOnReddit (url) {
     }
 }
 
+/**
+ * Set the isFetching to true, and then ask the plugin to refresh
+ *
+ * @param {*} url - Url of the reddit endpoint
+ */
 function refreshSubReddit (url) {
   set(url, {
     ...get(url),
@@ -24,8 +35,14 @@ function refreshSubReddit (url) {
   refresh(url, true)
 }
 
+/**
+ * React component that render the posts
+ *
+ * @param {object} props
+ * @param {string} props.url - Url of the reddit endpoint
+ * @returns {*}
+ */
 export default function Posts ({ url }) {
-
   const { isFetching, posts, receivedAt } = useOnReddit(url)
   return (
     <>

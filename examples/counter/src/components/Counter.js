@@ -3,10 +3,10 @@ import { set, useOnGet } from 'onget'
 
 export default function Counter (props) {
 
-  const value = useOnGet(`dotted://${props.counterKey}`, { first: props.firstValue || 0 })
+  const value = useOnGet(`fast://${props.counterKey}`, { first: props.firstValue || 0 })
 
   function sum (x) {
-    set(`dotted://${props.counterKey}`, value + x)
+    set(`fast://${props.counterKey}`, value + x)
   }
 
   return (

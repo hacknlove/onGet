@@ -30,6 +30,7 @@
   "dependencies": {
     "@hacknlove/deepobject": "^1.1.6",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
+    "eslint-plugin-react": "^7.16.0",
     "isdifferent": "^2.0.0",
     "path-to-regexp": "^3.1.0"
   },

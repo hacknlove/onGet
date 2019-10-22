@@ -1,53 +1,61 @@
 import React from 'react'
-import { get, set, useOnGet, command } from 'onget'
-
-let newId = 0
-
-function increment (path) {
-  const counter = get(`dotted://tree.${path}.counter`)
-
-  set(`dotted://tree.${path}.counter`, counter + 1)
+import { set, useOnGet, command, get } from 'onget'
+function handleIncrementClick (id, counter) {
+  set(`dotted://tree.${id}.counter`, counter + 1)
 }
 
-function remove (e, path) {
+let nextId = 2000
+function handleAddChildClick (e, node) {
   e.preventDefault()
-  command(`dotted://tree.${path}`, 'remove')
-}
-
-function addChild (e, path) {
-  e.preventDefault()
-  set(`dotted://tree.${path}.${newId++}`, {
+  set(`dotted://tree.${node.id}`, {
+    ...node,
+    childIds: [...node.childIds, ++nextId]
+  })
+  set(`dotted://tree.${nextId}`, {
+    id: nextId,
+    childIds: [],
     counter: 0
   })
 }
 
-export default function Node ({ path, doNotRemove = null }) {
-  const node = useOnGet(`dotted://tree.${path}`)
-  if (node === undefined) {
-    return null
-  }
+function handleRemoveClick (e, id, parentId) {
+  e.preventDefault()
+  const sibbling = get(`dotted://tree.${parentId}.childIds`)
+  set(`dotted://tree.${parentId}.childIds`, sibbling.filter(sibid => id !== sibid))
+  command(`dotted://tree.${id}`, 'remove')
+}
 
-  const childIds = Object.keys(node).filter(key => key !== 'counter')
+function renderChild (childId, id) {
+  return (
+    <li key={childId}>
+      <Node id={childId} parentId={id} />
+    </li>
+  )
+}
+
+export default function Node ({ id, parentId }) {
+  const node = useOnGet(`dotted://tree.${id}`)
+  const { counter, childIds } = node
 
   return (
     <div>
-      Counter: {node.counter}
-
-      <button onClick={() => increment(path)}>
+      Counter: {counter}
+      {' '}
+      <button onClick={() => handleIncrementClick(id, counter)}>
         +
       </button>
-
-      { doNotRemove || (
-        <a href="#" onClick={e => remove(e, path)} // eslint-disable-line jsx-a11y/anchor-is-valid
-           style={{ color: 'lightgray', textDecoration: 'none' }}>
+      {' '}
+      {parentId !== undefined &&
+        <a href="#" onClick={e => handleRemoveClick(e, id, parentId)} // eslint-disable-line jsx-a11y/anchor-is-valid
+          style={{ color: 'lightgray', textDecoration: 'none' }}>
           ×
         </a>
-      )}
+      }
       <ul>
-        {childIds.map(childId => <li key={`${path}.${childId}`}><Node path={`${path}.${childId}`}/></li>)}
+        {childIds.map(childId => renderChild(childId, id))}
         <li key="add">
           <a href="#" // eslint-disable-line jsx-a11y/anchor-is-valid
-            onClick={e => addChild(e, path)}
+            onClick={e => handleAddChildClick(e, node)}
           >
             Add child
           </a>
@@ -55,5 +63,4 @@ export default function Node ({ path, doNotRemove = null }) {
       </ul>
     </div>
   )
-
 }
