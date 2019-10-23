@@ -230,4 +230,5 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * Universal [source](/examples/universal)
 
 ## Coding Challenges
-* customPlugin [source](/codingChallenges/WheatherMaps) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps)
+* WheatherMaps [source](/codingChallenges/WheatherMaps) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps)
+* wallmartlabs [source](/codingChallenges/wallmartlabs) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/wallmartlabs)
