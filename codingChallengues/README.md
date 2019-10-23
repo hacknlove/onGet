@@ -7,5 +7,5 @@ Some react/redux coding challenges refactored to react/onget, to show how the co
 It uses a custom plugin to abstract a bit more the REST API calls
 
 
-* [source](/examples/customPlugin)
-* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/customPlugin)
+* [source](/codingChallenges/WheatherMaps)
+* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps)
