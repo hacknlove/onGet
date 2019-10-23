@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`expandable item component matches snapshot 1`] = `
+<div
+  className="expandable-information"
+>
+  <button
+    className="ui-button"
+    onClick={[Function]}
+  >
+     
+    <span
+      className="expand-sign"
+    >
+      +
+    </span>
+  </button>
+   
+</div>
+`;

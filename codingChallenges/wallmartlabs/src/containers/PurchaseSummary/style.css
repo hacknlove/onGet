@@ -1,0 +1,15 @@
+.purchase-summary {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  float: right;
+  min-width: 235px;
+  width: 40%;
+  max-width: 300px;
+  border: solid 1px #ccc;
+  padding: 16px;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.16);
+  line-height: 24px;
+}

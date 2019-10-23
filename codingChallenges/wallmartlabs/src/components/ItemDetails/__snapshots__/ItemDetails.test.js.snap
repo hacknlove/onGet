@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`item details component matches snapshot 1`] = `
+<div
+  className="item-details"
+>
+  <img
+    className="item-picture"
+  />
+  <div
+    className="item-name"
+  />
+  <div
+    className="item-price"
+  >
+    $
+  </div>
+  <div
+    className="item-quantity"
+  >
+    Qty:
+  </div>
+  <div
+    className="item-previous-price"
+  >
+    $
+  </div>
+</div>
+`;

@@ -1,0 +1,30 @@
+.discount-form {
+  padding-top: 10px;
+}
+
+.apply-button {
+  border: solid 1px black;
+  border-radius: 18px;
+  height: 2.5em;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.apply-button:focus {
+  outline: none;
+}
+
+#promoCode {
+  height: 2.5em;
+  border: solid 1px #e6e7e8;
+  border-radius: 5px;
+  color: gray;
+}
+#promoCode:focus {
+  outline: none;
+}
+
+.promoCode-label {
+  color: gray;
+}

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tooltip component matches snapshot 1`] = `
+<div
+  className="tooltip"
+>
+  <button
+    className="ui-button"
+  />
+</div>
+`;
