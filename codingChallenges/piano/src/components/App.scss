@@ -1,0 +1,49 @@
+* {
+  outline: none !important;
+}
+body {
+  margin: 0;
+  padding: 0;
+  #app {
+    background: black;
+    padding: 0 10px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    &.STOP .stop {
+      display: none;
+    }
+    &.RECORDING .start {
+      display: none;
+    }
+    &.PLAYING {
+      .start {
+        display: none;
+      }
+      #buttons * {
+        display: none;
+      }
+    }
+    #buttons {
+      height: 5vh;
+      padding: 2vh;
+      display: flex;
+      justify-content: center;
+      background:#e8e2d5;
+      border-bottom: #555;
+      margin-bottom: 1px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      button {
+        color: #f6f5f3;
+        padding: 0 5vw;
+        border:1px solid #000;
+        background: #555;
+        border-radius: 5px;
+        &:active {
+            background: #3ac8da;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+#saveSong {
+    background: black;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    justify-content: safe-center;
+    align-items: center;
+    align-items: safe-center;
+    div {
+        padding: 20px;
+        background: #e8e2d5;
+        border-radius: 5px;
+        width: 300px;
+        max-width: 90vw;
+        input {
+            width: 100%;
+            border: 0;
+            display: block;
+            background: transparent;
+            border-bottom: 1px solid #555;
+            margin-bottom: 20px;
+            &:focus {
+                border-bottom-color: #3ac8da;
+            }
+        }
+        button {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid black;
+            background: #555;
+            color: #e8e2d5;
+            padding: 5px 20px;
+            border-radius: 5px;
+            &:active {
+                background: #3ac8da;
+            }
+        }
+    }
+}

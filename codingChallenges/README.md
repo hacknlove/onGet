@@ -17,3 +17,12 @@ When it comer to mock a server-side API like, you can just use a client-side API
 
 * [source](/codingChallenges/wallmartlabs)
 * [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/wallmartlabs)
+
+## piano
+
+A virtual piano in which you can play song, save them and play them back.
+
+It uses GraphQL without making any attemp to integrate GraphQL into onGet.
+
+* [source](/codingChallenges/piano)
+* [sandbox](https://codesandbox.io/s/piano-wkfoe)

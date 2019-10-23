@@ -1,0 +1,26 @@
+.PLAYINGOTHER {
+    .controls {
+        display: none;
+    }
+}
+
+#songList > div {
+    background: #555;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    .controls {
+        margin-right: 10px;
+    }
+    color: #f6f5f3;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &:active {
+        background: #3ac8da;
+    }
+}
