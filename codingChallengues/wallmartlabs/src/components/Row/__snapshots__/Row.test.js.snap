@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`row component matches snapshot 1`] = `
+<div
+  className="row"
+>
+  <div
+    className="row-title"
+  />
+  <div
+    className="row-figure"
+    style={
+      Object {
+        "color": "black",
+      }
+    }
+  >
+    $
+  </div>
+</div>
+`;

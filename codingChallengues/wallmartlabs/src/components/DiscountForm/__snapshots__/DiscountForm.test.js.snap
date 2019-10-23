@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`discount form component matches snapshot 1`] = `
+<form
+  className="discount-form"
+  onSubmit={[Function]}
+>
+  <div>
+    <label
+      className="promoCode-label"
+      htmlFor="promoCode"
+    >
+      Promo
+    </label>
+  </div>
+  <div>
+    <input
+      id="promoCode"
+      name="promoCode"
+      onChange={[Function]}
+      type="text"
+      value=""
+    />
+    <button
+      className="apply-button"
+    >
+      Apply
+    </button>
+  </div>
+</form>
+`;
