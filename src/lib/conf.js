@@ -20,8 +20,9 @@ export const conf = {
 export const resources = {}
 export const plugins = []
 export const setHooks = {
-  before: [],
-  after: []
+  beforeSet: [],
+  afterSet: [],
+  beforeRefresh: []
 }
 
 export const serverInstances = []

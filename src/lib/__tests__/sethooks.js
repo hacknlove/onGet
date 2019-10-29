@@ -13,8 +13,8 @@ jest.useFakeTimers()
 
 describe('hooks', () => {
   beforeEach(() => {
-    setHooks.before = []
-    setHooks.after = []
+    setHooks.beforeSet = []
+    setHooks.afterSet = []
   })
   describe('insertHook', () => {
     it('inserts the hook in the array', () => {
@@ -41,10 +41,10 @@ describe('hooks', () => {
   })
 
   describe('beforeSet', () => {
-    afterEach(() => { setHooks.before.length = 0 })
-    it('inserts the hook in setHooks.before', () => {
+    afterEach(() => { setHooks.beforeSet.length = 0 })
+    it('inserts the hook in setHooks.beforeSet', () => {
       beforeSet('/some/:path', 'function')
-      expect(setHooks.before).toStrictEqual([
+      expect(setHooks.beforeSet).toStrictEqual([
         [
           /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
           [
@@ -64,10 +64,10 @@ describe('hooks', () => {
   })
 
   describe('afterSet', () => {
-    afterEach(() => { setHooks.before.length = 0 })
-    it('inserts the hook in setHooks.after', () => {
+    afterEach(() => { setHooks.beforeSet.length = 0 })
+    it('inserts the hook in setHooks.afterSet', () => {
       afterSet('/some/:path', 'function')
-      expect(setHooks.after).toStrictEqual([
+      expect(setHooks.afterSet).toStrictEqual([
         [
           /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
           [

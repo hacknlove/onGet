@@ -26,7 +26,7 @@ import { insertHook } from '../private/setHooks'
  * })
  */
 export function afterSet (path, hook) {
-  insertHook(path, hook, setHooks.after)
+  insertHook(path, hook, setHooks.afterSet)
 }
 
 /**

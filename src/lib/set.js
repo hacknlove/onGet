@@ -16,7 +16,7 @@ import { executeHooks } from '../private/setHooks'
  * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
  */
 export function set (url, value, options = {}) {
-  const beforeResult = executeHooks(setHooks.before, {
+  const beforeResult = executeHooks(setHooks.beforeSet, {
     ...options,
     url,
     value
@@ -34,7 +34,7 @@ export function set (url, value, options = {}) {
       resource.value = value
       resource.plugin.set(resource)
     }
-    executeHooks(setHooks.after, {
+    executeHooks(setHooks.afterSet, {
       ...options,
       url,
       value
@@ -49,7 +49,7 @@ export function set (url, value, options = {}) {
     pospone(resource)
   }
   _set(resource, value, beforeResult.preventRefresh)
-  executeHooks(setHooks.after, {
+  executeHooks(setHooks.afterSet, {
     ...options,
     url,
     oldValue,
