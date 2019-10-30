@@ -46,6 +46,9 @@ const plugin = {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
   set (resource) {
+    if (resource === undefined) {
+      return delete localStorage[resource.key]
+    }
     localStorage[resource.key] = JSON.stringify(resource.value)
   },
   clean (resource) {

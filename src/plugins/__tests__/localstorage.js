@@ -1,6 +1,7 @@
 /* global localStorage */
 import { resources } from '../../lib/conf'
 import plugin, { onChange } from '../localstorage'
+import { set, get } from '../../index'
 
 global.localStorage = {}
 
@@ -99,6 +100,15 @@ describe('plugin', () => {
     })
     it('does not break if resource.unsubscribeStorage not exists', () => {
       expect(() => plugin.clean({})).not.toThrow()
+    })
+  })
+
+  describe('edge cases', () => {
+    it('deletes the value if set undefined', () => {
+      set('localStorage://something', 'algo')
+      expect(get('localStorage://something')).toBe('algo')
+      set('localStorage://something', undefined)
+      expect(get('localStorage://something')).toBeUndefined()
     })
   })
 })
