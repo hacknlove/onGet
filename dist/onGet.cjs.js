@@ -31,8 +31,9 @@ const conf = {
 const resources = {};
 const plugins = [];
 const setHooks = {
-  before: [],
-  after: []
+  beforeSet: [],
+  afterSet: [],
+  beforeRefresh: []
 };
 
 const serverInstances = [];
@@ -319,6 +320,49 @@ function pospone (resource) {
 }
 
 /**
+ * Execute all the hooks that match an url
+ *
+ * @private
+ * @param {Array} where array to search for the hook
+ * @param {object} context object to be passed to the hook
+ * @returns {object} the context object, it might be modified by the hooks
+ */
+function executeHooks (where, context) {
+  for (let i = 0, z = where.length; i < z; i++) {
+    if (context.preventHooks) {
+      break
+    }
+    const [regex, keys, cb] = where[i];
+    const match = context.url.match(regex);
+    if (!match) {
+      continue
+    }
+    context.params = {};
+    for (let i = 1; i < match.length; i++) {
+      context.params[keys[i - 1].name] = match[1];
+    }
+
+    cb(context);
+  }
+
+  return context
+}
+
+/**
+ * Prepares the regex that match the path patters, and insert the hook in the indicated array
+ *
+ * @private
+ * @param {string} path the same format of express. (path-to-regexp)
+ * @param {afterSetHook|BeforeSetHook} hook Function to be called at hook time
+ * @param {Array} where array to insert the hook in
+ */
+function insertHook (path, hook, where) {
+  const keys = [];
+  const regex = pathToRegExp(path, keys);
+  where.push([regex, keys, hook]);
+}
+
+/**
  * Check if the value of a resource has changed, and execute the subscriptions if so.
  * It makes the plugin reevaluate the value of the resorce, in those plugins that make periodical evaluations, or that uses some source that could have been changed with a `set` operation on the resource, like `localStorage` or `sessionStorage`
  *
@@ -351,11 +395,19 @@ function refresh (url, force = false) {
   if (!resource.plugin.refresh) {
     return
   }
-  if (!force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
+
+  const beforeRefresh = executeHooks(setHooks.beforeRefresh, {
+    force,
+    url
+  });
+  if (beforeRefresh.preventRefresh) {
+    return
+  }
+  if (!beforeRefresh.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
     return
   }
   pospone(resource)
-  ;(async () => _set(resource, await resource.plugin.refresh(resource)))();
+  ;(async () => _set(resource, await resource.plugin.refresh(resource, beforeRefresh.options)))();
   return true
 }
 
@@ -646,49 +698,6 @@ function save () {
 }
 
 /**
- * Execute all the hooks that match an url
- *
- * @private
- * @param {Array} where array to search for the hook
- * @param {object} context object to be passed to the hook
- * @returns {object} the context object, it might be modified by the hooks
- */
-function executeHooks (where, context) {
-  for (let i = 0, z = where.length; i < z; i++) {
-    if (context.preventHooks) {
-      break
-    }
-    const [regex, keys, cb] = where[i];
-    const match = context.url.match(regex);
-    if (!match) {
-      continue
-    }
-    context.params = {};
-    for (let i = 1; i < match.length; i++) {
-      context.params[keys[i - 1].name] = match[1];
-    }
-
-    cb(context);
-  }
-
-  return context
-}
-
-/**
- * Prepares the regex that match the path patters, and insert the hook in the indicated array
- *
- * @private
- * @param {string} path the same format of express. (path-to-regexp)
- * @param {afterSetHook|BeforeSetHook} hook Function to be called at hook time
- * @param {Array} where array to insert the hook in
- */
-function insertHook (path, hook, where) {
-  const keys = [];
-  const regex = pathToRegExp(path, keys);
-  where.push([regex, keys, hook]);
-}
-
-/**
  * set a new cached value for an resource, and call the handlers. If the resource does not exists, it creates it.
  *
  * @param {string} url  of the resource whose value set to.
@@ -700,7 +709,7 @@ function insertHook (path, hook, where) {
  * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
  */
 function set (url, value, options = {}) {
-  const beforeResult = executeHooks(setHooks.before, {
+  const beforeResult = executeHooks(setHooks.beforeSet, {
     ...options,
     url,
     value
@@ -718,7 +727,7 @@ function set (url, value, options = {}) {
       resource.value = value;
       resource.plugin.set(resource);
     }
-    executeHooks(setHooks.after, {
+    executeHooks(setHooks.afterSet, {
       ...options,
       url,
       value
@@ -733,7 +742,7 @@ function set (url, value, options = {}) {
     pospone(resource);
   }
   _set(resource, value, beforeResult.preventRefresh);
-  executeHooks(setHooks.after, {
+  executeHooks(setHooks.afterSet, {
     ...options,
     url,
     oldValue,
@@ -743,7 +752,7 @@ function set (url, value, options = {}) {
 
 /**
  * Attach a handler for an express-like path, that will be executed before any set operation on the resources whose url match that path.
- * From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
+ * From inside the handler it is possible to modify the value to be set, prevent the next beforeSet and afterSet handlers to be executed, prevent the subscription callbacks to be executed, or prevent the whole to be set to take place.
  *
  * @param {string} path express-like path to check in which resources execute the hook
  * @param {BeforeSetHandler} hook Function to be called
@@ -764,7 +773,7 @@ function set (url, value, options = {}) {
  *  })
  */
 function beforeSet (path, hook) {
-  insertHook(path, hook, setHooks.before);
+  insertHook(path, hook, setHooks.beforeSet);
 }
 
 /**
@@ -807,7 +816,7 @@ function beforeSet (path, hook) {
  * })
  */
 function afterSet (path, hook) {
-  insertHook(path, hook, setHooks.after);
+  insertHook(path, hook, setHooks.afterSet);
 }
 
 /**
@@ -910,8 +919,8 @@ function waitUntil (url, condition = value => value) {
 var fetch$1 = {
   name: 'fetch',
   regex: /^./,
-  async refresh (resource) {
-    const response = await fetch(resource.url).catch(__error => ({ __error }));
+  async refresh (resource, options) {
+    const response = await fetch(resource.url, options).catch(__error => ({ __error }));
     if (response.__error) {
       return response.__error
     }
