@@ -88,38 +88,45 @@ describe('hooks', () => {
       ])
     })
     describe('preventRefresh', () => {
-      beforeRefresh('/url', context => {
-        context.preventRefresh = true
-      })
-      resources['/url'] = {
-        callbacks: {
-          uno: jest.fn()
-        },
-        plugin: {
-          refresh: jest.fn()
+      it('prevent refresh to take place', () => {
+        beforeRefresh('/url', context => {
+          context.preventRefresh = true
+        })
+        resources['/url'] = {
+          callbacks: {
+            uno: jest.fn()
+          },
+          plugin: {
+            refresh: jest.fn()
+          }
         }
-      }
 
-      refresh('/url')
-      expect(resources['/url'].callbacks.uno).not.toHaveBeenCalled()
-      expect(resources['/url'].plugin.refresh).not.toHaveBeenCalled()
+        refresh('/url')
+        expect(resources['/url'].callbacks.uno).not.toHaveBeenCalled()
+        expect(resources['/url'].plugin.refresh).not.toHaveBeenCalled()
+      })
     })
     describe('set parameter to refresh', () => {
-      beforeRefresh('/url', context => {
-        context.options = 'plugin options'
-      })
-      resources['/url'] = {
-        callbacks: {
-          uno: jest.fn()
-        },
-        plugin: {
-          refresh: jest.fn()
+      it('calls plugin.refersh with an extra parameter', () => {
+        beforeRefresh('/url', context => {
+          context.options = 'plugin options'
+        })
+        resources['/url'] = {
+          callbacks: {
+            uno: jest.fn()
+          },
+          last: -Infinity,
+          plugin: {
+            conf: {
+              threshold: 5000
+            },
+            refresh: jest.fn()
+          }
         }
-      }
 
-      refresh('/url')
-      expect(resources['/url'].callbacks.uno).toHaveBeenCalled()
-      expect(resources['/url'].plugin.refresh).toHaveBeenCalledWith(resources['/url'], 'plugin options')
+        refresh('/url')
+        expect(resources['/url'].plugin.refresh).toHaveBeenCalledWith(resources['/url'], 'plugin options')
+      })
     })
   })
 

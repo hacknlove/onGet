@@ -4,8 +4,8 @@ import { conf } from '../lib/conf'
 export default {
   name: 'fetch',
   regex: /^./,
-  async refresh (resource) {
-    const response = await fetch(resource.url).catch(__error => ({ __error }))
+  async refresh (resource, options) {
+    const response = await fetch(resource.url, options).catch(__error => ({ __error }))
     if (response.__error) {
       return response.__error
     }

@@ -96,9 +96,7 @@ Requests to the same endpoint are debounced and their responses are cached and p
 * You can `set` a value, to speed things up if you optimistically know the value that the enpoint will return, (for instance after making some other POST to the API)
 * You can ask for a manual refresh, to not wait for the periodical one, if you know the value has changed, , (for instance after making some POST to the API)
 * `get` is syncronous, so used with urls from fetch plugin, it only returns a value if the url has been used previously with `onGet`, `useOnGet` or `set`
-
-
-
+* You can use beforeRefresh to configure the `fetch` call.
 
 ## API Documentation
 [documentation](https://hacknlove.github.io/onGet/)
