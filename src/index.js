@@ -10,6 +10,7 @@ import { registerPlugin } from './lib/registerPlugin'
 import { save } from './lib/save'
 import { set } from './lib/set'
 import { beforeSet } from './lib/beforeSet'
+import { beforeRefresh } from './lib/beforeRefresh'
 import { afterSet } from './lib/afterSet'
 import { start } from './lib/start'
 import { end } from './lib/end'
@@ -33,6 +34,7 @@ registerPlugin(fast)
 export {
   afterSet,
   beforeSet,
+  beforeRefresh,
   command,
   conf,
   end,
