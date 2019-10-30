@@ -3,7 +3,7 @@ import { insertHook } from '../private/setHooks'
 
 /**
  * Attach a handler for an express-like path, that will be executed before any set operation on the resources whose url match that path.
- * From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
+ * From inside the handler it is possible to modify the value to be set, prevent the next beforeSet and afterSet handlers to be executed, prevent the subscription callbacks to be executed, or prevent the whole to be set to take place.
  *
  * @param {string} path express-like path to check in which resources execute the hook
  * @param {BeforeSetHandler} hook Function to be called

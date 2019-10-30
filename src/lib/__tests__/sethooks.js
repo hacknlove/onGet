@@ -1,6 +1,8 @@
 import { set } from '../set'
+import { refresh } from '../refresh'
 import { afterSet } from '../afterSet'
 import { beforeSet } from '../beforeSet'
+import { beforeRefresh } from '../beforeRefresh'
 import { insertHook, executeHooks } from '../../private/setHooks'
 import { resources, setHooks } from '../conf'
 import { getResource } from '../../private/getResource'
@@ -15,6 +17,7 @@ describe('hooks', () => {
   beforeEach(() => {
     setHooks.beforeSet = []
     setHooks.afterSet = []
+    setHooks.beforeRefresh = []
   })
   describe('insertHook', () => {
     it('inserts the hook in the array', () => {
@@ -60,6 +63,63 @@ describe('hooks', () => {
           'function'
         ]
       ])
+    })
+  })
+
+  describe('beforeRefresh', () => {
+    afterEach(() => { setHooks.beforeRefresh.length = 0 })
+    it('inserts the hook in setHooks.beforeRefresh', () => {
+      beforeRefresh('/some/:path', 'function')
+      expect(setHooks.beforeRefresh).toStrictEqual([
+        [
+          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
+          [
+            {
+              delimiter: '/',
+              name: 'path',
+              optional: false,
+              pattern: '[^\\/]+?',
+              prefix: '/',
+              repeat: false
+            }
+          ],
+          'function'
+        ]
+      ])
+    })
+    describe('preventRefresh', () => {
+      beforeRefresh('/url', context => {
+        context.preventRefresh = true
+      })
+      resources['/url'] = {
+        callbacks: {
+          uno: jest.fn()
+        },
+        plugin: {
+          refresh: jest.fn()
+        }
+      }
+
+      refresh('/url')
+      expect(resources['/url'].callbacks.uno).not.toHaveBeenCalled()
+      expect(resources['/url'].plugin.refresh).not.toHaveBeenCalled()
+    })
+    describe('set parameter to refresh', () => {
+      beforeRefresh('/url', context => {
+        context.options = 'plugin options'
+      })
+      resources['/url'] = {
+        callbacks: {
+          uno: jest.fn()
+        },
+        plugin: {
+          refresh: jest.fn()
+        }
+      }
+
+      refresh('/url')
+      expect(resources['/url'].callbacks.uno).toHaveBeenCalled()
+      expect(resources['/url'].plugin.refresh).toHaveBeenCalledWith(resources['/url'], 'plugin options')
     })
   })
 

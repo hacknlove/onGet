@@ -1,6 +1,7 @@
-import { resources } from './conf'
+import { resources, setHooks } from './conf'
 import { _set } from '../private//set'
 import { pospone } from '../private/pospone'
+import { executeHooks } from '../private/setHooks'
 
 /**
  * Check if the value of a resource has changed, and execute the subscriptions if so.
@@ -35,10 +36,18 @@ export function refresh (url, force = false) {
   if (!resource.plugin.refresh) {
     return
   }
-  if (!force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
+
+  const beforeRefresh = executeHooks(setHooks.beforeRefresh, {
+    force,
+    url
+  })
+  if (beforeRefresh.preventRefresh) {
+    return
+  }
+  if (!beforeRefresh.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
     return
   }
   pospone(resource)
-  ;(async () => _set(resource, await resource.plugin.refresh(resource)))()
+  ;(async () => _set(resource, await resource.plugin.refresh(resource, beforeRefresh.options)))()
   return true
 }

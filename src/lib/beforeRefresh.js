@@ -2,42 +2,38 @@ import { setHooks } from './conf'
 import { insertHook } from '../private/setHooks'
 
 /**
- * Attach a handler for an express-like path, that will be executed before any set operation on the resources whose url match that path.
- * From inside the handler it is possible to modify the value to be set, to prevent the next beforeSet and afterSet handlers to be executed, to prevent the subscription callbacks to be executed, event to prevent the whole to be set to take place.
+ * Attach a handler for an express-like path, that will be executed before any refresh operation on the resources whose url match that path.
+ * From inside the handler it is possible to add more parameters to the call to plugin.
  *
  * @param {string} path express-like path to check in which resources execute the hook
- * @param {BeforeSetHandler} hook Function to be called
- * @see set
- * @see afterSet
+ * @param {BeforeRefreshHandler} hook Function to be called
+ * @see refresh
  * @example
- *  import { beforeSet, set } from 'onget'
+ *  import { beforeRefresh, refresh } from 'onget'
  *
- *  beforeSet(`localStorage://username`, context => {
- *    context.value = context.value.trim().toLowerCase()
- *  })
- *
- *  beforeSet(`localStorage://email`, context => {
- *    if (context.value.match(/@/) === null) {
- *      context.preventSet = true
- *      set('dotted://errors.email', true)
+ *  beforerefresh('/api/user/current', context => {
+ *    const token = get('localStorage://token')
+ *    context.options = {
+ *      headers: { 'Authorization': `Bearer ${token}` }
  *    }
  *  })
+ *
+ *  refresh('/api/user/current')
  */
-export function beforeSet (path, hook) {
-  insertHook(path, hook, setHooks.beforeSet)
+export function beforeRefresh (path, hook) {
+  insertHook(path, hook, setHooks.beforeRefresh)
 }
 
 /**
- * Function to be called before a set operation. They are executed synchrony and they can modify, even prevent, the set.
+ * Function to be called before a reefresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
  *
- * @callback BeforeSetHandler
- * @param {object} event context in which the hook is executed.
- * @param {string} event.url url of the resource that has received the set
- * @param {object} event.params the params captured on the url by the path. Like in express
- * @param {*} event.value The current value. It can be changed.
- * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
- * @param {boolean} event.preventRefresh set this to true to prevent the resource callbacks to be executed.
- * @param {boolean} event.preventSet set this to true to prevent the whole set operation (except the next hooks, that can be prevented with preventHooks)
- * @param {boolean} event.preventPospone set this to true to prevent the next periodical check to be posponed
+ * @callback BeforeRefreshHandler
+ * @param {object} conext - context in which the hook is executed.
+ * @param {string} context.url - url of the resource that has received the set
+ * @param {object} context.params - the params captured on the url by the path. Like in express
+ * @param {any} context.value - The current value. It can be changed.
+ * @param {any} context.options - The
+ * @param {boolean} context.preventHooks - set this to true to prevent the next hooks to be executed.
+ * @param {boolean} context.preventRefresh - set this to true to prevent the resource callbacks to be executed.
  * @see beforeSet
  */
