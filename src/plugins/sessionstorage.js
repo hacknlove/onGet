@@ -22,12 +22,19 @@ const plugin = {
       resource.value = parseIfPossible(sessionStorage[resource.key])
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value)
   },
   get (url) {
     return parseIfPossible(sessionStorage[url.substr(PROTOCOLCUT)])
   },
   set (resource) {
+    if (resource === undefined) {
+      return delete sessionStorage[resource.key]
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value)
   },
 

@@ -981,12 +981,19 @@ const plugin = {
       resource.value = parseIfPossible(localStorage[resource.key]);
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     localStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
     return parseIfPossible(localStorage[url.substr(PROTOCOLCUT)])
   },
   set (resource) {
+    if (resource === undefined) {
+      return delete localStorage[resource.key]
+    }
     localStorage[resource.key] = JSON.stringify(resource.value);
   },
   clean (resource) {
@@ -1021,12 +1028,19 @@ const plugin$1 = {
       resource.value = parseIfPossible$1(sessionStorage[resource.key]);
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
     return parseIfPossible$1(sessionStorage[url.substr(PROTOCOLCUT$1)])
   },
   set (resource) {
+    if (resource === undefined) {
+      return delete sessionStorage[resource.key]
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
 

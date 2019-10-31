@@ -1,6 +1,6 @@
 {
   "name": "onget",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"
