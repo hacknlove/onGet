@@ -1,5 +1,28 @@
-# Custom plugin Example
+# ditGIS code challenge
 
-It is not entirely necessary to create a plugin to get this example done, but it is a good one to show how the REST api calls can be abstracted through a custom plugin, so you ask for `openweathermap://barcelona` and you get the client-side processed response of calling `https://api.openweathermap.org/data/2.5/forecast?APPID=2bde50bdcc809a6230f17e9ba8e7f951&units=metric&q=barcelona`
+original no available
 
-With custom plugins you can make complex things easier.
+## Warning
+You should not use this code to fullfil the selection process of Flowkey, because they will notice.
+
+
+## VAFF
+
+### `openweathermap://{city}`
+
+It calls to `https://api.openweathermap.org/data/2.5/forecast?APPID=...&units=metric&q=${city}` and process the response to make it ready for its visualization.
+
+It is not entirely necessary to create a plugin to get this example done, but it is a good one to show how the REST api calls can be abstracted through a custom plugin and make complex things easier.
+
+### dotted://menu
+Menu state
+
+#### dotted://menu.items
+The list of items availables in the menu
+
+#### dotted://menu.show
+Whether the menu is showed or not.
+
+
+### dotted://cards
+Array with the open cards

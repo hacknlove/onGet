@@ -4,26 +4,10 @@ import { insertHook } from '../private/setHooks'
 /**
  * Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
  * From inside the handler it is possible to prevent the next afterSet handlers to be executed.
- *
  * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHandler} hook Function to be called
  * @see set
  * @see beforeSet
- * @example
- * import { afterSet, refresh } from 'onget'
- *
- *  afterSet('/api/cart/:item', async context => {
- *    await fetch(`/api/cart/${context.params.item}`, {
- *      method: 'POST',
- *      headers: {
- *        'Content-Type': 'application/json'
- *      },
- *      body: {
- *        amount: context.value
- *      }
- *    })
- *    refresh(`/api/stock/${context.params.item}`)
- * })
  */
 export function afterSet (path, hook) {
   insertHook(path, hook, setHooks.afterSet)

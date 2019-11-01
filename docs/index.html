@@ -1,505 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Index</title>
-    
-    
-    
-    
-    
-    <meta property="og:title" content=""/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:image" content=""/>
-    
-    <meta property="og:url" content=""/>
-    
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
-    <script src="scripts/jquery.min.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
-    
-    
-    <script>
-    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"onget","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
-    </script>
-    
 
-    
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      Home - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
 </head>
+
 <body>
-<div id="wrap" class="clearfix">
-    
-<div class="navigation">
-    <h3 class="applicationName"><a href="index.html">onget</a></h3>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
 
-    <div class="search">
-        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
-    </div>
-    <ul class="list">
-    
-        <li class="item" data-name="conf">
-            <span class="title">
-                <a href="conf.html">conf</a>
-                
-                <span class="static">static</span>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="afterSetHandler">
-            <span class="title">
-                <a href="global.html#afterSetHandler">afterSetHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="BeforeRefreshHandler">
-            <span class="title">
-                <a href="global.html#BeforeRefreshHandler">BeforeRefreshHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="BeforeSetHandler">
-            <span class="title">
-                <a href="global.html#BeforeSetHandler">BeforeSetHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="cleanPluginHandler">
-            <span class="title">
-                <a href="global.html#cleanPluginHandler">cleanPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="commandPlugin">
-            <span class="title">
-                <a href="global.html#commandPlugin">commandPlugin</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="getPluginHandler">
-            <span class="title">
-                <a href="global.html#getPluginHandler">getPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="getResourcePluginHandler">
-            <span class="title">
-                <a href="global.html#getResourcePluginHandler">getResourcePluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="handler">
-            <span class="title">
-                <a href="global.html#handler">handler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="loadPluginHandler">
-            <span class="title">
-                <a href="global.html#loadPluginHandler">loadPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="loadResourcePluginHandler">
-            <span class="title">
-                <a href="global.html#loadResourcePluginHandler">loadResourcePluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="onceHandler">
-            <span class="title">
-                <a href="global.html#onceHandler">onceHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Plugin">
-            <span class="title">
-                <a href="global.html#Plugin">Plugin</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="refreshPluginHandler">
-            <span class="title">
-                <a href="global.html#refreshPluginHandler">refreshPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="savePluginHandler">
-            <span class="title">
-                <a href="global.html#savePluginHandler">savePluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="saveResourcePluginHandler">
-            <span class="title">
-                <a href="global.html#saveResourcePluginHandler">saveResourcePluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="setPluginHandler">
-            <span class="title">
-                <a href="global.html#setPluginHandler">setPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="startPluginHandler">
-            <span class="title">
-                <a href="global.html#startPluginHandler">startPluginHandler</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li  class="active" >
+        <a href="index.html">
+          
+          
+            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+        </a>
+      </li>
+
+      
+
     </ul>
-</div>
-    <div class="main">
-        <h1 class="page-title" data-filename="index.html">Index</h1>
-        
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      onGet
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/hacknlove/onGet">github</a>
+      
+    
+
+    <h3>Tutorials</h3><ul><li id="getting-started-nav"><a href="tutorial-getting-started.html">getting-started</a></li><li id="plugins-quick-view-nav"><a href="tutorial-plugins-quick-view.html">plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+
+    
+      
+
 
 
     
 
-
-    <h3> </h3>
-
+      
 
 
-
-
-
-
-
-    
-
-
-
-
-    <section>
-        <article class="readme"><h1>onGet</h1>
-<p>The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.</p>
-<h2>Plugins</h2>
-<h3>fast</h3>
-<p>The fastest key&gt;value plugin.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('fast://someKey', someHandler)
-</code></pre>
-<h3>dotted</h3>
-<p>A deeply-dotted-key aware plugin.</p>
-<ul>
-<li>It allows you to get/set/subscribe to any deeply-dotted-key</li>
-<li>The change events are propagated to every parent and to only those child whose value has been changed.</li>
-</ul>
-<pre class="prettyprint source lang-js"><code>  onGet('dotted://someKey.foo', someFooHandler)
-  onGet('dotted://someKey.bar.baz', someBarHandler)
-
-  set('dotted://someKey', {
-    foo: 42,
-    bar: {
-      baz: 'quz'
-    }
-  })
-</code></pre>
-<h4>Commands</h4>
-<ul>
-<li><strong>remove</strong> It removes a value</li>
-</ul>
-<pre class="prettyprint source lang-js"><code>  onGet('dotted://foo', value => console.log(JSON.stringify(value)))
-
-  set('dotted://foo.bar', { baz: 42 }) // {&quot;bar&quot;:{&quot;baz&quot;:42}}
-
-  command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}
-</code></pre>
-<h3>history</h3>
-<p>A plugin with independent histories for each key</p>
-<ul>
-<li>It allows you to undo/redo on the fields you want to. For instance, in a text editor you could be interested in undo the content but not the UX state like zoom level.</li>
-<li>You can also subscribe to prev and next steps.</li>
-</ul>
-<pre class="prettyprint source lang-js"><code>  onGet('history://someKey', someHandler)
-  set('history://someKey', 'first step')
-  set('history://someKey', 'second step')
-  command('history://someKey', 'undo')
-  set('history://someKey', 'new second step')
-</code></pre>
-<h4>Commands</h4>
-<ul>
-<li><strong>replace</strong> It set a new value, without advancing the history</li>
-<li><strong>undo</strong> It undoes a step in the history</li>
-<li><strong>redo</strong> It redoes a step in the history</li>
-<li><strong>goto</strong> It makes the indicated step the active one</li>
-<li><strong>first</strong> It makes the history go to the first step</li>
-<li><strong>last</strong> It makes the history go to the last step</li>
-<li><strong>length</strong> It returns the amount of steps in the history</li>
-<li><strong>undoLength</strong> It returns the amount of undoable steps in the history</li>
-<li><strong>redoLength</strong> It returns the amount of redoable steps in the history</li>
-</ul>
-<h3>localStorage</h3>
-<p>A plugin that uses localStorage, so the state is persistent and it trigger the subscription handlers if the value is changed from other tabs.</p>
-<p>It serializes and deserialize the values.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('localStorage://someKey')
-</code></pre>
-<h3>sessionStorage</h3>
-<p>A plugin that uses sessionStorage, so the state is persistent between reloads but different between tabs.</p>
-<p>It serializes and deserialize the values.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('sessionStorage://someKey')
-</code></pre>
-<h3>fetch</h3>
-<p>A plugin that obtain the values from HTTP GET requests.</p>
-<p>Requests to the same endpoint are debounced and their responses are cached and periodically refreshed.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('/absolute/url', someHandler)
-  onGet('relative/foo', someOtherHandler)
-  onGet('https://full.url', someThirdHandler)
-</code></pre>
-<ul>
-<li>You can <code>set</code> a value, to speed things up if you optimistically know the value that the enpoint will return, (for instance after making some other POST to the API)</li>
-<li>You can ask for a manual refresh, to not wait for the periodical one, if you know the value has changed, , (for instance after making some POST to the API)</li>
-<li><code>get</code> is syncronous, so used with urls from fetch plugin, it only returns a value if the url has been used previously with <code>onGet</code>, <code>useOnGet</code> or <code>set</code></li>
-<li>You can use beforeRefresh to configure the <code>fetch</code> call.</li>
-</ul>
-<h2>API Documentation</h2>
-<p><a target="_blank" href="https://hacknlove.github.io/onGet/">documentation</a></p>
-<h2>Why</h2>
-<p>Because It does not feel right when you end up with a lot of boilerplate code, a lot of unnecessary complexity, a big lack of liberty and too much coupling.</p>
+  <section class="readme">
+    <article>
+      <h1>onGet</h1><p>The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.</p>
+<h2>Why</h2><p>Because It does not feel right when you end up with a lot of bloat code, a lot of unnecessary complexity, a big lack of liberty and too much coupling.</p>
 <p>Reactive State shared across your components should be as efficient, transparent, fun to work with, and less intrusive as possible.</p>
 <p>A virtual client-side API feels so natural that you will end up with a more understandable and scalable and mantainable code.</p>
-<h2>Characteristics</h2>
-<ol>
+<h2>Documentation</h2><p><a href="https://hacknlove.github.io/onGet/">documentation</a></p>
+<h2>Characteristics</h2><ol>
 <li>It allows you to design a sort of client-side CRUDy API that organize your application state as url-accessible resources.</li>
 <li>Then your application can access, change, and subscribe to this resources through urls.</li>
 <li>It follows a &quot;Batteries included&quot; Philosophy, to help you deal with undoable histories, deep states, remote APIs, localStorage and sessionStorage.</li>
@@ -509,19 +115,14 @@
 <li>If you do server-side rendering or prerendering, you can use serialize the state and share it with the client.</li>
 <li>You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB</li>
 </ol>
-<h2>Basic Usage. Examples</h2>
-<h3>Set and get the value of a resource</h3>
-<pre class="prettyprint source lang-js"><code>import { get, set } from 'onget'
+<h2>Basic Usage. Examples</h2><h3>Set and get the value of a resource</h3><pre class="prettyprint source lang-js"><code>import { get, set } from 'onget'
 
 get('history://foo') // undefined
 
 set('history://foo', 'bar')
 
 get('history://foo') // 'bar'
-
-</code></pre>
-<h3>Subscribe to a resource</h3>
-<pre class="prettyprint source lang-js"><code>import { onGet, set } from 'onget'
+</code></pre><h3>Subscribe to a resource</h3><pre class="prettyprint source lang-js"><code>import { onGet, set } from 'onget'
 
 const unsubscribe = onGet('dotted://hello', value => { // handler
   console.log(value)
@@ -533,10 +134,7 @@ set('dotted://hello', 'Earth') // The handler will be executed
 
 unsubscribe() // You can unsubscribe
 
-set('dotted://hello', 'Mars') // The handler will not be executed
-</code></pre>
-<h3>React hook</h3>
-<pre class="prettyprint source lang-js"><code>import React from 'react'
+set('dotted://hello', 'Mars') // The handler will not be executed</code></pre><h3>React hook</h3><pre class="prettyprint source lang-js"><code>import React from 'react'
 import { useOnGet } from 'onget'
 
 export function MyComponent () {
@@ -545,10 +143,7 @@ export function MyComponent () {
   return (
     &lt;p>{myValue}&lt;/p>
   )
-}
-</code></pre>
-<h3>Modify the behavior of <code>set</code></h3>
-<pre class="prettyprint source lang-js"><code>import { beforeSet, set } from 'onget'
+}</code></pre><h3>Modify the behavior of <code>set</code></h3><pre class="prettyprint source lang-js"><code>import { beforeSet, set } from 'onget'
 
 beforeSet('localstorage://day', context => {
   if (![
@@ -570,10 +165,7 @@ beforeSet('sessionStorage://count/:item', context => {
 set('localStorage://day', 'monday') // localStorage.day => 'monday'
 set('localStorage://day', 'fooday') // localStorage.day => 'monday'
 set('sessionStorage://count/happyness', '42') // sessionStorage['count/happyness'] => 42
-set('sessionStorage://count/life', 12.3) // sessionStorage.day => 12
-</code></pre>
-<h3>Execute some function after the set</h3>
-<pre class="prettyprint source lang-js"><code>import { afterSet, set } from 'onget'
+set('sessionStorage://count/life', 12.3) // sessionStorage.day => 12</code></pre><h3>Execute some function after the set</h3><pre class="prettyprint source lang-js"><code>import { afterSet, set } from 'onget'
 
 afterSet('/api/name', context => {
   fetch('/api/name', {
@@ -587,41 +179,41 @@ afterSet('/api/name', context => {
   })
 })
 
-set('/api/name', 'johndoe') // a HTTP POST request will be done
-</code></pre>
-<h2>Full Examples</h2>
-<p>Forked from https://github.com/reduxjs/redux/tree/master/examples</p>
+set('/api/name', 'johndoe') // a HTTP POST request will be done</code></pre><h2>Full Examples</h2><p>Forked from https://github.com/reduxjs/redux/tree/master/examples</p>
 <ul>
-<li>counter <a href="/examples/counter">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter">sandbox</a></li>
-<li>Todos <a href="/master/examples/todos">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos">sandbox</a></li>
-<li>Todos-with-undo <a href="/examples/todos-with-undo">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo">sandbox</a></li>
-<li>TodoMVC <a href="/master/examples/todomvc">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc">sandbox</a></li>
+<li>counter <a href="/examples/counter">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter">sandbox</a></li>
+<li>Todos <a href="/master/examples/todos">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos">sandbox</a></li>
+<li>Todos-with-undo <a href="/examples/todos-with-undo">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo">sandbox</a></li>
+<li>TodoMVC <a href="/master/examples/todomvc">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc">sandbox</a></li>
 <li>Shopping-cart <a href="/examples/shopping-cart">source</a></li>
-<li>Tree-view <a href="/examples/tree-view">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view">sandbox</a></li>
-<li>Async <a href="/examples/async">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async">sandbox</a></li>
+<li>Tree-view <a href="/examples/tree-view">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view">sandbox</a></li>
+<li>Async <a href="/examples/async">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async">sandbox</a></li>
 <li>Universal <a href="/examples/universal">source</a></li>
 </ul>
-<h2>Coding Challenges</h2>
-<ul>
-<li>WheatherMaps <a href="/codingChallenges/WheatherMaps">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps">sandbox</a></li>
-<li>wallmartlabs <a href="/codingChallenges/wallmartlabs">source</a> <a target="_blank" href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/wallmartlabs">sandbox</a></li>
-</ul></article>
-    </section>
+<h2>Coding Challenges</h2><ul>
+<li>WheatherMaps <a href="/codingChallenges/WheatherMaps">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps">sandbox</a></li>
+<li>walmartlabs <a href="/codingChallenges/walmartlabs">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/walmartlabs">sandbox</a></li>
+<li>FlowKey <a href="/codingChallenges/piano">source</a> <a href="https://codesandbox.io/s/piano-wkfoe">sandbox</a></li>
+</ul>
+    </article>
+  </section>
 
 
+    
 
 
+  </div>
 
+  <br class="clear">
 
-        
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+  </footer>
 
-        <footer>
-            Documentation generated by <a target="_blank" href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Wed Oct 30 2019 10:33:44 GMT+0100 (GMT+01:00)
-        </footer>
-    </div>
-</div>
-<script>prettyPrint();</script>
-<script src="scripts/linenumber.js"></script>
-<script src="scripts/main.js"></script>
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
 </body>
 </html>

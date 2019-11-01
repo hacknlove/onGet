@@ -6,36 +6,25 @@
 		"excludePattern": "(^|\\/|\\\\)_"
 	},
 	"opts": {
-		"template": "../onget-jsdoc",
+		"template": "../jsdoc-template",
 		"destination": "./docs/",
 		"recurse": true,
-		"readme": "README.md"
+		"readme": "README.md",
+		"tutorials": "./tutorials",
+		"verbose": true
 	},
 	"tags": {
 		"allowUnknownTags" : true
 	},
 	"templates": {
-		"cleverLinks": true,
-		"monospaceLinks": true,
-		"default": {
-			"outputSourceFiles" : true
-		},
-		"applicationName": "onget",
-		"disqus": "",
-		"googleAnalytics": "",
-		"openGraph": {
-			"title": "",
-			"type": "website",
-			"image": "",
-			"site_name": "",
-			"url": ""
-		},
-		"meta": {
-			"title": "",
-			"description": "",
-			"keyword": ""
-		},
-		"linenums": false
+		"cleverLinks": false,
+		"monospaceLinks": false,
+		"referenceTitle": "onGet",
+		"disableSort": false,
+		"collapse": true,
+		"resources": {
+				"github": "https://github.com/hacknlove/onGet"
+		}
 	},
 	"markdown": {
 		"parser": "gfm",
