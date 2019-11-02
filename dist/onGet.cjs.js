@@ -400,6 +400,9 @@ function refresh (url, force = false) {
     force,
     url
   });
+  if (beforeRefresh.value !== undefined) {
+    return _set(resource, beforeRefresh.value)
+  }
   if (beforeRefresh.preventRefresh) {
     return
   }
@@ -453,7 +456,7 @@ function onGet (url, cb, options = {}) {
 /**
  * @callback handler
  * @param {any} value The value of the resource
-*/
+ */
 
 /**
  * Attach a handler, that will be executed at most once, to the eventual change the the value of resource.
@@ -831,26 +834,10 @@ function beforeRefresh (path, hook) {
 /**
  * Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
  * From inside the handler it is possible to prevent the next afterSet handlers to be executed.
- *
  * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHandler} hook Function to be called
  * @see set
  * @see beforeSet
- * @example
- * import { afterSet, refresh } from 'onget'
- *
- *  afterSet('/api/cart/:item', async context => {
- *    await fetch(`/api/cart/${context.params.item}`, {
- *      method: 'POST',
- *      headers: {
- *        'Content-Type': 'application/json'
- *      },
- *      body: {
- *        amount: context.value
- *      }
- *    })
- *    refresh(`/api/stock/${context.params.item}`)
- * })
  */
 function afterSet (path, hook) {
   insertHook(path, hook, setHooks.afterSet);
