@@ -20,6 +20,8 @@ There is none.
 
 Just import and use.
 
+## Basic example
+
 ```js
 import { onGet, set, get } from 'onget'
 
@@ -49,9 +51,9 @@ sum(6)
 // 7
 ```
 
-## Scaling
+## Get ready to scale
 
-There is only one tip to make your code scalable:
+There is only one tip to make your code scalable, and it is a very simple one.
 
 You should document your *VAFF*
 
@@ -61,3 +63,5 @@ You should document your *VAFF*
 Being a frontend developer you know the importance of having a good documentation of the Rest API (or GraphQL) you need to use. Just write the VAFF documentation with this in mind.
 
 As long as you can keep this documentation clear, you will be safely increase the complexity of your app without descending into madness.
+
+When you are ready to get to the next level, take a look at [document-your-VAFF](tutorial-document-your-VAFF.html)
