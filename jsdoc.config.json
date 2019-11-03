@@ -6,10 +6,10 @@
 		"excludePattern": "(^|\\/|\\\\)_"
 	},
 	"opts": {
-		"template": "../jsdoc-template",
+		"template": "../../jsdoc-template",
 		"destination": "./docs/",
 		"recurse": true,
-		"readme": "README.md",
+		"readme": ".doc.md",
 		"tutorials": "./tutorials",
 		"verbose": true
 	},

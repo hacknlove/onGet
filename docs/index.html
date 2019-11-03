@@ -82,7 +82,7 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="getting-started-nav"><a href="tutorial-getting-started.html">getting-started</a></li><li id="plugins-quick-view-nav"><a href="tutorial-plugins-quick-view.html">plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-plugins-quick-view-nav"><a href="tutorial-02-plugins-quick-view.html">02-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
@@ -100,101 +100,11 @@
 
   <section class="readme">
     <article>
-      <h1>onGet</h1><p>The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.</p>
-<h2>Why</h2><p>Because It does not feel right when you end up with a lot of bloat code, a lot of unnecessary complexity, a big lack of liberty and too much trouble.</p>
-<p>Reactive State shared across your components should be as fun to work with as possible.</p>
-<p>A virtual client-side API feels so natural that you will end up with a more understandable and scalable and mantainable code.</p>
-<h2>Documentation</h2><p><a href="https://hacknlove.github.io/onGet/">documentation</a></p>
-<h2>Characteristics</h2><ol>
-<li>It allows you to design a sort of client-side CRUDy API that organize your application state as url-accessible resources.</li>
-<li>Then your application can access, change, and subscribe to this resources through urls.</li>
-<li>It follows a &quot;Batteries included&quot; Philosophy, to help you deal with undoable histories, deep states, remote APIs, localStorage and sessionStorage.</li>
-<li>It is extensible through plugins, so you can add a new kind of resources to fit your needs.</li>
-<li>You can add transformations and validations to the values you set to the resources.</li>
-<li>You use expressjs-like paths to add more functionality to your API</li>
-<li>If you do server-side rendering or prerendering, you can use serialize the state and share it with the client.</li>
-<li>You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB</li>
-</ol>
-<h2>Basic Usage. Examples</h2><h3>Set and get the value of a resource</h3><pre class="prettyprint source lang-js"><code>import { get, set } from 'onget'
-
-get('history://foo') // undefined
-
-set('history://foo', 'bar')
-
-get('history://foo') // 'bar'
-</code></pre><h3>Subscribe to a resource</h3><pre class="prettyprint source lang-js"><code>import { onGet, set } from 'onget'
-
-const unsubscribe = onGet('dotted://hello', value => { // handler
-  console.log(value)
-}, {
-  first: 'word' // Optionally set a first value only if the response has no value yet
-})
-
-set('dotted://hello', 'Earth') // The handler will be executed
-
-unsubscribe() // You can unsubscribe
-
-set('dotted://hello', 'Mars') // The handler will not be executed</code></pre><h3>React hook</h3><pre class="prettyprint source lang-js"><code>import React from 'react'
-import { useOnGet } from 'onget'
-
-export function MyComponent () {
-  const myValue = useOnGet('dotted://myResource')
-
-  return (
-    &lt;p>{myValue}&lt;/p>
-  )
-}</code></pre><h3>Modify the behavior of <code>set</code></h3><pre class="prettyprint source lang-js"><code>import { beforeSet, set } from 'onget'
-
-beforeSet('localstorage://day', context => {
-  if (![
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday'
-  ].includes(value)) {
-    context.preventSet = true // prevent the set
-  }
-})
-beforeSet('sessionStorage://count/:item', context => {
-  context.value = parseInt(context.value) // modify the value to be set
-})
-
-set('localStorage://day', 'monday') // localStorage.day => 'monday'
-set('localStorage://day', 'fooday') // localStorage.day => 'monday'
-set('sessionStorage://count/happyness', '42') // sessionStorage['count/happyness'] => 42
-set('sessionStorage://count/life', 12.3) // sessionStorage.day => 12</code></pre><h3>Execute some function after the set</h3><pre class="prettyprint source lang-js"><code>import { afterSet, set } from 'onget'
-
-afterSet('/api/name', context => {
-  fetch('/api/name', {
-    method: 'POST',
-    body: JSON.stringify({
-      name: context.value
-    }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-})
-
-set('/api/name', 'johndoe') // a HTTP POST request will be done</code></pre><h2>Full Examples</h2><p>Forked from https://github.com/reduxjs/redux/tree/master/examples</p>
-<ul>
-<li>counter <a href="/examples/counter">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter">sandbox</a></li>
-<li>Todos <a href="/master/examples/todos">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos">sandbox</a></li>
-<li>Todos-with-undo <a href="/examples/todos-with-undo">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos-with-undo">sandbox</a></li>
-<li>TodoMVC <a href="/master/examples/todomvc">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todomvc">sandbox</a></li>
-<li>Shopping-cart <a href="/examples/shopping-cart">source</a></li>
-<li>Tree-view <a href="/examples/tree-view">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/tree-view">sandbox</a></li>
-<li>Async <a href="/examples/async">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async">sandbox</a></li>
-<li>Universal <a href="/examples/universal">source</a></li>
-</ul>
-<h2>Coding Challenges</h2><ul>
-<li>WheatherMaps <a href="/codingChallenges/WheatherMaps">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps">sandbox</a></li>
-<li>walmartlabs <a href="/codingChallenges/walmartlabs">source</a> <a href="https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/walmartlabs">sandbox</a></li>
-<li>FlowKey <a href="/codingChallenges/piano">source</a> <a href="https://codesandbox.io/s/piano-wkfoe">sandbox</a></li>
-</ul>
+      <h1>The VAFF design pattern</h1><p>In one way or another, modern web applications are based on components, and this makes it necessary to use some technique to manage the state and the interactions between them.</p>
+<p><strong>VAFF</strong> stands for <em>virtual API for Frontend</em> is a design pattern that aims to solve this problem by organizing this part of the front's logic as a sort of API that runs in the browser.</p>
+<p><strong>onGet</strong> is the virtual URLS based library that allows you to use the <em>VAFF</em> desing pattern at its maximum level.</p>
+<p>This design facilitates a greater decoupling and dynamicity, makes the design and documentation of the API simpler and more intuitive, allows the use of route patterns as expressjs, and most importantly makes the management of these URLs to be delegated to plugins, both proprietary and custom.</p>
+<p>Using a onGet your code will be simpler, more readable, more maintainable, and lovely to work with.</p>
     </article>
   </section>
 

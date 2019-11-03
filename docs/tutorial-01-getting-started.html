@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Tutorial: getting-started - Documentation
+      Tutorial: 01-getting-started - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -82,13 +82,13 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="getting-started-nav"><a href="tutorial-getting-started.html">getting-started</a></li><li id="plugins-quick-view-nav"><a href="tutorial-plugins-quick-view.html">plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-plugins-quick-view-nav"><a href="tutorial-02-plugins-quick-view.html">02-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
     
       <h1 class="page-title">
-        Tutorial: getting-started
+        Tutorial: 01-getting-started
       </h1>
     
 
@@ -97,7 +97,7 @@
     
 
     <h2>
-      getting-started
+      01-getting-started
     </h2>
   </header>
 
@@ -107,7 +107,7 @@
 <h2>When should you use onGet ?</h2><p>Uou should consider trying onGet when you are writing a state driven UI, and you realized that things are getting too much complicated, you feel that you have lots of code bloat, and unnecessary artifacts that does not make the code more efficient, testeable, readable, maintainable, or better, and you believe that it should be a more convenient way to do it.</p>
 <h2>Install</h2><pre class="prettyprint source"><code>npm i onget</code></pre><h2>setup and configuration</h2><p>There is none.</p>
 <p>Just import and use.</p>
-<pre class="prettyprint source lang-js"><code>import { onGet, set, get } from 'onget'
+<h2>Basic example</h2><pre class="prettyprint source lang-js"><code>import { onGet, set, get } from 'onget'
 
 // initialize a resource at the url fast://counter, with a value
 set('fast://counter', 0)
@@ -132,7 +132,7 @@ sum(4)
 sum(-3)
 // 1
 sum(6)
-// 7</code></pre><h2>Scaling</h2><p>There is only one tip to make your code scalable:</p>
+// 7</code></pre><h2>Get ready to scale</h2><p>There is only one tip to make your code scalable, and it is a very simple one.</p>
 <p>You should document your <em>VAFF</em></p>
 <ul>
 <li>What resources are being using, and what for.</li>

@@ -19,7 +19,7 @@ A virtual client-side API feels so natural that you will end up with a more unde
 
 1. It allows you to design a sort of client-side CRUDy API that organize your application state as url-accessible resources.
 2. Then your application can access, change, and subscribe to this resources through urls.
-3. It follows a "Batteries included" Philosophy, to help you deal with undoable histories, deep states, remote APIs, localStorage and sessionStorage.
+3. It follows a "Batteries included" Philosophy, to help you deal with undoable histories, deep states, remote APIs, localStorage and fast.
 4. It is extensible through plugins, so you can add a new kind of resources to fit your needs.
 5. You can add transformations and validations to the values you set to the resources.
 6. You use expressjs-like paths to add more functionality to your API
@@ -33,11 +33,11 @@ A virtual client-side API feels so natural that you will end up with a more unde
 ```js
 import { get, set } from 'onget'
 
-get('history://foo') // undefined
+get('fast://foo') // undefined
 
-set('history://foo', 'bar')
+set('fast://foo', 'bar')
 
-get('history://foo') // 'bar'
+get('fast://foo') // 'bar'
 
 ```
 
@@ -45,17 +45,17 @@ get('history://foo') // 'bar'
 ```js
 import { onGet, set } from 'onget'
 
-const unsubscribe = onGet('dotted://hello', value => { // handler
+const unsubscribe = onGet('fast://hello', value => { // handler
   console.log(value)
 }, {
   first: 'word' // Optionally set a first value only if the response has no value yet
 })
 
-set('dotted://hello', 'Earth') // The handler will be executed
+set('fast://hello', 'Earth') // The handler will be executed
 
 unsubscribe() // You can unsubscribe
 
-set('dotted://hello', 'Mars') // The handler will not be executed
+set('fast://hello', 'Mars') // The handler will not be executed
 ```
 
 ### React hook
@@ -64,7 +64,7 @@ import React from 'react'
 import { useOnGet } from 'onget'
 
 export function MyComponent () {
-  const myValue = useOnGet('dotted://myResource')
+  const myValue = useOnGet('fast://myResource')
 
   return (
     <p>{myValue}</p>
@@ -77,7 +77,7 @@ export function MyComponent () {
 ```js
 import { beforeSet, set } from 'onget'
 
-beforeSet('localstorage://day', context => {
+beforeSet('fast://day', context => {
   if (![
     'monday',
     'tuesday',
@@ -90,14 +90,19 @@ beforeSet('localstorage://day', context => {
     context.preventSet = true // prevent the set
   }
 })
-beforeSet('sessionStorage://count/:item', context => {
+set('fast://day', 'monday')
+// get('fast://day') -> 'monday'
+set('fast://day', 'fooday')
+// get('fast://day') -> 'monday'
+
+
+beforeSet('fast://count/:item', context => {
   context.value = parseInt(context.value) // modify the value to be set
 })
-
-set('localStorage://day', 'monday') // localStorage.day => 'monday'
-set('localStorage://day', 'fooday') // localStorage.day => 'monday'
-set('sessionStorage://count/happyness', '42') // sessionStorage['count/happyness'] => 42
-set('sessionStorage://count/life', 12.3) // sessionStorage.day => 12
+set('fast://count/happyness', '42')
+// get('fast://count/happyness') -> 42
+set('fast://count/life', 12.3) // 12
+// get('fast://count/life') -> 12
 ```
 
 
@@ -120,9 +125,9 @@ afterSet('/api/name', context => {
 set('/api/name', 'johndoe') // a HTTP POST request will be done
 ```
 
-## Full Examples
+## Examples
 
-Forked from https://github.com/reduxjs/redux/tree/master/examples
+**Forked from https://github.com/reduxjs/redux/tree/master/examples**
 
 * counter [source](/examples/counter) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/counter)
 * Todos [source](/master/examples/todos) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/todos)
@@ -133,7 +138,11 @@ Forked from https://github.com/reduxjs/redux/tree/master/examples
 * Async [source](/examples/async) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/examples/async)
 * Universal [source](/examples/universal)
 
-## Coding Challenges
+**Realworld Code challenges**
+
 * WheatherMaps [source](/codingChallenges/WheatherMaps) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps)
 * walmartlabs [source](/codingChallenges/walmartlabs) [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/walmartlabs)
 * FlowKey [source](/codingChallenges/piano) [sandbox](https://codesandbox.io/s/piano-wkfoe)
+
+**Other framework tutorial redone the onGet way**
+* grommet [source](https://github.com/hacknlove/grommet-vending-onget) [sandbox](https://codesandbox.io/s/github/hacknlove/grommet-vending-onget/tree/onget)

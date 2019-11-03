@@ -63,5 +63,3 @@ You should document your *VAFF*
 Being a frontend developer you know the importance of having a good documentation of the Rest API (or GraphQL) you need to use. Just write the VAFF documentation with this in mind.
 
 As long as you can keep this documentation clear, you will be safely increase the complexity of your app without descending into madness.
-
-When you are ready to get to the next level, take a look at [document-your-VAFF](tutorial-document-your-VAFF.html)
