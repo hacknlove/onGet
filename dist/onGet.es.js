@@ -812,14 +812,14 @@ function beforeRefresh (path, hook) {
 }
 
 /**
- * Function to be called before a reefresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
+ * Function to be called before a refresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
  *
  * @callback BeforeRefreshHandler
  * @param {object} conext - context in which the hook is executed.
  * @param {string} context.url - url of the resource that has received the set
  * @param {object} context.params - the params captured on the url by the path. Like in express
  * @param {any} context.value - The current value. It can be changed.
- * @param {any} context.options - The
+ * @param {any} context.options - The options that will be passed to plugin.refresh
  * @param {boolean} context.preventHooks - set this to true to prevent the next hooks to be executed.
  * @param {boolean} context.preventRefresh - set this to true to prevent the resource callbacks to be executed.
  * @see beforeSet
