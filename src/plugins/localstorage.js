@@ -40,6 +40,10 @@ const plugin = {
       resource.value = parseIfPossible(localStorage[resource.key])
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     localStorage[resource.key] = JSON.stringify(resource.value)
   },
   get (url) {

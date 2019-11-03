@@ -11,12 +11,12 @@ It uses a custom plugin to abstract a bit more the REST API calls,
 * [source](/codingChallenges/WheatherMaps)
 * [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/WheatherMaps)
 
-## wallmartlabs
+## walmartlabs
 
 When it comer to mock a server-side API like, you can just use a client-side API url, easy-peasy.
 
-* [source](/codingChallenges/wallmartlabs)
-* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/wallmartlabs)
+* [source](/codingChallenges/walmartlabs)
+* [sandbox](https://codesandbox.io/s/github/hacknlove/onGet/tree/master/codingChallenges/walmartlabs)
 
 ## piano
 

@@ -41,6 +41,9 @@ export function refresh (url, force = false) {
     force,
     url
   })
+  if (beforeRefresh.value !== undefined) {
+    return _set(resource, beforeRefresh.value)
+  }
   if (beforeRefresh.preventRefresh) {
     return
   }

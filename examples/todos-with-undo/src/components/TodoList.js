@@ -4,7 +4,7 @@ import { useOnGet } from 'onget'
 
 function useFilterTodos () {
   const todos = useOnGet('history://todos', { first: [] })
-  const filter = useOnGet('dotted://filter', { first: 'SHOW_ALL' })
+  const filter = useOnGet('fast://filter', { first: 'SHOW_ALL' })
 
   switch (filter) {
     case 'SHOW_COMPLETED':

@@ -400,6 +400,9 @@ function refresh (url, force = false) {
     force,
     url
   });
+  if (beforeRefresh.value !== undefined) {
+    return _set(resource, beforeRefresh.value)
+  }
   if (beforeRefresh.preventRefresh) {
     return
   }
@@ -453,7 +456,7 @@ function onGet (url, cb, options = {}) {
 /**
  * @callback handler
  * @param {any} value The value of the resource
-*/
+ */
 
 /**
  * Attach a handler, that will be executed at most once, to the eventual change the the value of resource.
@@ -815,14 +818,14 @@ function beforeRefresh (path, hook) {
 }
 
 /**
- * Function to be called before a reefresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
+ * Function to be called before a refresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
  *
  * @callback BeforeRefreshHandler
  * @param {object} conext - context in which the hook is executed.
  * @param {string} context.url - url of the resource that has received the set
  * @param {object} context.params - the params captured on the url by the path. Like in express
  * @param {any} context.value - The current value. It can be changed.
- * @param {any} context.options - The
+ * @param {any} context.options - The options that will be passed to plugin.refresh
  * @param {boolean} context.preventHooks - set this to true to prevent the next hooks to be executed.
  * @param {boolean} context.preventRefresh - set this to true to prevent the resource callbacks to be executed.
  * @see beforeSet
@@ -831,26 +834,10 @@ function beforeRefresh (path, hook) {
 /**
  * Attach a handler for an express-like path, that will be executed after any set operation the the resources whose url match that path.
  * From inside the handler it is possible to prevent the next afterSet handlers to be executed.
- *
  * @param {string} path Pattern to check in which resources execute the hook
  * @param {afterSetHandler} hook Function to be called
  * @see set
  * @see beforeSet
- * @example
- * import { afterSet, refresh } from 'onget'
- *
- *  afterSet('/api/cart/:item', async context => {
- *    await fetch(`/api/cart/${context.params.item}`, {
- *      method: 'POST',
- *      headers: {
- *        'Content-Type': 'application/json'
- *      },
- *      body: {
- *        amount: context.value
- *      }
- *    })
- *    refresh(`/api/stock/${context.params.item}`)
- * })
  */
 function afterSet (path, hook) {
   insertHook(path, hook, setHooks.afterSet);
@@ -1018,6 +1005,10 @@ const plugin = {
       resource.value = parseIfPossible(localStorage[resource.key]);
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     localStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
@@ -1061,12 +1052,19 @@ const plugin$1 = {
       resource.value = parseIfPossible$1(sessionStorage[resource.key]);
       return
     }
+
+    if (resource.value === undefined) {
+      return
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
   get (url) {
     return parseIfPossible$1(sessionStorage[url.substr(PROTOCOLCUT$1)])
   },
   set (resource) {
+    if (resource === undefined) {
+      return delete sessionStorage[resource.key]
+    }
     sessionStorage[resource.key] = JSON.stringify(resource.value);
   },
 

@@ -1,7 +1,6 @@
 import { getResource } from '../private/getResource'
 import { addNewSubscription } from '../private/addNewSubscription'
 import { refresh } from './refresh'
-import { conf } from './conf'
 
 /**
  * Set a handler to be called each time the value of a resource changes
@@ -45,4 +44,4 @@ export function onGet (url, cb, options = {}) {
 /**
  * @callback handler
  * @param {any} value The value of the resource
-*/
+ */

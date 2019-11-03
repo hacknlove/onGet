@@ -1,6 +1,6 @@
 {
   "name": "onget",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/hacknlove/onGet#readme",
   "dependencies": {
     "@hacknlove/deepobject": "^1.1.6",
+    "docdown": "^0.7.3",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "isdifferent": "^2.0.0",
     "path-to-regexp": "^3.1.0"
