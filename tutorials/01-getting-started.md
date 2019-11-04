@@ -55,11 +55,11 @@ sum(6)
 
 There is only one tip to make your code scalable, and it is a very simple one.
 
-You should document your *VAFF*
+**You should document your *VAFF***
 
 * What resources are being using, and what for.
 * Which of them are using hooks, and what for.
 
-Being a frontend developer you know the importance of having a good documentation of the Rest API (or GraphQL) you need to use. Just write the VAFF documentation with this in mind.
+Being a frontend developer you know the importance of having a good documentation of the Rest API (or GraphQL) you need to use. Just write the *VAFF* documentation with this experience in mind.
 
-As long as you can keep this documentation clear, you will be safely increase the complexity of your app without descending into madness.
+As long as you can keep your documentation clear, you will be safely increase the complexity of your app without descending into madness.

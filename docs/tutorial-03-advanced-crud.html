@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      lib/conf.js - Documentation
+      Tutorial: 03-advanced-crud - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -90,49 +88,87 @@
   <div id="main">
     
       <h1 class="page-title">
-        lib/conf.js
+        Tutorial: 03-advanced-crud
       </h1>
     
 
+    <section>
+  <header>
     
-      
 
-<section>
+    <h2>
+      03-advanced-crud
+    </h2>
+  </header>
+
   <article>
-    <pre class="prettyprint source linenums"><code>/**
- * @namespace
- * @property {number} CACHE_SIZE - The garbage colector is inactive when the amount of resources is less than CACHE_SIZE
- * @property {object} plugins - Stores the plugins configuration
- * @property {object} plugins.fetch - The configuration for the fetch plugin
- * @property {number} plugins.fetch.checkInterval - Size of the interval, in milliseconds, to check for new values doing a GET request
- * @property {number} plugins.fetch.threshold - Size of the windows, in milliseconds, in which a call to `get`, `onGet`, `refresh` or `useOnGet` will use the cached value instead of make a fetch
- * @property {object} plugins.anyCustomPluginName - Whatever configuration object that were needed by the plugin named `anyCustomPluginName`
- */
-export const conf = {
-  CACHE_SIZE: 100,
-  plugins: {
-    fetch: {
-      checkInterval: 30000,
-      threshold: 500
-    }
+    <h1>Advanced CRUD</h1><p>Sometimes it is convenient to be able to transform the values that are going to be writted or to perform some action after a new value has been set.</p>
+<p>This kind of things can be done attaching handlers that are executed whenbefore or after a set operation is done.</p>
+<p>onGet offers two functions to to this:</p>
+<ul>
+<li>beforeSet</li>
+<li>afterSet</li>
+</ul>
+<p>Both, uses express-js-like patterns to define where to hook the handler, and every hook whose pattern match the url, will be executed, in the same order that they have been attached.</p>
+<h2>beforeSet - Pre-procesing</h2><p>with beforeSet you can validate the value, transform it, and even prevent the set to take place.</p>
+<p>The beforeSet handlers should be synchronous. You cannot asynchronously transform the value, or prevent the set.</p>
+<h3>Change the value</h3><p>Set the value you want to set to <code>context.value</code></p>
+<pre class="prettyprint source lang-js"><code>beforeGet('fast://hello/:thing', context => {
+  context.value = context.value.trim()
+})
+
+set('fast://hello/world', '  good day  ')
+
+get('fast://hello/world') // 'good day'</code></pre><h3>Prevent the set to take place</h3><p>Set <code>context.preventSet</code> to true, and the set will be aborted, and no afterSet hook will be executed.</p>
+<p>The next beforeSet will still be executed, and they could set <code>context.preventSet</code> back to false.</p>
+<pre class="prettyprint source lang-js"><code>beforeGet('fast://price', context => {
+  if (context.value &lt; 0) {
+    context.preventSet = true
   }
-}
+})
+set('fast://price', 14)
+set('fast://price', -5)
 
-export const resources = {}
-export const plugins = []
-export const setHooks = {
-  beforeSet: [],
-  afterSet: [],
-  beforeRefresh: []
-}
+get('fast://price') // 14
+</code></pre><h3>Prevent the next hooks to be executed</h3><p>Set <code>context.preventHooks</code> to true to prevent the next hooks to be executed, afterSet hooks included.</p>
+<h3>Prevent the subscriptions to be called</h3><p>If, for whatever reason, you need to set a new value but you do not want the subscriptions to be called, you can set <code>context.preventRefresh</code> to true.</p>
+<p>There are 3 hooks.</p>
+<ul>
+<li>beforeRefresh</li>
+</ul>
+<h2>afterSet - perform actions after the set take place</h2><p>You could use <code>onGet</code> to make a function be called each time the value of a resource changes, but <code>afterSet</code> offers you some differences.</p>
+<ol>
+<li>The <code>onGet</code> subscription listener could be called with a changed that has not be produced by a <code>set</code> call, but for some manual or automatic <code>refresh</code>, in the case of <code>localStorage</code> or <code>fetch</code> plugins. The <code>afterSet</code> hook handler will only be triggered by a <code>set</code> operation.</li>
+<li>The <code>onGet</code> can be prevented with <code>context.preventRefresh</code> along the other subscriptions. The <code>afterSet</code> can be prevented with <code>context.preventHooks</code>.</li>
+<li><code>onGet</code> can be unsubscribed. <code>afterSet</code> cannot.</li>
+<li><code>onGet</code> creates an initiated the resource, if it does not exists. Because the subscription is attached to an existant resource. <code>afterSet</code> is not attached to an actual resource, but to a express-js-like url pattern.</li>
+</ol>
+<p>The afterSet hooks cannot prevent the set, neither change the value. You can prevent the following afterSet hooks to be executed, though.</p>
+<h2>common pattern</h2><p>You can set a new value to a REST API resource, add a <code>loading</code> attribute with <code>beforeSet</code> and perform the API call with the <code>afterSet</code>.</p>
+<pre class="prettyprint source lang-js"><code>
+beforeSet('/api/items/:id', context => {
+  context.value.loading = true
+})
 
-export const serverInstances = []
+beforeSet('/api/items/:id', async context => {
+  delete context.value.loading
+  const response = await fetch(`/api/items/${context.params.id}`, {
+    method: 'POST',
+    body: JSON.stringify(context.value),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  const data = response.json()
+
+  set(`/api/items/${context.params.id}`, data.item, {
+    preventHooks: true // set accepts a third parameter where you can put preventHooks among other options
+  })
+})
 </code></pre>
   </article>
 </section>
-
-    
-
 
   </div>
 

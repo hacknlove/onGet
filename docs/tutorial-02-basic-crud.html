@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      lib/conf.js - Documentation
+      Tutorial: 02-basic-crud - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -90,49 +88,43 @@
   <div id="main">
     
       <h1 class="page-title">
-        lib/conf.js
+        Tutorial: 02-basic-crud
       </h1>
     
 
+    <section>
+  <header>
     
-      
 
-<section>
+    <h2>
+      02-basic-crud
+    </h2>
+  </header>
+
   <article>
-    <pre class="prettyprint source linenums"><code>/**
- * @namespace
- * @property {number} CACHE_SIZE - The garbage colector is inactive when the amount of resources is less than CACHE_SIZE
- * @property {object} plugins - Stores the plugins configuration
- * @property {object} plugins.fetch - The configuration for the fetch plugin
- * @property {number} plugins.fetch.checkInterval - Size of the interval, in milliseconds, to check for new values doing a GET request
- * @property {number} plugins.fetch.threshold - Size of the windows, in milliseconds, in which a call to `get`, `onGet`, `refresh` or `useOnGet` will use the cached value instead of make a fetch
- * @property {object} plugins.anyCustomPluginName - Whatever configuration object that were needed by the plugin named `anyCustomPluginName`
- */
-export const conf = {
-  CACHE_SIZE: 100,
-  plugins: {
-    fetch: {
-      checkInterval: 30000,
-      threshold: 500
-    }
-  }
-}
-
-export const resources = {}
-export const plugins = []
-export const setHooks = {
-  beforeSet: [],
-  afterSet: [],
-  beforeRefresh: []
-}
-
-export const serverInstances = []
-</code></pre>
+    <h1>Basic CRUD</h1><p>Simple CRUD operations are very straightforward to do with onGet. Just think about what urls you need, and use<code>set</code> to create, update and delete; and <code>get</code>, <code>onGet</code> or <code>useOnGet</code> to read,</p>
+<p>It is up to you to choose good descriptive urls, so your code is readable.</p>
+<pre class="prettyprint source lang-js"><code>set('fast://menuOpened', true);</code></pre><pre class="prettyprint source lang-js"><code>get('fast://menuOpened') // -> true</code></pre><p><code>onGet</code> attach a listener to a subscription to the resource</p>
+<pre class="prettyprint source lang-js"><code>onGet('fast://menuOpened', value => {
+  // ...
+})</code></pre><p><code>useOnGet</code> is a react hook that refresh the component whenever the resource changes.</p>
+<pre class="prettyprint source lang-js"><code>function SomeComponent () {
+  const menuOpened = useOnGet('fast://menuOpened')
+  return (
+      ...
+  )
+}</code></pre><h2>Resource URLs and plugins</h2><p>The &quot;protocol&quot; of the url determine the plugin that will be used. If no protocol is present, the url will be processed by the <code>fetch</code> plugin.</p>
+<p>It is very important to be aware that <code>fast://someurl</code>, <code>dotted://someurl</code>, <code>history://someurl</code> are completely separate resources, with their own values and subscriptions.</p>
+<h3>fast - just values.</h3><p>Those resource that have no special needs, should use urls that start with <code>fast://...</code> because they go right to the point.</p>
+<h3>history - undoable and redoable</h3><p>You should use urls that start with <code>history://</code> with those (and only those) resources that needs to be undoable and redoable.</p>
+<p>Otherwise you shouldn't use <code>history://</code> because it uses more memory and it involves more steps that you do not need.</p>
+<h3>dotted - urls to the members of an object.</h3><p>When It is more convenient for your code to perform CRUD operations in some deep key path on objects, so you can set or subscribe in dotted key paths, you can use <code>dotted://</code> urls. Like <code>dotted://foo.bar.buz</code> that points to <code>{ bar: { buz: --&gt; HERE &lt;-- }}</code> inside <code>dotted://foo</code></p>
+<h3>localStorage and sessionStorage - Persistence</h3><p>If you need some resource to be backed by localStorage or sessionStorage, you should use <code>localStorage://...</code> or <code>sessionStorage://...</code></p>
+<p>localStorage also respond to changes that have been made from other tabs.</p>
+<h3>fetch - REST API</h3><p>In a nutshell <code>/some/url/</code> returns the value of fetching <code>/some/url</code></p>
+<p>We will talk about the fetch plugin in the his own tutorial.</p>
   </article>
 </section>
-
-    
-
 
   </div>
 
