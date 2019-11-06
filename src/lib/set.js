@@ -22,8 +22,9 @@ export function set (url, value, options = {}) {
     delete debouncedSets[url]
   }
   if (options.debounce) {
+    let debounce = options.debounce
     delete options.debounce
-    debouncedSets[url] = setTimeout(set, options.debounce, url, value, options)
+    debouncedSets[url] = setTimeout(set, debounce, url, value, options)
     return
   }
 

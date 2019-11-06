@@ -145,6 +145,7 @@ describe('set', () => {
       set('debounceTest', 'uno', {
         debounce: 1000
       })
+      expect(setTimeout.mock.calls[0][1]).toBe(1000)
       set('debounceTest', 'dos', {
         debounce: 1000
       })
