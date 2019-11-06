@@ -3,11 +3,14 @@ import { isDifferent } from 'isdifferent'
 import { resources } from '../conf'
 import { getResource } from '../../private/getResource'
 import { pospone } from '../../private/pospone'
+import { executeHooks } from '../../private/setHooks'
 
 jest.mock('isdifferent')
 jest.mock('../../private/getResource')
 jest.mock('../../private/pospone')
+jest.mock('../../private/setHooks')
 jest.useFakeTimers()
+executeHooks.mockImplementation((where, context) => context)
 describe('set', () => {
   it('If the resource does not exist, getResource should be called', async () => {
     const resource = { plugin: {} }
@@ -132,5 +135,29 @@ describe('set', () => {
     set('test', 'new')
 
     expect(resources.test.plugin.set).toHaveBeenCalledWith(resources.test, 'old', undefined)
+  })
+
+  describe('debounce', () => {
+    it('should debounce', () => {
+      const resource = { plugin: {} }
+      getResource.mockReturnValue(resource)
+
+      set('debounceTest', 'uno', {
+        debounce: 1000
+      })
+      set('debounceTest', 'dos', {
+        debounce: 1000
+      })
+      set('debounceTest', 'tres', {
+        debounce: 1000
+      })
+      set('debounceTest', 'cuatro', {
+        debounce: 1000
+      })
+      expect(executeHooks).not.toHaveBeenCalled()
+      jest.runAllTimers()
+      expect(executeHooks.mock.calls.length).toBe(2)
+      expect(executeHooks.mock.calls[1][1].value).toBe('cuatro')
+    })
   })
 })

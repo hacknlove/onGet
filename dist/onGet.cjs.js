@@ -37,6 +37,7 @@ const setHooks = {
 };
 
 const serverInstances = [];
+const debouncedSets = {};
 
 /**
  * Returns the first plugin whose regex matchs the url
@@ -707,23 +708,35 @@ function save () {
  * @param {any} value value to series.
  * @param {object} options to determine the behaviour of the set, and to be passed to the hooks.
  * @param {boolean} options.preventPospone if true, it prevents to pospone the next check.
- * @param {boolean} event.preventHooks if true, prevent the hooks to be executed.
- * @param {boolean} event.preventRefresh if true, prevents the resource callbacks to be executed.
- * @param {boolean} event.preventSet if true to prevent the whole set operation, except the beforeSetHooks
+ * @param {boolean} options.preventHooks if true, prevent the hooks to be executed.
+ * @param {boolean} options.preventRefresh if true, prevents the resource callbacks to be executed.
+ * @param {boolean} options.preventSet if true to prevent the whole set operation, except the beforeSetHooks
+ * @param {number} options.debounce amount of milliseconds to debounce consecutive sets to a resource. (beforeSetHooks are also debounced)
  */
 function set (url, value, options = {}) {
+  if (debouncedSets[url]) {
+    clearTimeout(debouncedSets[url]);
+    delete debouncedSets[url];
+  }
+  if (options.debounce) {
+    delete options.debounce;
+    debouncedSets[url] = setTimeout(set, options.debounce, url, value, options);
+    return
+  }
+
   const beforeResult = executeHooks(setHooks.beforeSet, {
     ...options,
     url,
     value
   });
+
   if (beforeResult.preventSet) {
     return
   }
-  const resource = resources[url];
   value = beforeResult.value;
   options.preventPospone = beforeResult.preventPospone;
 
+  const resource = resources[url];
   if (!resource) {
     const resource = getResource(url, value);
     if (resource.plugin.set) {
@@ -744,6 +757,7 @@ function set (url, value, options = {}) {
   if (resource.intervals && !options.preventPospone) {
     pospone(resource);
   }
+
   _set(resource, value, beforeResult.preventRefresh);
   executeHooks(setHooks.afterSet, {
     ...options,

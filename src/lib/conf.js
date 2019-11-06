@@ -26,3 +26,4 @@ export const setHooks = {
 }
 
 export const serverInstances = []
+export const debouncedSets = {}
