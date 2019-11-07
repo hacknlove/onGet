@@ -243,7 +243,7 @@ function createUnsubscribe (resource, sk) {
     if (resource.intervals) {
       delete resource.intervals[sk];
       resource.minInterval = Math.min(...Object.values(resource.intervals));
-      if (resource.minInterval === 0) {
+      if (resource.minInterval === Infinity) {
         clearTimeout(resource.timeout);
       }
     }
