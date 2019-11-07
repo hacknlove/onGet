@@ -30,6 +30,9 @@ export function beforeRefresh (path, hook) {
  * @callback BeforeRefreshHandler
  * @param {object} conext - context in which the hook is executed.
  * @param {string} context.url - url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
  * @param {object} context.params - the params captured on the url by the path. Like in express
  * @param {any} context.value - The current value. It can be changed.
  * @param {any} context.options - The options that will be passed to plugin.refresh

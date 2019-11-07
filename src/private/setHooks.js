@@ -1,5 +1,7 @@
 import pathToRegExp from 'path-to-regexp'
 
+const pathSearchAndHashRegExp = /^(.*?)(\?(.*?))?(#(.*))?$/
+
 /**
  * Execute all the hooks that match an url
  *
@@ -9,12 +11,17 @@ import pathToRegExp from 'path-to-regexp'
  * @returns {object} the context object, it might be modified by the hooks
  */
 export function executeHooks (where, context) {
+  const pathSearchAndHash = context.url.match(pathSearchAndHashRegExp)
+  context.path = pathSearchAndHash[1]
+  context.search = pathSearchAndHash[3]
+  context.hash = pathSearchAndHash[5]
+
   for (let i = 0, z = where.length; i < z; i++) {
     if (context.preventHooks) {
       break
     }
     const [regex, keys, cb] = where[i]
-    const match = context.url.match(regex)
+    const match = context.path.match(regex)
     if (!match) {
       continue
     }

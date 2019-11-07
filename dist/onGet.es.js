@@ -314,6 +314,8 @@ function pospone (resource) {
   }, resource.minInterval);
 }
 
+const pathSearchAndHashRegExp = /^(.*?)(\?(.*?))?(#(.*))?$/;
+
 /**
  * Execute all the hooks that match an url
  *
@@ -323,12 +325,17 @@ function pospone (resource) {
  * @returns {object} the context object, it might be modified by the hooks
  */
 function executeHooks (where, context) {
+  const pathSearchAndHash = context.url.match(pathSearchAndHashRegExp);
+  context.path = pathSearchAndHash[1];
+  context.search = pathSearchAndHash[3];
+  context.hash = pathSearchAndHash[5];
+
   for (let i = 0, z = where.length; i < z; i++) {
     if (context.preventHooks) {
       break
     }
     const [regex, keys, cb] = where[i];
-    const match = context.url.match(regex);
+    const match = context.path.match(regex);
     if (!match) {
       continue
     }
@@ -794,6 +801,9 @@ function beforeSet (path, hook) {
  * @callback BeforeSetHandler
  * @param {object} event context in which the hook is executed.
  * @param {string} event.url url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
  * @param {object} event.params the params captured on the url by the path. Like in express
  * @param {*} event.value The current value. It can be changed.
  * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.
@@ -832,6 +842,9 @@ function beforeRefresh (path, hook) {
  * @callback BeforeRefreshHandler
  * @param {object} conext - context in which the hook is executed.
  * @param {string} context.url - url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
  * @param {object} context.params - the params captured on the url by the path. Like in express
  * @param {any} context.value - The current value. It can be changed.
  * @param {any} context.options - The options that will be passed to plugin.refresh
@@ -856,13 +869,16 @@ function afterSet (path, hook) {
  * Function to be called after a set operation. They are executed synchrony and they cannot modify the set.
  *
  * @callback afterSetHandler
- * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the resource that has received the set
- * @param {object} event.params the params captured on the url by the path. Like in express
- * @param {any} event.oldValue The previous value
- * @param {any} event.value The current value
- * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
- * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
+ * @param {object} context context in which the hook is executed
+ * @param {string} context.url url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
+ * @param {object} context.params the params captured on the url by the path. Like in express
+ * @param {any} context.oldValue The previous value
+ * @param {any} context.value The current value
+ * @param {boolean} context.preventHooks set this to true, to prevent the next hooks to be executed.
+ * @param {boolean} context.preventPospone Indicates the next periodical check has been posponed
  * @see afterSet
  */
 
