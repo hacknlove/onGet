@@ -134,6 +134,9 @@ export function beforeSet (path, hook) {
  * @callback BeforeSetHandler
  * @param {object} event context in which the hook is executed.
  * @param {string} event.url url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
  * @param {object} event.params the params captured on the url by the path. Like in express
  * @param {*} event.value The current value. It can be changed.
  * @param {boolean} event.preventHooks set this to true to prevent the next hooks to be executed.

@@ -231,6 +231,7 @@ function getResource (url, firstValue) {
  * @private
  * @param {object} resource from which unsubscribe
  * @param {strink} sk key that identifies the subscription
+ * @returns {Function} function that removes a subscription
  */
 function createUnsubscribe (resource, sk) {
   return () => {
@@ -242,6 +243,9 @@ function createUnsubscribe (resource, sk) {
     if (resource.intervals) {
       delete resource.intervals[sk];
       resource.minInterval = Math.min(...Object.values(resource.intervals));
+      if (resource.minInterval === 0) {
+        clearTimeout(resource.timeout);
+      }
     }
   }
 }
@@ -298,7 +302,6 @@ function _set (resource, value, preventRefresh) {
  * Pospone the refresh of the resource
  * @private
  * @param {object} resource resource whose refresh should be posponed, as returned by getResource(url)
- * @returns undefined
  */
 function pospone (resource) {
   if (!resource.intervals) {

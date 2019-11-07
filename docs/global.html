@@ -2835,17 +2835,9 @@
       </tr>
 
     
-  </tbody>
-</table>
-
-          
-        </td>
-      </tr>
-
-    
       <tr>
         
-          <td class="name"><code>event.preventHooks</code></td>
+          <td class="name"><code>preventHooks</code></td>
         
 
         <td class="type">
@@ -2874,7 +2866,7 @@
     
       <tr>
         
-          <td class="name"><code>event.preventRefresh</code></td>
+          <td class="name"><code>preventRefresh</code></td>
         
 
         <td class="type">
@@ -2903,7 +2895,7 @@
     
       <tr>
         
-          <td class="name"><code>event.preventSet</code></td>
+          <td class="name"><code>preventSet</code></td>
         
 
         <td class="type">
@@ -2925,6 +2917,43 @@
 
         <td class="description last">
           <p>if true to prevent the whole set operation, except the beforeSetHooks</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>debounce</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>amount of milliseconds to debounce consecutive sets to a resource. (beforeSetHooks are also debounced)</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
           
         </td>
       </tr>
@@ -2968,7 +2997,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_set.js.html">lib/set.js</a>, <a href="lib_set.js.html#line18">line 18</a>
+          <a href="lib_set.js.html">lib/set.js</a>, <a href="lib_set.js.html#line19">line 19</a>
         </li>
       </ul>
     </dd>
@@ -3538,7 +3567,7 @@
       </svg>
     </a>
     <h4 class="name" id="afterSetHandler">
-      <span class="type-signature"></span>afterSetHandler<span class="signature">(event)</span><span class="type-signature"></span>
+      <span class="type-signature"></span>afterSetHandler<span class="signature">(context)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -3580,7 +3609,7 @@
     
       <tr>
         
-          <td class="name"><code>event</code></td>
+          <td class="name"><code>context</code></td>
         
 
         <td class="type">
@@ -3649,6 +3678,93 @@
 
         <td class="description last">
           <p>url of the resource that has received the set</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>path part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>search</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>search part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>hash</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>hash part of the url</p>
           
         </td>
       </tr>
@@ -3988,6 +4104,93 @@
 
         <td class="description last">
           <p>url of the resource that has received the set</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>path part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.search</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>search part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.hash</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>hash part of the url</p>
           
         </td>
       </tr>
@@ -4342,9 +4545,104 @@
       </tr>
 
     
+  </tbody>
+</table>
+
+          
+        </td>
+      </tr>
+
+    
       <tr>
         
-          <td class="name"><code>params</code></td>
+          <td class="name"><code>context.path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>path part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.search</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>search part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.hash</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>hash part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>event.params</code></td>
         
 
         <td class="type">
@@ -4373,7 +4671,7 @@
     
       <tr>
         
-          <td class="name"><code>value</code></td>
+          <td class="name"><code>event.value</code></td>
         
 
         <td class="type">
@@ -4402,7 +4700,7 @@
     
       <tr>
         
-          <td class="name"><code>preventHooks</code></td>
+          <td class="name"><code>event.preventHooks</code></td>
         
 
         <td class="type">
@@ -4431,7 +4729,7 @@
     
       <tr>
         
-          <td class="name"><code>preventRefresh</code></td>
+          <td class="name"><code>event.preventRefresh</code></td>
         
 
         <td class="type">
@@ -4460,7 +4758,7 @@
     
       <tr>
         
-          <td class="name"><code>preventSet</code></td>
+          <td class="name"><code>event.preventSet</code></td>
         
 
         <td class="type">
@@ -4489,7 +4787,7 @@
     
       <tr>
         
-          <td class="name"><code>preventPospone</code></td>
+          <td class="name"><code>event.preventPospone</code></td>
         
 
         <td class="type">
@@ -4511,14 +4809,6 @@
 
         <td class="description last">
           <p>set this to true to prevent the next periodical check to be posponed</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
           
         </td>
       </tr>

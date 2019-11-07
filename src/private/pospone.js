@@ -4,7 +4,6 @@ import { refresh } from '../lib/refresh'
  * Pospone the refresh of the resource
  * @private
  * @param {object} resource resource whose refresh should be posponed, as returned by getResource(url)
- * @returns undefined
  */
 export function pospone (resource) {
   if (!resource.intervals) {

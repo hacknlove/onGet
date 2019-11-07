@@ -118,13 +118,16 @@ export function afterSet (path, hook) {
  * Function to be called after a set operation. They are executed synchrony and they cannot modify the set.
  *
  * @callback afterSetHandler
- * @param {object} event context in which the hook is executed
- * @param {string} event.url url of the resource that has received the set
- * @param {object} event.params the params captured on the url by the path. Like in express
- * @param {any} event.oldValue The previous value
- * @param {any} event.value The current value
- * @param {boolean} event.preventHooks set this to true, to prevent the next hooks to be executed.
- * @param {boolean} event.preventPospone Indicates the next periodical check has been posponed
+ * @param {object} context context in which the hook is executed
+ * @param {string} context.url url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
+ * @param {object} context.params the params captured on the url by the path. Like in express
+ * @param {any} context.oldValue The previous value
+ * @param {any} context.value The current value
+ * @param {boolean} context.preventHooks set this to true, to prevent the next hooks to be executed.
+ * @param {boolean} context.preventPospone Indicates the next periodical check has been posponed
  * @see afterSet
  */
 </code></pre>
