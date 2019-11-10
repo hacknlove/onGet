@@ -60,7 +60,7 @@ If, for whatever reason, you need to set a new value but you do not want the sub
 
 There are 3 hooks.
 
-* beforeRefresh
+* beforeRefetch
 
 
 ## afterSet - perform actions after the set take place

@@ -82,7 +82,7 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefresh">beforeRefresh</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
@@ -168,6 +168,208 @@
 
     
       <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#afterRefetch">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="afterRefetch">
+      <span class="type-signature"></span>afterRefetch<span class="signature">(path, hook)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Attach a handler for an express-like path, that will be executed after any refresh operation on the resources whose url match that path.<br>From inside the handler it is possible to add more parameters to the call to plugin.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>express-like path to check in which resources execute the hook</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>hook</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#afterRefetchHandler">afterRefetchHandler</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Function to be called</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="lib_afterRefetch.js.html">lib/afterRefetch.js</a>, <a href="lib_afterRefetch.js.html#line23">line 23</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+      <ul>
+        
+          <li>
+            <a href="global.html#refresh">refresh</a>
+          </li>
+        
+      </ul>
+    </dd>
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="example-container">
+    <a class="link-icon" href="#afterRefetch-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="afterRefetch-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>&lt;p>import { afterRefetch, refresh } from 'onget'&lt;/p>
+&lt;p> afterrefetch('/api/user/current', context =&amp;gt; {&lt;br>   const token = get('localStorage://token')&lt;br>   context.options = {&lt;br>     headers: { 'Authorization': &lt;code>Bearer ${token}&lt;/code> }&lt;br>   }&lt;br> })&lt;/p>
+&lt;p> refresh('/api/user/current')&lt;/p></code></pre>
+
+
+  </div>
+
 
       
         
@@ -366,13 +568,13 @@
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#beforeRefresh">
+    <a class="link-icon" href="#beforeRefetch">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="beforeRefresh">
-      <span class="type-signature"></span>beforeRefresh<span class="signature">(path, hook)</span><span class="type-signature"></span>
+    <h4 class="name" id="beforeRefetch">
+      <span class="type-signature"></span>beforeRefetch<span class="signature">(path, hook)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -450,7 +652,7 @@
           
             
     <span class="param-type">
-      <a href="global.html#BeforeRefreshHandler">BeforeRefreshHandler</a>
+      <a href="global.html#beforeRefetchHandler">beforeRefetchHandler</a>
     </span>
 
     
@@ -508,7 +710,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_beforeRefresh.js.html">lib/beforeRefresh.js</a>, <a href="lib_beforeRefresh.js.html#line23">line 23</a>
+          <a href="lib_beforeRefetch.js.html">lib/beforeRefetch.js</a>, <a href="lib_beforeRefetch.js.html#line23">line 23</a>
         </li>
       </ul>
     </dd>
@@ -545,16 +747,16 @@
 
 
   <div class="example-container">
-    <a class="link-icon" href="#beforeRefresh-examples">
+    <a class="link-icon" href="#beforeRefetch-examples">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h5 id="beforeRefresh-examples">Example</h5>
+    <h5 id="beforeRefetch-examples">Example</h5>
     
 
-  <pre class="prettyprint"><code>&lt;p>import { beforeRefresh, refresh } from 'onget'&lt;/p>
-&lt;p> beforerefresh('/api/user/current', context =&amp;gt; {&lt;br>   const token = get('localStorage://token')&lt;br>   context.options = {&lt;br>     headers: { 'Authorization': &lt;code>Bearer ${token}&lt;/code> }&lt;br>   }&lt;br> })&lt;/p>
+  <pre class="prettyprint"><code>&lt;p>import { beforeRefetch, refresh } from 'onget'&lt;/p>
+&lt;p> beforerefetch('/api/user/current', context =&amp;gt; {&lt;br>   const token = get('localStorage://token')&lt;br>   context.options = {&lt;br>     headers: { 'Authorization': &lt;code>Bearer ${token}&lt;/code> }&lt;br>   }&lt;br> })&lt;/p>
 &lt;p> refresh('/api/user/current')&lt;/p></code></pre>
 
 
@@ -2035,6 +2237,181 @@
   
 
   <span class='name-container'>
+    <a class="link-icon" href="#refetch">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="refetch">
+      <span class="type-signature"></span>refetch<span class="signature">(resource, beforeRefetch)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Do the actual fetch and set the new value to the resource</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>resource</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The resource that is going to be refetched</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>beforeRefetch</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The result of executing the beforeRefetch hooks</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="lib_refresh.js.html">lib/refresh.js</a>, <a href="lib_refresh.js.html#line12">line 12</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
     <a class="link-icon" href="#refresh">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
@@ -2177,7 +2554,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_refresh.js.html">lib/refresh.js</a>, <a href="lib_refresh.js.html#line30">line 30</a>
+          <a href="lib_refresh.js.html">lib/refresh.js</a>, <a href="lib_refresh.js.html#line49">line 49</a>
         </li>
       </ul>
     </dd>
@@ -3561,6 +3938,424 @@
   
 
   <span class='name-container'>
+    <a class="link-icon" href="#afterRefetchHandler">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="afterRefetchHandler">
+      <span class="type-signature"></span>afterRefetchHandler<span class="signature">(conext)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Function to be called after a refresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>conext</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>context in which the hook is executed.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.url</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>url of the resource that has received the set</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>path part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.search</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>search part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.hash</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>hash part of the url</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.params</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>the params captured on the url by the path. Like in express</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.value</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      any
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The current value. It can be changed.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      any
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The options that will be passed to plugin.refresh</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.preventHooks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>set this to true to prevent the next hooks to be executed.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>context.preventRefresh</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>set this to true to prevent the resource callbacks to be executed.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="lib_afterRefetch.js.html">lib/afterRefetch.js</a>, <a href="lib_afterRefetch.js.html#line27">line 27</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+      <ul>
+        
+          <li>
+            <a href="global.html#afterSet">afterSet</a>
+          </li>
+        
+      </ul>
+    </dd>
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+          
+
+
+  
+
+  <span class='name-container'>
     <a class="link-icon" href="#afterSetHandler">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
@@ -4005,13 +4800,13 @@
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#BeforeRefreshHandler">
+    <a class="link-icon" href="#beforeRefetchHandler">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="BeforeRefreshHandler">
-      <span class="type-signature"></span>BeforeRefreshHandler<span class="signature">(conext)</span><span class="type-signature"></span>
+    <h4 class="name" id="beforeRefetchHandler">
+      <span class="type-signature"></span>beforeRefetchHandler<span class="signature">(conext)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -4248,7 +5043,7 @@
         
 
         <td class="description last">
-          <p>The current value. It can be changed.</p>
+          <p>The current value. It can be changed. So the real fetch will never take place.</p>
           
         </td>
       </tr>
@@ -4379,7 +5174,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_beforeRefresh.js.html">lib/beforeRefresh.js</a>, <a href="lib_beforeRefresh.js.html#line27">line 27</a>
+          <a href="lib_beforeRefetch.js.html">lib/beforeRefetch.js</a>, <a href="lib_beforeRefetch.js.html#line27">line 27</a>
         </li>
       </ul>
     </dd>

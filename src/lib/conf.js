@@ -22,7 +22,7 @@ export const plugins = []
 export const setHooks = {
   beforeSet: [],
   afterSet: [],
-  beforeRefresh: []
+  beforeRefetch: []
 }
 
 export const serverInstances = []

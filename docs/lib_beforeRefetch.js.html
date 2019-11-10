@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      lib/end.js - Documentation
+      lib/beforeRefetch.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -90,7 +90,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        lib/end.js
+        lib/beforeRefetch.js
       </h1>
     
 
@@ -99,26 +99,48 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>import { plugins, serverInstances, resources } from './conf'
+    <pre class="prettyprint source linenums"><code>import { setHooks } from './conf'
+import { insertHook } from '../private/setHooks'
 
 /**
- * Indicates that the prerrendering has finished and allows the next prerrendering to begin.
- * It is used in server-side prerrendering along with `start`
+ * Attach a handler for an express-like path, that will be executed before any refresh operation on the resources whose url match that path.
+ * From inside the handler it is possible to add more parameters to the call to plugin.
  *
- * @see start
+ * @param {string} path express-like path to check in which resources execute the hook
+ * @param {beforeRefetchHandler} hook Function to be called
+ * @see refresh
+ * @example
+ *  import { beforeRefetch, refresh } from 'onget'
+ *
+ *  beforerefetch('/api/user/current', context => {
+ *    const token = get('localStorage://token')
+ *    context.options = {
+ *      headers: { 'Authorization': `Bearer ${token}` }
+ *    }
+ *  })
+ *
+ *  refresh('/api/user/current')
  */
-export function end () {
-  Object.keys(resources).forEach(key => delete resources[key])
-
-  plugins.forEach(plugin => {
-    if (plugin.end) {
-      plugin.end()
-    }
-  })
-
-  const instance = serverInstances.pop()
-  instance.resolve()
+export function beforeRefetch (path, hook) {
+  insertHook(path, hook, setHooks.beforeRefetch)
 }
+
+/**
+ * Function to be called before a refresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
+ *
+ * @callback beforeRefetchHandler
+ * @param {object} conext - context in which the hook is executed.
+ * @param {string} context.url - url of the resource that has received the set
+ * @param {string} context.path path part of the url
+ * @param {string} context.search search part of the url
+ * @param {string} context.hash hash part of the url
+ * @param {object} context.params - the params captured on the url by the path. Like in express
+ * @param {any} context.value - The current value. It can be changed. So the real fetch will never take place.
+ * @param {any} context.options - The options that will be passed to plugin.refresh
+ * @param {boolean} context.preventHooks - set this to true to prevent the next hooks to be executed.
+ * @param {boolean} context.preventRefresh - set this to true to prevent the resource callbacks to be executed.
+ * @see beforeSet
+ */
 </code></pre>
   </article>
 </section>

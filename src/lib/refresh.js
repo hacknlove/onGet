@@ -4,6 +4,25 @@ import { pospone } from '../private/pospone'
 import { executeHooks } from '../private/setHooks'
 
 /**
+ * Do the actual fetch and set the new value to the resource
+ *
+ * @param {object} resource - The resource that is going to be refetched
+ * @param {object} beforeRefetch - The result of executing the beforeRefetch hooks
+ */
+export async function refetch (resource, beforeRefetch) {
+  const value = await resource.plugin.refresh(resource, beforeRefetch.options)
+  const afterRefetch = executeHooks(setHooks.beforeRefetch, {
+    ...beforeRefetch,
+    value
+  })
+
+  if (afterRefetch.preventRefresh) {
+    return
+  }
+  _set(resource, afterRefetch.value)
+}
+
+/**
  * Check if the value of a resource has changed, and execute the subscriptions if so.
  * It makes the plugin reevaluate the value of the resorce, in those plugins that make periodical evaluations, or that uses some source that could have been changed with a `set` operation on the resource, like `localStorage` or `sessionStorage`
  *
@@ -27,7 +46,7 @@ import { executeHooks } from '../private/setHooks'
  *    refresh(`/api/stock/${context.params.item}`)
  * })
  */
-export function refresh (url, force = false) {
+ export function refresh (url, force = false) {
   const resource = resources[url]
   if (!resource) {
     return false
@@ -37,20 +56,20 @@ export function refresh (url, force = false) {
     return
   }
 
-  const beforeRefresh = executeHooks(setHooks.beforeRefresh, {
+  const beforeRefetch = executeHooks(setHooks.beforeRefetch, {
     force,
     url
   })
-  if (beforeRefresh.value !== undefined) {
-    return _set(resource, beforeRefresh.value)
+  if (beforeRefetch.value !== undefined) {
+    return _set(resource, beforeRefetch.value)
   }
-  if (beforeRefresh.preventRefresh) {
+  if (beforeRefetch.preventRefresh) {
     return
   }
-  if (!beforeRefresh.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
+  if (!beforeRefetch.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
     return
   }
   pospone(resource)
-  ;(async () => _set(resource, await resource.plugin.refresh(resource, beforeRefresh.options)))()
+  refetch(resource, beforeRefetch)
   return true
 }

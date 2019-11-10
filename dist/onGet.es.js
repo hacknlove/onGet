@@ -27,7 +27,7 @@ const plugins = [];
 const setHooks = {
   beforeSet: [],
   afterSet: [],
-  beforeRefresh: []
+  beforeRefetch: []
 };
 
 const serverInstances = [];
@@ -368,6 +368,25 @@ function insertHook (path, hook, where) {
 }
 
 /**
+ * Do the actual fetch and set the new value to the resource
+ *
+ * @param {object} resource - The resource that is going to be refetched
+ * @param {object} beforeRefetch - The result of executing the beforeRefetch hooks
+ */
+async function refetch (resource, beforeRefetch) {
+  const value = await resource.plugin.refresh(resource, beforeRefetch.options);
+  const afterRefetch = executeHooks(setHooks.beforeRefetch, {
+    ...beforeRefetch,
+    value
+  });
+
+  if (afterRefetch.preventRefresh) {
+    return
+  }
+  _set(resource, afterRefetch.value);
+}
+
+/**
  * Check if the value of a resource has changed, and execute the subscriptions if so.
  * It makes the plugin reevaluate the value of the resorce, in those plugins that make periodical evaluations, or that uses some source that could have been changed with a `set` operation on the resource, like `localStorage` or `sessionStorage`
  *
@@ -391,7 +410,7 @@ function insertHook (path, hook, where) {
  *    refresh(`/api/stock/${context.params.item}`)
  * })
  */
-function refresh (url, force = false) {
+ function refresh (url, force = false) {
   const resource = resources[url];
   if (!resource) {
     return false
@@ -401,21 +420,21 @@ function refresh (url, force = false) {
     return
   }
 
-  const beforeRefresh = executeHooks(setHooks.beforeRefresh, {
+  const beforeRefetch = executeHooks(setHooks.beforeRefetch, {
     force,
     url
   });
-  if (beforeRefresh.value !== undefined) {
-    return _set(resource, beforeRefresh.value)
+  if (beforeRefetch.value !== undefined) {
+    return _set(resource, beforeRefetch.value)
   }
-  if (beforeRefresh.preventRefresh) {
+  if (beforeRefetch.preventRefresh) {
     return
   }
-  if (!beforeRefresh.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
+  if (!beforeRefetch.force && resource.plugin.conf.threshold !== undefined && Date.now() - resource.last < resource.plugin.conf.threshold) {
     return
   }
-  pospone(resource)
-  ;(async () => _set(resource, await resource.plugin.refresh(resource, beforeRefresh.options)))();
+  pospone(resource);
+  refetch(resource, beforeRefetch);
   return true
 }
 
@@ -821,12 +840,12 @@ function beforeSet (path, hook) {
  * From inside the handler it is possible to add more parameters to the call to plugin.
  *
  * @param {string} path express-like path to check in which resources execute the hook
- * @param {BeforeRefreshHandler} hook Function to be called
+ * @param {beforeRefetchHandler} hook Function to be called
  * @see refresh
  * @example
- *  import { beforeRefresh, refresh } from 'onget'
+ *  import { beforeRefetch, refresh } from 'onget'
  *
- *  beforerefresh('/api/user/current', context => {
+ *  beforerefetch('/api/user/current', context => {
  *    const token = get('localStorage://token')
  *    context.options = {
  *      headers: { 'Authorization': `Bearer ${token}` }
@@ -835,21 +854,21 @@ function beforeSet (path, hook) {
  *
  *  refresh('/api/user/current')
  */
-function beforeRefresh (path, hook) {
-  insertHook(path, hook, setHooks.beforeRefresh);
+function beforeRefetch (path, hook) {
+  insertHook(path, hook, setHooks.beforeRefetch);
 }
 
 /**
  * Function to be called before a refresh operation. They are executed synchrony and they can prevent the refresh, prevent the next hook from being executed, and set the second parameter to plugin.refresh.
  *
- * @callback BeforeRefreshHandler
+ * @callback beforeRefetchHandler
  * @param {object} conext - context in which the hook is executed.
  * @param {string} context.url - url of the resource that has received the set
  * @param {string} context.path path part of the url
  * @param {string} context.search search part of the url
  * @param {string} context.hash hash part of the url
  * @param {object} context.params - the params captured on the url by the path. Like in express
- * @param {any} context.value - The current value. It can be changed.
+ * @param {any} context.value - The current value. It can be changed. So the real fetch will never take place.
  * @param {any} context.options - The options that will be passed to plugin.refresh
  * @param {boolean} context.preventHooks - set this to true to prevent the next hooks to be executed.
  * @param {boolean} context.preventRefresh - set this to true to prevent the resource callbacks to be executed.
@@ -1547,4 +1566,4 @@ registerPlugin(plugin$2);
 registerPlugin(dotted);
 registerPlugin(fast);
 
-export { afterSet, beforeRefresh, beforeSet, command, conf, end, get, load, onGet, once, plugins, refresh, refreshRegExp, registerPlugin, resources, save, set, start, useOnGet, waitUntil };
+export { afterSet, beforeRefetch, beforeSet, command, conf, end, get, load, onGet, once, plugins, refresh, refreshRegExp, registerPlugin, resources, save, set, start, useOnGet, waitUntil };

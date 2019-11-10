@@ -2,7 +2,7 @@ import { set } from '../set'
 import { refresh } from '../refresh'
 import { afterSet } from '../afterSet'
 import { beforeSet } from '../beforeSet'
-import { beforeRefresh } from '../beforeRefresh'
+import { beforeRefetch } from '../beforeRefetch'
 import { insertHook, executeHooks } from '../../private/setHooks'
 import { resources, setHooks } from '../conf'
 import { getResource } from '../../private/getResource'
@@ -17,7 +17,7 @@ describe('hooks', () => {
   beforeEach(() => {
     setHooks.beforeSet = []
     setHooks.afterSet = []
-    setHooks.beforeRefresh = []
+    setHooks.beforeRefetch = []
   })
   describe('insertHook', () => {
     it('inserts the hook in the array', () => {
@@ -66,11 +66,11 @@ describe('hooks', () => {
     })
   })
 
-  describe('beforeRefresh', () => {
-    afterEach(() => { setHooks.beforeRefresh.length = 0 })
-    it('inserts the hook in setHooks.beforeRefresh', () => {
-      beforeRefresh('/some/:path', 'function')
-      expect(setHooks.beforeRefresh).toStrictEqual([
+  describe('beforeRefetch', () => {
+    afterEach(() => { setHooks.beforeRefetch.length = 0 })
+    it('inserts the hook in setHooks.beforeRefetch', () => {
+      beforeRefetch('/some/:path', 'function')
+      expect(setHooks.beforeRefetch).toStrictEqual([
         [
           /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
           [
@@ -89,7 +89,7 @@ describe('hooks', () => {
     })
     describe('preventRefresh', () => {
       it('prevent refresh to take place', () => {
-        beforeRefresh('/url', context => {
+        beforeRefetch('/url', context => {
           context.preventRefresh = true
         })
         resources['/url'] = {
@@ -108,7 +108,7 @@ describe('hooks', () => {
     })
     describe('set parameter to refresh', () => {
       it('calls plugin.refersh with an extra parameter', () => {
-        beforeRefresh('/url', context => {
+        beforeRefetch('/url', context => {
           context.options = 'plugin options'
         })
         resources['/url'] = {
