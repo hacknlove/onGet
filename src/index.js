@@ -11,6 +11,7 @@ import { save } from './lib/save'
 import { set } from './lib/set'
 import { beforeSet } from './lib/beforeSet'
 import { beforeRefetch } from './lib/beforeRefetch'
+import { afterRefetch } from './lib/afterRefetch'
 import { afterSet } from './lib/afterSet'
 import { start } from './lib/start'
 import { end } from './lib/end'
@@ -34,6 +35,7 @@ registerPlugin(fast)
 export {
   afterSet,
   beforeSet,
+  afterRefetch,
   beforeRefetch,
   command,
   conf,
