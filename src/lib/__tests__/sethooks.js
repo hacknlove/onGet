@@ -24,22 +24,7 @@ describe('hooks', () => {
       const array = []
       insertHook('/some/:path', 'function', array)
 
-      expect(array).toStrictEqual([
-        [
-          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
-          [
-            {
-              delimiter: '/',
-              name: 'path',
-              optional: false,
-              pattern: '[^\\/]+?',
-              prefix: '/',
-              repeat: false
-            }
-          ],
-          'function'
-        ]
-      ])
+      expect(array).toHaveLength(1)
     })
   })
 
@@ -47,22 +32,7 @@ describe('hooks', () => {
     afterEach(() => { setHooks.beforeSet.length = 0 })
     it('inserts the hook in setHooks.beforeSet', () => {
       beforeSet('/some/:path', 'function')
-      expect(setHooks.beforeSet).toStrictEqual([
-        [
-          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
-          [
-            {
-              delimiter: '/',
-              name: 'path',
-              optional: false,
-              pattern: '[^\\/]+?',
-              prefix: '/',
-              repeat: false
-            }
-          ],
-          'function'
-        ]
-      ])
+      expect(setHooks.beforeSet).toHaveLength(1)
     })
   })
 
@@ -70,22 +40,7 @@ describe('hooks', () => {
     afterEach(() => { setHooks.beforeRefetch.length = 0 })
     it('inserts the hook in setHooks.beforeRefetch', () => {
       beforeRefetch('/some/:path', 'function')
-      expect(setHooks.beforeRefetch).toStrictEqual([
-        [
-          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
-          [
-            {
-              delimiter: '/',
-              name: 'path',
-              optional: false,
-              pattern: '[^\\/]+?',
-              prefix: '/',
-              repeat: false
-            }
-          ],
-          'function'
-        ]
-      ])
+      expect(setHooks.beforeRefetch).toHaveLength(1)
     })
     describe('preventRefresh', () => {
       it('prevent refresh to take place', () => {
@@ -134,51 +89,36 @@ describe('hooks', () => {
     afterEach(() => { setHooks.beforeSet.length = 0 })
     it('inserts the hook in setHooks.afterSet', () => {
       afterSet('/some/:path', 'function')
-      expect(setHooks.afterSet).toStrictEqual([
-        [
-          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
-          [
-            {
-              delimiter: '/',
-              name: 'path',
-              optional: false,
-              pattern: '[^\\/]+?',
-              prefix: '/',
-              repeat: false
-            }
-          ],
-          'function'
-        ]
-      ])
+      expect(setHooks.afterSet).toHaveLength(1)
     })
   })
 
   describe('executeHooks', () => {
     it('stop executing hooks if any of them set preventHooks to true', async () => {
       const where = [
-        [/./, [], jest.fn()],
-        [/./, [], jest.fn(event => { event.preventHooks = true })],
-        [/./, [], jest.fn()]
+        [() => ({}), jest.fn()],
+        [() => ({}), jest.fn(event => { event.preventHooks = true })],
+        [() => ({}), jest.fn()]
       ]
       executeHooks(where, {
         url: 'url',
         value: 'value'
       })
-      expect(where[0][2]).toHaveBeenCalled()
-      expect(where[1][2]).toHaveBeenCalled()
-      expect(where[2][2]).not.toHaveBeenCalled()
+      expect(where[0][1]).toHaveBeenCalled()
+      expect(where[1][1]).toHaveBeenCalled()
+      expect(where[2][1]).not.toHaveBeenCalled()
     })
 
     it('pass the correct event context', async () => {
       const where = [
-        [/./, [], jest.fn()]
+        [() => ({}), jest.fn()]
       ]
       executeHooks(where, {
         url: 'url',
         value: 'value',
         preventPospone: 'preventPospone'
       })
-      const event = where[0][2].mock.calls[0][0]
+      const event = where[0][1].mock.calls[0][0]
       expect(event.preventPospone).toBe('preventPospone')
       expect(event.url).toBe('url')
       expect(event.value).toBe('value')
@@ -189,48 +129,38 @@ describe('hooks', () => {
 
     it('pass the same modifyable event context', async () => {
       const where = [
-        [/./, [], jest.fn(event => {
+        [() => ({}), jest.fn(event => {
           event.value = 'new value'
           event.foo = 'bar'
         })],
-        [/./, [], jest.fn()]
+        [() => ({}), jest.fn()]
       ]
       executeHooks(where, {
         url: 'url',
         value: 'value'
       })
-      const event = where[1][2].mock.calls[0][0]
+      const event = where[1][1].mock.calls[0][0]
       expect(event.value).toBe('new value')
       expect(event.foo).toBe('bar')
     })
 
     it('skips the hooks that does not match the url pattern', async () => {
       const where = [
-        [/^a/, [], jest.fn()],
-        [/^b/, [], jest.fn()]
+        [() => ({}), jest.fn()],
+        [() => false, jest.fn()]
       ]
       executeHooks(where, {
         url: 'a',
         value: 'value'
       })
-      expect(where[0][2]).toHaveBeenCalled()
-      expect(where[1][2]).not.toHaveBeenCalled()
+      expect(where[0][1]).toHaveBeenCalled()
+      expect(where[1][1]).not.toHaveBeenCalled()
     })
 
     it('populates the params', async () => {
       const where = [
         [
-          /^\/some\/([^\/]+?)(?:\/)?$/i, // eslint-disable-line
-          [
-            {
-              delimiter: '/',
-              name: 'name',
-              optional: false,
-              pattern: '[^\\/]+?',
-              prefix: '/',
-              repeat: false
-            }
-          ],
+          () => ({ params: { name: 'param' } }),
           jest.fn()
         ]
       ]
@@ -239,7 +169,7 @@ describe('hooks', () => {
         url: '/some/param',
         value: 'value'
       })
-      expect(where[0][2].mock.calls[0][0].params).toStrictEqual({
+      expect(where[0][1].mock.calls[0][0].params).toStrictEqual({
         name: 'param'
       })
     })

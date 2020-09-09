@@ -1,5 +1,5 @@
 import { isDifferent } from 'isdifferent';
-import pathToRegExp from 'path-to-regexp';
+import { match } from 'path-to-regexp';
 import { useState, useEffect } from 'react';
 import { getValue, setValue, deleteValue } from '@hacknlove/deepobject';
 
@@ -337,15 +337,13 @@ function executeHooks (where, context) {
     if (context.preventHooks) {
       break
     }
-    const [regex, keys, cb] = where[i];
-    const match = context.path.match(regex);
-    if (!match) {
+    const [match, cb] = where[i];
+
+    const isMatch = match(context.path);
+    if (!isMatch) {
       continue
     }
-    context.params = {};
-    for (let i = 1; i < match.length; i++) {
-      context.params[keys[i - 1].name] = match[1];
-    }
+    context.params = isMatch.params;
 
     cb(context);
   }
@@ -362,9 +360,8 @@ function executeHooks (where, context) {
  * @param {Array} where array to insert the hook in
  */
 function insertHook (path, hook, where) {
-  const keys = [];
-  const regex = pathToRegExp(path, keys);
-  where.push([regex, keys, hook]);
+  const regex = match(path);
+  where.push([regex, hook]);
 }
 
 /**
