@@ -1,6 +1,10 @@
 /* global sessionStorage */
 const PROTOCOLCUT = 'sessionStorage://'.length
 
+if (typeof setImmediate === 'function') {
+  global.sessionStorage = {}
+}
+
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)

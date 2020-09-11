@@ -82,7 +82,7 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#_start">_start</a></li><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
@@ -102,7 +102,8 @@
   </header>
 
   <article>
-    <h1>Advanced CRUD</h1><p>Sometimes it is convenient to be able to transform the values that are going to be writted or to perform some action after a new value has been set.</p>
+    <h1>Advanced CRUD</h1>
+<p>Sometimes it is convenient to be able to transform the values that are going to be writted or to perform some action after a new value has been set.</p>
 <p>This kind of things can be done attaching handlers that are executed whenbefore or after a set operation is done.</p>
 <p>onGet offers two functions to to this:</p>
 <ul>
@@ -110,16 +111,21 @@
 <li>afterSet</li>
 </ul>
 <p>Both, uses express-js-like patterns to define where to hook the handler, and every hook whose pattern match the url, will be executed, in the same order that they have been attached.</p>
-<h2>beforeSet - Pre-procesing</h2><p>with beforeSet you can validate the value, transform it, and even prevent the set to take place.</p>
+<h2>beforeSet - Pre-procesing</h2>
+<p>with beforeSet you can validate the value, transform it, and even prevent the set to take place.</p>
 <p>The beforeSet handlers should be synchronous. You cannot asynchronously transform the value, or prevent the set.</p>
-<h3>Change the value</h3><p>Set the value you want to set to <code>context.value</code></p>
+<h3>Change the value</h3>
+<p>Set the value you want to set to <code>context.value</code></p>
 <pre class="prettyprint source lang-js"><code>beforeGet('fast://hello/:thing', context => {
   context.value = context.value.trim()
 })
 
 set('fast://hello/world', '  good day  ')
 
-get('fast://hello/world') // 'good day'</code></pre><h3>Prevent the set to take place</h3><p>Set <code>context.preventSet</code> to true, and the set will be aborted, and no afterSet hook will be executed.</p>
+get('fast://hello/world') // 'good day'
+</code></pre>
+<h3>Prevent the set to take place</h3>
+<p>Set <code>context.preventSet</code> to true, and the set will be aborted, and no afterSet hook will be executed.</p>
 <p>The next beforeSet will still be executed, and they could set <code>context.preventSet</code> back to false.</p>
 <pre class="prettyprint source lang-js"><code>beforeGet('fast://price', context => {
   if (context.value &lt; 0) {
@@ -130,13 +136,18 @@ set('fast://price', 14)
 set('fast://price', -5)
 
 get('fast://price') // 14
-</code></pre><h3>Prevent the next hooks to be executed</h3><p>Set <code>context.preventHooks</code> to true to prevent the next hooks to be executed, afterSet hooks included.</p>
-<h3>Prevent the subscriptions to be called</h3><p>If, for whatever reason, you need to set a new value but you do not want the subscriptions to be called, you can set <code>context.preventRefresh</code> to true.</p>
+
+</code></pre>
+<h3>Prevent the next hooks to be executed</h3>
+<p>Set <code>context.preventHooks</code> to true to prevent the next hooks to be executed, afterSet hooks included.</p>
+<h3>Prevent the subscriptions to be called</h3>
+<p>If, for whatever reason, you need to set a new value but you do not want the subscriptions to be called, you can set <code>context.preventRefresh</code> to true.</p>
 <p>There are 3 hooks.</p>
 <ul>
 <li>beforeRefetch</li>
 </ul>
-<h2>afterSet - perform actions after the set take place</h2><p>You could use <code>onGet</code> to make a function be called each time the value of a resource changes, but <code>afterSet</code> offers you some differences.</p>
+<h2>afterSet - perform actions after the set take place</h2>
+<p>You could use <code>onGet</code> to make a function be called each time the value of a resource changes, but <code>afterSet</code> offers you some differences.</p>
 <ol>
 <li>The <code>onGet</code> subscription listener could be called with a changed that has not be produced by a <code>set</code> call, but for some manual or automatic <code>refresh</code>, in the case of <code>localStorage</code> or <code>fetch</code> plugins. The <code>afterSet</code> hook handler will only be triggered by a <code>set</code> operation.</li>
 <li>The <code>onGet</code> can be prevented with <code>context.preventRefresh</code> along the other subscriptions. The <code>afterSet</code> can be prevented with <code>context.preventHooks</code>.</li>
@@ -144,7 +155,8 @@ get('fast://price') // 14
 <li><code>onGet</code> creates an initiated the resource, if it does not exists. Because the subscription is attached to an existant resource. <code>afterSet</code> is not attached to an actual resource, but to a express-js-like url pattern.</li>
 </ol>
 <p>The afterSet hooks cannot prevent the set, neither change the value. You can prevent the following afterSet hooks to be executed, though.</p>
-<h2>common pattern</h2><p>You can set a new value to a REST API resource, add a <code>loading</code> attribute with <code>beforeSet</code> and perform the API call with the <code>afterSet</code>.</p>
+<h2>common pattern</h2>
+<p>You can set a new value to a REST API resource, add a <code>loading</code> attribute with <code>beforeSet</code> and perform the API call with the <code>afterSet</code>.</p>
 <pre class="prettyprint source lang-js"><code>
 beforeSet('/api/items/:id', context => {
   context.value.loading = true
@@ -166,6 +178,7 @@ beforeSet('/api/items/:id', async context => {
     preventHooks: true // set accepts a third parameter where you can put preventHooks among other options
   })
 })
+
 </code></pre>
   </article>
 </section>
@@ -175,7 +188,7 @@ beforeSet('/api/items/:id', async context => {
   <br class="clear">
 
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>

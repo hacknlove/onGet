@@ -82,7 +82,7 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#_start">_start</a></li><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
@@ -102,26 +102,41 @@
   </header>
 
   <article>
-    <h1>Basic CRUD</h1><p>Simple CRUD operations are very straightforward to do with onGet. Just think about what urls you need, and use<code>set</code> to create, update and delete; and <code>get</code>, <code>onGet</code> or <code>useOnGet</code> to read,</p>
+    <h1>Basic CRUD</h1>
+<p>Simple CRUD operations are very straightforward to do with onGet. Just think about what urls you need, and use<code>set</code> to create, update and delete; and <code>get</code>, <code>onGet</code> or <code>useOnGet</code> to read,</p>
 <p>It is up to you to choose good descriptive urls, so your code is readable.</p>
-<pre class="prettyprint source lang-js"><code>set('fast://menuOpened', true);</code></pre><pre class="prettyprint source lang-js"><code>get('fast://menuOpened') // -> true</code></pre><p><code>onGet</code> attach a listener to a subscription to the resource</p>
+<pre class="prettyprint source lang-js"><code>set('fast://menuOpened', true);
+</code></pre>
+<pre class="prettyprint source lang-js"><code>get('fast://menuOpened') // -> true
+</code></pre>
+<p><code>onGet</code> attach a listener to a subscription to the resource</p>
 <pre class="prettyprint source lang-js"><code>onGet('fast://menuOpened', value => {
   // ...
-})</code></pre><p><code>useOnGet</code> is a react hook that refresh the component whenever the resource changes.</p>
+})
+</code></pre>
+<p><code>useOnGet</code> is a react hook that refresh the component whenever the resource changes.</p>
 <pre class="prettyprint source lang-js"><code>function SomeComponent () {
   const menuOpened = useOnGet('fast://menuOpened')
   return (
       ...
   )
-}</code></pre><h2>Resource URLs and plugins</h2><p>The &quot;protocol&quot; of the url determine the plugin that will be used. If no protocol is present, the url will be processed by the <code>fetch</code> plugin.</p>
+}
+</code></pre>
+<h2>Resource URLs and plugins</h2>
+<p>The &quot;protocol&quot; of the url determine the plugin that will be used. If no protocol is present, the url will be processed by the <code>fetch</code> plugin.</p>
 <p>It is very important to be aware that <code>fast://someurl</code>, <code>dotted://someurl</code>, <code>history://someurl</code> are completely separate resources, with their own values and subscriptions.</p>
-<h3>fast - just values.</h3><p>Those resource that have no special needs, should use urls that start with <code>fast://...</code> because they go right to the point.</p>
-<h3>history - undoable and redoable</h3><p>You should use urls that start with <code>history://</code> with those (and only those) resources that needs to be undoable and redoable.</p>
+<h3>fast - just values.</h3>
+<p>Those resource that have no special needs, should use urls that start with <code>fast://...</code> because they go right to the point.</p>
+<h3>history - undoable and redoable</h3>
+<p>You should use urls that start with <code>history://</code> with those (and only those) resources that needs to be undoable and redoable.</p>
 <p>Otherwise you shouldn't use <code>history://</code> because it uses more memory and it involves more steps that you do not need.</p>
-<h3>dotted - urls to the members of an object.</h3><p>When It is more convenient for your code to perform CRUD operations in some deep key path on objects, so you can set or subscribe in dotted key paths, you can use <code>dotted://</code> urls. Like <code>dotted://foo.bar.buz</code> that points to <code>{ bar: { buz: --&gt; HERE &lt;-- }}</code> inside <code>dotted://foo</code></p>
-<h3>localStorage and sessionStorage - Persistence</h3><p>If you need some resource to be backed by localStorage or sessionStorage, you should use <code>localStorage://...</code> or <code>sessionStorage://...</code></p>
+<h3>dotted - urls to the members of an object.</h3>
+<p>When It is more convenient for your code to perform CRUD operations in some deep key path on objects, so you can set or subscribe in dotted key paths, you can use <code>dotted://</code> urls. Like <code>dotted://foo.bar.buz</code> that points to <code>{ bar: { buz: --&gt; HERE &lt;-- }}</code> inside <code>dotted://foo</code></p>
+<h3>localStorage and sessionStorage - Persistence</h3>
+<p>If you need some resource to be backed by localStorage or sessionStorage, you should use <code>localStorage://...</code> or <code>sessionStorage://...</code></p>
 <p>localStorage also respond to changes that have been made from other tabs.</p>
-<h3>fetch - REST API</h3><p>In a nutshell <code>/some/url/</code> returns the value of fetching <code>/some/url</code></p>
+<h3>fetch - REST API</h3>
+<p>In a nutshell <code>/some/url/</code> returns the value of fetching <code>/some/url</code></p>
 <p>We will talk about the fetch plugin in the his own tutorial.</p>
   </article>
 </section>
@@ -131,7 +146,7 @@
   <br class="clear">
 
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>

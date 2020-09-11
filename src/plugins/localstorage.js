@@ -1,6 +1,10 @@
 /* global localStorage */
 const PROTOCOLCUT = 'localStorage://'.length
 
+if (typeof setImmediate === 'function') {
+  global.localStorage = {}
+}
+
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)

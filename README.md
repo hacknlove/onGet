@@ -1,15 +1,16 @@
 # onGet
 
-The KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with state in modern applications is a Client-side virtual API.
+This is the KISS, write-less do more, elegant, scalable, and plugin-extensible way to deal with reactive state in modern applications.
 
 ## Why
 
-Because It does not feel right when you end up with a lot of bloat code, a lot of unnecessary complexity, a big lack of liberty and too much trouble.
+I have tried a bunch of solutions, and It did not feel right. They have a lot of unnecessary complexity, they lacked of liberty and there were too much trouble everywher.
 
-Reactive State shared across your components should be as fun to work with as possible.
+I wrote the first version of onGet in 3 months in 2019, but then I started working in a couple of projects for other people, and I thought that it was better to use something standard and broadly used, so I went back to redux. After a while I found SWR, and I though, cool man, I was not completly wrong, some guys has done something similar, and I started using SWR in my projects too. But now I remembered how much easier and fun was onGet, so I am here again, making it Even if I am the only one using it, It's worth it, because it makes a great difference on how you work, and I want to spend my time making great apps with great UX, instead of trying to hack some weirdiness to make it run.
 
-A virtual client-side API feels so natural that you will end up with a more understandable and scalable and mantainable code.
+Now I am making it play nicer with NextJS, because it's the framework I am using, and I must say I am very satisfied on how it's going so far.
 
+onGet + nextjs it's a wonderfull combination.
 
 ## Documentation
 [documentation](https://hacknlove.github.io/onGet/)

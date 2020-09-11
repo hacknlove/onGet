@@ -944,7 +944,7 @@ function afterSet (path, hook) {
 /**
  * @summary Wait until the system is free to do a server side prerrender, and then set it to not-free
  */
-async function start () {
+async function _start () {
   const instance = {};
 
   instance.promise = new Promise(resolve => { instance.resolve = resolve; });
@@ -962,23 +962,59 @@ async function start () {
   });
 }
 
+async function start (props) {
+  const propsIsFunction = typeof props === 'function';
+  const isSSR = typeof setImmediate === 'function';
+
+  if (!propsIsFunction) {
+    if (isSSR) {
+      await _start();
+    }
+    return ({ props: {} })
+  }
+
+  if (!isSSR) {
+    return props
+  }
+
+  return async (params) => {
+    await _start();
+    props(params);
+  }
+}
+
 /**
  * Indicates that the prerrendering has finished and allows the next prerrendering to begin.
  * It is used in server-side prerrendering along with `start`
  *
+ * @param cb
  * @see start
  */
-function end () {
-  Object.keys(resources).forEach(key => delete resources[key]);
+function end (cb) {
+  if (typeof setImmediate === 'undefined') {
+    return cb
+  }
 
-  plugins.forEach(plugin => {
-    if (plugin.end) {
-      plugin.end();
+  return function (...params) {
+    let result;
+    try {
+      result = cb(...params);
+    } finally {
+      Object.keys(resources).forEach(key => delete resources[key]);
+
+      plugins.forEach(plugin => {
+        if (plugin.end) {
+          plugin.end();
+        }
+      });
+
+      const instance = serverInstances.pop();
+      if (instance) {
+        instance.resolve();
+      }
     }
-  });
-
-  const instance = serverInstances.pop();
-  instance.resolve();
+    return result || null
+  }
 }
 
 /**
@@ -1050,6 +1086,10 @@ var fetch$1 = {
 /* global localStorage */
 const PROTOCOLCUT = 'localStorage://'.length;
 
+if (typeof setImmediate === 'function') {
+  global.localStorage = {};
+}
+
 function parseIfPossible (value) {
   try {
     return JSON.parse(value)
@@ -1114,6 +1154,10 @@ const plugin = {
 
 /* global sessionStorage */
 const PROTOCOLCUT$1 = 'sessionStorage://'.length;
+
+if (typeof setImmediate === 'function') {
+  global.sessionStorage = {};
+}
 
 function parseIfPossible$1 (value) {
   try {

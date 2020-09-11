@@ -3,7 +3,7 @@ import { plugins, serverInstances } from './conf'
 /**
  * @summary Wait until the system is free to do a server side prerrender, and then set it to not-free
  */
-export async function start () {
+async function _start () {
   const instance = {}
 
   instance.promise = new Promise(resolve => { instance.resolve = resolve })
@@ -19,4 +19,25 @@ export async function start () {
       plugin.start()
     }
   })
+}
+
+export async function start (props) {
+  const propsIsFunction = typeof props === 'function'
+  const isSSR = typeof setImmediate === 'function'
+
+  if (!propsIsFunction) {
+    if (isSSR) {
+      await _start()
+    }
+    return ({ props: {} })
+  }
+
+  if (!isSSR) {
+    return props
+  }
+
+  return async (params) => {
+    await _start()
+    props(params)
+  }
 }

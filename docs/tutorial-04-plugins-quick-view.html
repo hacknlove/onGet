@@ -82,7 +82,7 @@
       
     
 
-    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
+    <h3>Tutorials</h3><ul><li id="01-getting-started-nav"><a href="tutorial-01-getting-started.html">01-getting-started</a></li><li id="02-basic-crud-nav"><a href="tutorial-02-basic-crud.html">02-basic-crud</a></li><li id="03-advanced-crud-nav"><a href="tutorial-03-advanced-crud.html">03-advanced-crud</a></li><li id="04-plugins-quick-view-nav"><a href="tutorial-04-plugins-quick-view.html">04-plugins-quick-view</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#_start">_start</a></li><li><a href="global.html#afterRefetch">afterRefetch</a></li><li><a href="global.html#afterSet">afterSet</a></li><li><a href="global.html#beforeRefetch">beforeRefetch</a></li><li><a href="global.html#beforeSet">beforeSet</a></li><li><a href="global.html#command">command</a></li><li><a href="global.html#end">end</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#once">once</a></li><li><a href="global.html#onGet">onGet</a></li><li><a href="global.html#refetch">refetch</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#refreshRegExp">refreshRegExp</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#useOnGet">useOnGet</a></li><li><a href="global.html#waitUntil">waitUntil</a></li></ul>
   </nav>
 
   <div id="main">
@@ -102,8 +102,13 @@
   </header>
 
   <article>
-    <h2>Plugins</h2><h3>fast</h3><p>The fastest key&gt;value plugin.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('fast://someKey', someHandler)</code></pre><h3>dotted</h3><p>A deeply-dotted-key aware plugin.</p>
+    <h2>Plugins</h2>
+<h3>fast</h3>
+<p>The fastest key&gt;value plugin.</p>
+<pre class="prettyprint source lang-js"><code>  onGet('fast://someKey', someHandler)
+</code></pre>
+<h3>dotted</h3>
+<p>A deeply-dotted-key aware plugin.</p>
 <ul>
 <li>It allows you to get/set/subscribe to any deeply-dotted-key</li>
 <li>The change events are propagated to every parent and to only those child whose value has been changed.</li>
@@ -116,15 +121,20 @@
     bar: {
       baz: 'quz'
     }
-  })</code></pre><h4>Commands</h4><ul>
-<li><p><strong>remove</strong> It removes a value</p>
-<pre class="prettyprint source lang-js"><code>onGet('dotted://foo', value => console.log(JSON.stringify(value)))
-
-set('dotted://foo.bar', { baz: 42 }) // {&quot;bar&quot;:{&quot;baz&quot;:42}}
-
-command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}</code></pre></li>
+  })
+</code></pre>
+<h4>Commands</h4>
+<ul>
+<li><strong>remove</strong> It removes a value</li>
 </ul>
-<h3>history</h3><p>A plugin with independent histories for each key</p>
+<pre class="prettyprint source lang-js"><code>  onGet('dotted://foo', value => console.log(JSON.stringify(value)))
+
+  set('dotted://foo.bar', { baz: 42 }) // {&quot;bar&quot;:{&quot;baz&quot;:42}}
+
+  command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}
+</code></pre>
+<h3>history</h3>
+<p>A plugin with independent histories for each key</p>
 <ul>
 <li>It allows you to undo/redo on the fields you want to. For instance, in a text editor you could be interested in undo the content but not the UX state like zoom level.</li>
 <li>You can also subscribe to prev and next steps.</li>
@@ -133,7 +143,10 @@ command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}</code></pre></li>
   set('history://someKey', 'first step')
   set('history://someKey', 'second step')
   command('history://someKey', 'undo')
-  set('history://someKey', 'new second step')</code></pre><h4>Commands</h4><ul>
+  set('history://someKey', 'new second step')
+</code></pre>
+<h4>Commands</h4>
+<ul>
 <li><strong>replace</strong> It set a new value, without advancing the history</li>
 <li><strong>undo</strong> It undoes a step in the history</li>
 <li><strong>redo</strong> It redoes a step in the history</li>
@@ -144,15 +157,24 @@ command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}</code></pre></li>
 <li><strong>undoLength</strong> It returns the amount of undoable steps in the history</li>
 <li><strong>redoLength</strong> It returns the amount of redoable steps in the history</li>
 </ul>
-<h3>localStorage</h3><p>A plugin that uses localStorage, so the state is persistent and it trigger the subscription handlers if the value is changed from other tabs.</p>
+<h3>localStorage</h3>
+<p>A plugin that uses localStorage, so the state is persistent and it trigger the subscription handlers if the value is changed from other tabs.</p>
 <p>It serializes and deserialize the values.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('localStorage://someKey')</code></pre><h3>sessionStorage</h3><p>A plugin that uses sessionStorage, so the state is persistent between reloads but different between tabs.</p>
+<pre class="prettyprint source lang-js"><code>  onGet('localStorage://someKey')
+</code></pre>
+<h3>sessionStorage</h3>
+<p>A plugin that uses sessionStorage, so the state is persistent between reloads but different between tabs.</p>
 <p>It serializes and deserialize the values.</p>
-<pre class="prettyprint source lang-js"><code>  onGet('sessionStorage://someKey')</code></pre><h3>fetch</h3><p>A plugin that obtain the values from HTTP GET requests.</p>
+<pre class="prettyprint source lang-js"><code>  onGet('sessionStorage://someKey')
+</code></pre>
+<h3>fetch</h3>
+<p>A plugin that obtain the values from HTTP GET requests.</p>
 <p>Requests to the same endpoint are debounced and their responses are cached and periodically refreshed.</p>
 <pre class="prettyprint source lang-js"><code>  onGet('/absolute/url', someHandler)
   onGet('relative/foo', someOtherHandler)
-  onGet('https://full.url', someThirdHandler)</code></pre><ul>
+  onGet('https://full.url', someThirdHandler)
+</code></pre>
+<ul>
 <li>You can <code>set</code> a value, to speed things up if you optimistically know the value that the enpoint will return, (for instance after making some other POST to the API)</li>
 <li>You can ask for a manual refresh, to not wait for the periodical one, if you know the value has changed, , (for instance after making some POST to the API)</li>
 <li><code>get</code> is syncronous, so used with urls from fetch plugin, it only returns a value if the url has been used previously with <code>onGet</code>, <code>useOnGet</code> or <code>set</code></li>
@@ -166,7 +188,7 @@ command('dotted://foo.bar.baz', 'remove') {&quot;bar&quot;:{}}</code></pre></li>
   <br class="clear">
 
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>

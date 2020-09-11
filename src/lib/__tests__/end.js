@@ -19,7 +19,7 @@ describe('end', () => {
       resolve
     })
 
-    end()
+    end(() => {})()
 
     expect(plugins[0].end).toHaveBeenCalled()
     expect(resolve).toHaveBeenCalled()
