@@ -21,23 +21,22 @@ async function _start () {
   })
 }
 
-export async function start (props) {
+export function start (props) {
   const propsIsFunction = typeof props === 'function'
   const isSSR = typeof setImmediate === 'function'
 
   if (!propsIsFunction) {
     if (isSSR) {
-      await _start()
+      return _start().then(() => ({ props: {} }))
     }
-    return ({ props: {} })
+    return () => ({ props: {} })
   }
 
   if (!isSSR) {
     return props
   }
-
-  return async (params) => {
+  return async (...params) => {
     await _start()
-    props(params)
+    return props(...params)
   }
 }
