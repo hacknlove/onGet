@@ -46,7 +46,7 @@ export async function refetch (resource, beforeRefetch) {
  *    refresh(`/api/stock/${context.params.item}`)
  * })
  */
- export function refresh (url, force = false) {
+export function refresh (url, force = false) {
   const resource = resources[url]
   if (!resource) {
     return false

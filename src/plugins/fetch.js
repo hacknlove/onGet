@@ -5,6 +5,9 @@ export default {
   name: 'fetch',
   regex: /^./,
   async refresh (resource, options) {
+    if (options && options.override) {
+      return options.override
+    }
     const response = await fetch(resource.url, options).catch(__error => ({ __error }))
     if (response.__error) {
       return response.__error

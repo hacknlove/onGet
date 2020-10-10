@@ -1,6 +1,6 @@
 {
   "name": "onget",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"
@@ -32,7 +32,7 @@
     "docdown": "^0.7.3",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "isdifferent": "^2.0.1",
-    "path-to-regexp": "^6.1.0"
+    "path-to-regexp": "^6.2.0"
   },
   "peerDependencies": {
     "react": "^16.9.0"
@@ -40,24 +40,24 @@
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
-    "@testing-library/react-hooks": "^3.4.1",
-    "babel-jest": "^26.3.0",
+    "@testing-library/react-hooks": "^3.4.2",
+    "babel-jest": "^26.5.2",
     "bluebird": "^3.7.2",
-    "eslint": "^7.8.1",
+    "eslint": "^7.11.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^24.0.0",
-    "eslint-plugin-jsdoc": "^30.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-jsdoc": "^30.6.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-standard": "^4.0.1",
-    "jest": "^26.4.2",
-    "jsdoc": "^3.6.5",
+    "jest": "^26.5.2",
+    "jsdoc": "^3.6.6",
     "nodemon": "^2.0.4",
     "react": "^16.13.1",
     "react-test-renderer": "^16.13.1",
-    "rollup": "^2.26.11",
+    "rollup": "^2.29.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",

@@ -411,7 +411,7 @@ async function refetch (resource, beforeRefetch) {
  *    refresh(`/api/stock/${context.params.item}`)
  * })
  */
- function refresh (url, force = false) {
+function refresh (url, force = false) {
   const resource = resources[url];
   if (!resource) {
     return false
@@ -1067,6 +1067,9 @@ var fetch$1 = {
   name: 'fetch',
   regex: /^./,
   async refresh (resource, options) {
+    if (options && options.override) {
+      return options.override
+    }
     const response = await fetch(resource.url, options).catch(__error => ({ __error }));
     if (response.__error) {
       return response.__error
