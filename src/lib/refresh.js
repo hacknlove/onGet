@@ -11,7 +11,7 @@ import { executeHooks } from '../private/setHooks'
  */
 export async function refetch (resource, beforeRefetch) {
   const value = await resource.plugin.refresh(resource, beforeRefetch.options)
-  const afterRefetch = executeHooks(setHooks.beforeRefetch, {
+  const afterRefetch = executeHooks(setHooks.afterRefetch, {
     ...beforeRefetch,
     value
   })

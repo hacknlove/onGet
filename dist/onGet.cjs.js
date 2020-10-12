@@ -31,6 +31,7 @@ const plugins = [];
 const setHooks = {
   beforeSet: [],
   afterSet: [],
+  afterRefetch: [],
   beforeRefetch: []
 };
 
@@ -376,7 +377,7 @@ function insertHook (path, hook, where) {
  */
 async function refetch (resource, beforeRefetch) {
   const value = await resource.plugin.refresh(resource, beforeRefetch.options);
-  const afterRefetch = executeHooks(setHooks.beforeRefetch, {
+  const afterRefetch = executeHooks(setHooks.afterRefetch, {
     ...beforeRefetch,
     value
   });

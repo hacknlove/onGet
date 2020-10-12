@@ -22,6 +22,7 @@ export const plugins = []
 export const setHooks = {
   beforeSet: [],
   afterSet: [],
+  afterRefetch: [],
   beforeRefetch: []
 }
 
