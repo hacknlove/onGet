@@ -71,7 +71,7 @@ export default [
     ]
   },
   {
-    input: 'src/react.tsx',
+    input: 'src/react.jsx',
     output: [
       { file: 'dist/cjs/react.js', format: 'cjs', indent: false },
       { file: 'dist/es/react.js', format: 'es', indent: false }
@@ -80,7 +80,6 @@ export default [
     plugins: [
       nodeResolve(),
       commonjs(),
-      typescript({ useTsconfigDeclarationDir: true }),
       babel({ babelHelpers: 'bundled' })
     ]
   }

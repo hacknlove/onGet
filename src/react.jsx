@@ -44,12 +44,12 @@ export function useOnGetValue (resource, options) {
 }
 
 export function useOnGetResource (url, options) {
-  const sharedState: any = useContext(ContextState)
+  const sharedState = useContext(ContextState)
   return sharedState.getResource(url, options)
 }
 
 export function useOnGetChange (url, callback, options) {
-  const sharedState: any = useContext(ContextState)
+  const sharedState = useContext(ContextState)
 
   useEffect(() => sharedState.onChange(url, callback, options), [url])
 }
