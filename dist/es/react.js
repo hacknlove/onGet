@@ -122,11 +122,10 @@ class SharedState {
   }
 }
 
-var ContextState = createContext({});
-function OnGetProvider(_a) {
-    var children = _a.children, _b = _a.plugins, plugins = _b === void 0 ? [] : _b, _c = _a.conf, conf = _c === void 0 ? {} : _c, testContextRef = _a.testContextRef;
-    var value = useMemo(function () {
-        var sharedState = new SharedState({ plugins: plugins, conf: conf });
+const ContextState = createContext({});
+function OnGetProvider({ children, plugins = [], conf = {}, testContextRef }) {
+    const value = useMemo(() => {
+        const sharedState = new SharedState({ plugins, conf });
         if (testContextRef) {
             testContextRef.sharedState = sharedState;
         }
@@ -134,32 +133,31 @@ function OnGetProvider(_a) {
     }, []);
     return React.createElement(ContextState.Provider, { value: value }, children);
 }
-function WithOnGetValue(_a) {
-    var url = _a.url, children = _a.children;
-    var _b = useOnGetValue(url, null), value = _b[0], setValue = _b[1], resource = _b[2];
+function WithOnGetValue({ url, children }) {
+    const [value, setValue, resource] = useOnGetValue(url, null);
     return children({
-        value: value, setValue: setValue, resource: resource
+        value, setValue, resource
     });
 }
 function useOnGetValue(resource, options) {
     if (typeof resource === 'string') {
         resource = useOnGetResource(resource, options);
     }
-    var _a = useState(resource.value), value = _a[0], set = _a[1];
-    useOnGetChange(resource.url, function (value) { return set(value); }, null);
+    const [value, set] = useState(resource.value);
+    useOnGetChange(resource.url, (value) => set(value), null);
     return [
         value,
-        function (newValue) { return resource.setValue(newValue); },
+        (newValue) => resource.setValue(newValue),
         resource
     ];
 }
 function useOnGetResource(url, options) {
-    var sharedState = useContext(ContextState);
+    const sharedState = useContext(ContextState);
     return sharedState.getResource(url, options);
 }
 function useOnGetChange(url, callback, options) {
-    var sharedState = useContext(ContextState);
-    useEffect(function () { return sharedState.onChange(url, callback, options); }, [url]);
+    const sharedState = useContext(ContextState);
+    useEffect(() => sharedState.onChange(url, callback, options), [url]);
 }
 function useOnGetState() {
     return useContext(ContextState);
