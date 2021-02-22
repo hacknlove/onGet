@@ -1,6 +1,6 @@
 {
   "name": "onget-dev",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "This package is meant just for development purposes",
   "scripts": {
     "build": "./CI/build.sh"

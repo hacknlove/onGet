@@ -1,11 +1,8 @@
 {
     "name": "onget",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
     "type": "module",
-    "files": [
-      "./"
-    ],
     "publishConfig": {
       "access": "public"
     },
