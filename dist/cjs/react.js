@@ -1,1 +1,182 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react");function t(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var s=t(e);class r{constructor(e,t={}){this.url=e,this.cached=t.firstValue,this.defaultValue=t.defaultValue,this.subscriptions=new Map,this.totalSubscriptionsCount=0}setValue(e){this.cached=e,this.triggerSubscriptions()}getValue(){return this.cached??this.defaultValue}triggerSubscriptions(){for(const e of this.subscriptions.values())e(this.value,this)}get value(){return this.getValue()}set value(e){this.setValue(e)}onChange(e){const t=this.totalSubscriptionsCount++;return this.subscriptions.set(t,e),()=>this.subscriptions.delete(t)}}class u{newResource(e,t){return new r(e,t)}}u.protocol="var";const n={},i={get:(e,t)=>e.getValue(t),deleteProperty(e,t){e.deleteReource(t)},set:(e,t,s)=>(e.setValue(t,s),!0)};class o{constructor({plugins:e=[],conf:t={}}){this.plugins=new Map(e.map(e=>[e.protocol,new e(this)])),this.plugins.has("var")||this.plugins.set("var",new u(this)),this.conf={...n,...t},this.resources=new Map,this.proxy=new Proxy(this,i)}findPlugin(e){return this.plugins.get(e.split(":",1))||this.plugins.get("var")}getResource(e,t={}){let s=this.resources.get(e);if(s)return s;return s=this.findPlugin(e).newResource(e,t,this),this.resources.set(e,s),s}getValue(e,t={}){return this.getResource(e,t).value}setValue(e,t,s={}){this.getResource(e,s).setValue(t,s)}deleteReource(e){this.getResource(e).delete(),this.resources.delete(e)}onChange(e,t,s){return this.getResource(e).onChange(t,s)}}var a=e.createContext({});function l(t,s){"string"==typeof t&&(t=c(t,s));var r=e.useState(t.value),u=r[0],n=r[1];return h(t.url,(function(e){return n(e)}),null),[u,function(e){return t.setValue(e)},t]}function c(t,s){return e.useContext(a).getResource(t,s)}function h(t,s,r){var u=e.useContext(a);e.useEffect((function(){return u.onChange(t,s,r)}),[t])}exports.ContextState=a,exports.OnGetProvider=function(t){var r=t.children,u=t.plugins,n=void 0===u?[]:u,i=t.conf,l=void 0===i?{}:i,c=t.testContextRef,h=e.useMemo((function(){var e=new o({plugins:n,conf:l});return c&&(c.sharedState=e),e}),[]);return s.default.createElement(a.Provider,{value:h},r)},exports.WithOnGetValue=function(e){var t=e.url,s=e.children,r=l(t,null);return s({value:r[0],setValue:r[1],resource:r[2]})},exports.useOnGetChange=h,exports.useOnGetResource=c,exports.useOnGetState=function(){return e.useContext(a)},exports.useOnGetValue=l;
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var React = require('react');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+
+class VarResource {
+  constructor (url, options = {}) {
+    this.url = url;
+    this.cached = options.firstValue;
+    this.defaultValue = options.defaultValue;
+    this.subscriptions = new Map();
+    this.totalSubscriptionsCount = 0;
+  }
+
+  setValue (value) {
+    this.cached = value;
+    this.triggerSubscriptions();
+  }
+
+  getValue () {
+    return this.cached ?? this.defaultValue
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.value, this);
+    }
+  }
+
+  get value () {
+    return this.getValue()
+  }
+
+  set value (value) {
+    this.setValue(value);
+  }
+
+  onChange (callback) {
+    const key = this.totalSubscriptionsCount++;
+
+    this.subscriptions.set(key, callback);
+    return () => this.subscriptions.delete(key)
+  }
+}
+
+class VarPlugin {
+  newResource (url, options) {
+    return new VarResource(url, options)
+  }
+}
+
+VarPlugin.protocol = 'var';
+
+const defaultConf = {};
+
+const proxyHandler = {
+  get (target, url) {
+    return target.getValue(url)
+  },
+
+  deleteProperty (target, url) {
+    target.deleteReource(url);
+  },
+
+  set (target, url, value) {
+    target.setValue(url, value);
+    return true
+  }
+};
+
+class SharedState {
+  constructor ({ plugins = [], conf = {} }) {
+    this.plugins = new Map(plugins.map(Plugin => [Plugin.protocol, new Plugin(this)]));
+
+    if (!this.plugins.has('var')) {
+      this.plugins.set('var', new VarPlugin(this));
+    }
+
+    this.conf = { ...defaultConf, ...conf };
+    this.resources = new Map();
+
+    this.proxy = new Proxy(this, proxyHandler);
+  }
+
+  findPlugin (url) {
+    return this.plugins.get(url.split(':', 1)) || this.plugins.get('var')
+  }
+
+  getResource (url, options = {}) {
+    let resource = this.resources.get(url);
+
+    if (resource) {
+      return resource
+    }
+
+    const plugin = this.findPlugin(url);
+
+    resource = plugin.newResource(url, options, this);
+
+    this.resources.set(url, resource);
+
+    return resource
+  }
+
+  getValue (url, options = {}) {
+    return this.getResource(url, options).value
+  }
+
+  setValue (url, value, options = {}) {
+    const resource = this.getResource(url, options);
+
+    resource.setValue(value, options);
+  }
+
+  deleteReource (url) {
+    const resource = this.getResource(url);
+
+    resource.delete();
+
+    this.resources.delete(url);
+  }
+
+  onChange (url, callback, options) {
+    return this.getResource(url).onChange(callback, options)
+  }
+}
+
+var ContextState = React.createContext({});
+function OnGetProvider(_a) {
+    var children = _a.children, _b = _a.plugins, plugins = _b === void 0 ? [] : _b, _c = _a.conf, conf = _c === void 0 ? {} : _c, testContextRef = _a.testContextRef;
+    var value = React.useMemo(function () {
+        var sharedState = new SharedState({ plugins: plugins, conf: conf });
+        if (testContextRef) {
+            testContextRef.sharedState = sharedState;
+        }
+        return sharedState;
+    }, []);
+    return React__default['default'].createElement(ContextState.Provider, { value: value }, children);
+}
+function WithOnGetValue(_a) {
+    var url = _a.url, children = _a.children;
+    var _b = useOnGetValue(url, null), value = _b[0], setValue = _b[1], resource = _b[2];
+    return children({
+        value: value, setValue: setValue, resource: resource
+    });
+}
+function useOnGetValue(resource, options) {
+    if (typeof resource === 'string') {
+        resource = useOnGetResource(resource, options);
+    }
+    var _a = React.useState(resource.value), value = _a[0], set = _a[1];
+    useOnGetChange(resource.url, function (value) { return set(value); }, null);
+    return [
+        value,
+        function (newValue) { return resource.setValue(newValue); },
+        resource
+    ];
+}
+function useOnGetResource(url, options) {
+    var sharedState = React.useContext(ContextState);
+    return sharedState.getResource(url, options);
+}
+function useOnGetChange(url, callback, options) {
+    var sharedState = React.useContext(ContextState);
+    React.useEffect(function () { return sharedState.onChange(url, callback, options); }, [url]);
+}
+function useOnGetState() {
+    return React.useContext(ContextState);
+}
+
+exports.ContextState = ContextState;
+exports.OnGetProvider = OnGetProvider;
+exports.WithOnGetValue = WithOnGetValue;
+exports.useOnGetChange = useOnGetChange;
+exports.useOnGetResource = useOnGetResource;
+exports.useOnGetState = useOnGetState;
+exports.useOnGetValue = useOnGetValue;

@@ -1,1 +1,50 @@
-class t{constructor(t,s={}){this.url=t,this.cached=s.firstValue,this.defaultValue=s.defaultValue,this.subscriptions=new Map,this.totalSubscriptionsCount=0}setValue(t){this.cached=t,this.triggerSubscriptions()}getValue(){return this.cached??this.defaultValue}triggerSubscriptions(){for(const t of this.subscriptions.values())t(this.value,this)}get value(){return this.getValue()}set value(t){this.setValue(t)}onChange(t){const s=this.totalSubscriptionsCount++;return this.subscriptions.set(s,t),()=>this.subscriptions.delete(s)}}class s{newResource(s,e){return new t(s,e)}}s.protocol="var";export default s;export{t as VarResource};
+class VarResource {
+  constructor (url, options = {}) {
+    this.url = url;
+    this.cached = options.firstValue;
+    this.defaultValue = options.defaultValue;
+    this.subscriptions = new Map();
+    this.totalSubscriptionsCount = 0;
+  }
+
+  setValue (value) {
+    this.cached = value;
+    this.triggerSubscriptions();
+  }
+
+  getValue () {
+    return this.cached ?? this.defaultValue
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.value, this);
+    }
+  }
+
+  get value () {
+    return this.getValue()
+  }
+
+  set value (value) {
+    this.setValue(value);
+  }
+
+  onChange (callback) {
+    const key = this.totalSubscriptionsCount++;
+
+    this.subscriptions.set(key, callback);
+    return () => this.subscriptions.delete(key)
+  }
+}
+
+class VarPlugin {
+  newResource (url, options) {
+    return new VarResource(url, options)
+  }
+}
+
+VarPlugin.protocol = 'var';
+
+export default VarPlugin;
+export { VarResource };

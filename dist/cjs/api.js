@@ -1,1 +1,148 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});class t extends class{constructor(t,e={}){this.url=t,this.cached=e.firstValue,this.defaultValue=e.defaultValue,this.subscriptions=new Map,this.totalSubscriptionsCount=0}setValue(t){this.cached=t,this.triggerSubscriptions()}getValue(){return this.cached??this.defaultValue}triggerSubscriptions(){for(const t of this.subscriptions.values())t(this.value,this)}get value(){return this.getValue()}set value(t){this.setValue(t)}onChange(t){const e=this.totalSubscriptionsCount++;return this.subscriptions.set(e,t),()=>this.subscriptions.delete(e)}}{constructor(t,{method:e="GET",endpoint:s,headers:i,data:h,debounce:r=0,defaultError:o,...n},a){super(t,n),this.plugin=a,this.fetchOptions={method:e,endpoint:s,headers:i,defaultError:o,data:h},this.debounce=r}set endpoint(t){this.fetchOptions.endpoint=t,this.refresh()}set headers(t){this.fetchOptions.headers=t,this.refresh()}set method(t){this.fetchOptions.method=t,this.refresh()}set data(t){this.fetchOptions.data=t,this.fetchOptions.body=JSON.stringify(t),this.refresh()}async refresh(t){if(this.debounced&&clearTimeout(this.debounced),0===t)return this.value=await this.plugin.fetch(this.fetchOptions.endpoint,{method:this.method,headers:this.headers,body:this.body,defaultError:this.defaultValue}),void(this.interval&&setTimeout(this.refresh,this.interval,0));this.debounced=setTimeout(this.refresh,t||this.debounce,0)}}class e{constructor(t){this.sharedContext=t,this.headers={"content-type":"application/json"},this.defaultError={ok:!1}}newResource(e,s){return new t(e,s,this)}async fetch(t,e){return fetch(t,{headers:e.headers??this.headers,body:e.body??void 0!==e.data&&JSON.stringify(this.data)}).then(t=>t.json()).catch(()=>e.defaultError??this.defaultError).then(t=>(t.onGetUpdate&&Object.entries(t.onGetUpdate).forEach(([t,e])=>{const s=e?.__onGetOptions;s&&delete e.__onGetOptions,this.sharedContext.setValue(t,e,s)}),t))}}["GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD","CONNECT","TRACE"].forEach(t=>e.prototype[t]=function(t,e={}){return fetch(t,{method:"GET",...e})}),e.protocol="api",exports.ApiResource=t,exports.default=e;
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+class VarResource {
+  constructor (url, options = {}) {
+    this.url = url;
+    this.cached = options.firstValue;
+    this.defaultValue = options.defaultValue;
+    this.subscriptions = new Map();
+    this.totalSubscriptionsCount = 0;
+  }
+
+  setValue (value) {
+    this.cached = value;
+    this.triggerSubscriptions();
+  }
+
+  getValue () {
+    return this.cached ?? this.defaultValue
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.value, this);
+    }
+  }
+
+  get value () {
+    return this.getValue()
+  }
+
+  set value (value) {
+    this.setValue(value);
+  }
+
+  onChange (callback) {
+    const key = this.totalSubscriptionsCount++;
+
+    this.subscriptions.set(key, callback);
+    return () => this.subscriptions.delete(key)
+  }
+}
+
+class ApiResource extends VarResource {
+  constructor (url, {
+    method = 'GET',
+    endpoint,
+    headers,
+    data,
+    debounce = 0,
+    defaultError,
+    ...options
+  }, plugin) {
+    super(url, options);
+    this.plugin = plugin;
+    this.fetchOptions = {
+      method,
+      endpoint,
+      headers,
+      defaultError,
+      data
+    };
+    this.debounce = debounce;
+  }
+
+  set endpoint (url) {
+    this.fetchOptions.endpoint = url;
+    this.refresh();
+  }
+
+  set headers (headers) {
+    this.fetchOptions.headers = headers;
+    this.refresh();
+  }
+
+  set method (method) {
+    this.fetchOptions.method = method;
+    this.refresh();
+  }
+
+  set data (data) {
+    this.fetchOptions.data = data;
+    this.fetchOptions.body = JSON.stringify(data);
+    this.refresh();
+  }
+
+  async refresh (debounce) {
+    if (this.debounced) {
+      clearTimeout(this.debounced);
+    }
+    if (debounce === 0) {
+      this.value = await this.plugin.fetch(this.fetchOptions.endpoint, {
+        method: this.method,
+        headers: this.headers,
+        body: this.body,
+        defaultError: this.defaultValue
+      });
+      if (this.interval) {
+        setTimeout(this.refresh, this.interval, 0);
+      }
+      return
+    }
+    this.debounced = setTimeout(this.refresh, debounce || this.debounce, 0);
+  }
+}
+
+class ApiPlugin {
+  constructor (sharedContext) {
+    this.sharedContext = sharedContext;
+    this.headers = { 'content-type': 'application/json' };
+    this.defaultError = { ok: false };
+  }
+
+  newResource (url, options) {
+    return new ApiResource(url, options, this)
+  }
+
+  async fetch (url, options) {
+    return fetch(url, {
+      headers: options.headers ?? this.headers,
+      body: options.body ?? (options.data !== undefined && JSON.stringify(this.data))
+    })
+      .then(res => res.json())
+    .catch(() => options.defaultError ?? this.defaultError)
+      .then(data => {
+        if (data.onGetUpdate) {
+          Object.entries(data.onGetUpdate).forEach(([url, value]) => {
+            const __onGetOptions = value?.__onGetOptions;
+            if (__onGetOptions) {
+              delete value.__onGetOptions;
+            }
+            this.sharedContext.setValue(url, value, __onGetOptions);
+          });
+        }
+        return data
+      })
+  }
+}
+
+['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD', 'CONNECT', 'TRACE'].forEach(method => ApiPlugin.prototype[method] = function (url, options = {}) {
+  return fetch(url, { method: 'GET', ...options })
+});
+
+ApiPlugin.protocol = 'api';
+
+exports.ApiResource = ApiResource;
+exports.default = ApiPlugin;

@@ -1,1 +1,159 @@
-import{getValue as t,setValue as e,deleteValue as s}from"@hacknlove/deepobject";import i from"proxy-deep";const r={get(t,e){const s=t===this.rootTarget?t.cached[e]:t[e];return"object"==typeof s&&null!==s?this.nest({resource:t.resource}):s},deleteProperty(){this.rootTarget.plugin.delete(this.rootTarget.url+"."+this.path.join("."))},set(t,e,s){return this.rootTarget.plugin.setValue(this.rootTarget.url+"."+this.path.join("."),s),!0}};class o extends class{constructor(t,e={}){this.url=t,this.cached=e.firstValue,this.defaultValue=e.defaultValue,this.subscriptions=new Map,this.totalSubscriptionsCount=0}setValue(t){this.cached=t,this.triggerSubscriptions()}getValue(){return this.cached??this.defaultValue}triggerSubscriptions(){for(const t of this.subscriptions.values())t(this.value,this)}get value(){return this.getValue()}set value(t){this.setValue(t)}onChange(t){const e=this.totalSubscriptionsCount++;return this.subscriptions.set(e,t),()=>this.subscriptions.delete(e)}}{constructor(t,e,s){super(t,e),this.plugin=s,void 0!==e.firstValue&&void 0===this.value&&(this.value=e.firstValue)}setValue(t){this.plugin.setValue(this.url,t),this.cached=t,super.triggerSubscriptions()}setChild(t,e){this.plugin.setValue(this.url+"."+t,e)}getChild(e){return t(this.cached,e)}delete(){delete this.cached,this.plugin.delete(this.url)}triggerSubscriptions(){for(const t of this.subscriptions.values())t(this.cached,this)}proxy(){if(this.proxy)return this.proxy;this.proxy=new i(this,r)}}class a{constructor(t){this.sharedState=t,this.state={}}newResource(t,e){return new o(t,e,this)}getValue(e){return t(this.state,e)}setValue(t,s){this.state=e(this.state,t,s),this.propagateDown(t),this.propagateUp(t)}delete(t){this.state=s(this.state,t),this.propagateUp(t),this.propagateDown(t)}propagateUp(t){const e=t.replace(/\.?[^.]*$/,"");if(!e)return;const s=this.sharedState.resources.get(e);s&&s.triggerSubscriptions(),this.propagateUp(e)}propagateDown(t){const e=t+".";for(const t of this.sharedState.resources.values())t.url.startsWith(e)&&t.triggerSubscriptions()}}a.protocol="dot";export default a;export{o as DotResource};
+import { getValue, setValue, deleteValue } from '@hacknlove/deepobject';
+import DeepProxy from 'proxy-deep';
+
+class VarResource {
+  constructor (url, options = {}) {
+    this.url = url;
+    this.cached = options.firstValue;
+    this.defaultValue = options.defaultValue;
+    this.subscriptions = new Map();
+    this.totalSubscriptionsCount = 0;
+  }
+
+  setValue (value) {
+    this.cached = value;
+    this.triggerSubscriptions();
+  }
+
+  getValue () {
+    return this.cached ?? this.defaultValue
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.value, this);
+    }
+  }
+
+  get value () {
+    return this.getValue()
+  }
+
+  set value (value) {
+    this.setValue(value);
+  }
+
+  onChange (callback) {
+    const key = this.totalSubscriptionsCount++;
+
+    this.subscriptions.set(key, callback);
+    return () => this.subscriptions.delete(key)
+  }
+}
+
+const proxyHandlers = {
+  get (target, key) {
+    const value = target === this.rootTarget ? target.cached[key] : target[key];
+
+    if (typeof value === 'object' && value !== null) {
+      return this.nest({
+        resource: target.resource
+      })
+    }
+    return value
+  },
+  deleteProperty () {
+    this.rootTarget.plugin.delete(this.rootTarget.url + '.' + this.path.join('.'));
+  },
+  set (target, key, value) {
+    this.rootTarget.plugin.setValue(this.rootTarget.url + '.' + this.path.join('.'), value);
+    return true
+  }
+};
+
+class DotResource extends VarResource {
+  constructor (url, options, plugin) {
+    super(url, options);
+    this.plugin = plugin;
+
+    if (options.firstValue !== undefined && this.value === undefined) {
+      this.value = options.firstValue;
+    }
+  }
+
+  setValue (value) {
+    this.plugin.setValue(this.url, value);
+    this.cached = value;
+    super.triggerSubscriptions();
+  }
+
+  setChild (url, value) {
+    this.plugin.setValue(this.url + '.' + url, value);
+  }
+
+  getChild (url) {
+    return getValue(this.cached, url)
+  }
+
+  delete () {
+    delete this.cached;
+    this.plugin.delete(this.url);
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.cached, this);
+    }
+  }
+
+  proxy () {
+    if (this.proxy) {
+      return this.proxy
+    }
+    this.proxy = new DeepProxy(this, proxyHandlers);
+  }
+}
+
+class DotPlugin {
+  constructor (sharedState) {
+    this.sharedState = sharedState;
+    this.state = {};
+  }
+
+  newResource (url, options) {
+    return new DotResource(url, options, this)
+  }
+
+  getValue (url) {
+    return getValue(this.state, url)
+  }
+
+  setValue (url, value) {
+    this.state = setValue(this.state, url, value);
+    this.propagateDown(url);
+    this.propagateUp(url);
+  }
+
+  delete (url) {
+    this.state = deleteValue(this.state, url);
+    this.propagateUp(url);
+    this.propagateDown(url);
+  }
+
+  propagateUp (url) {
+    const parentUrl = url.replace(/\.?[^.]*$/, '');
+    if (!parentUrl) {
+      return
+    }
+    const resource = this.sharedState.resources.get(parentUrl);
+
+    if (resource) {
+      resource.triggerSubscriptions();
+    }
+    this.propagateUp(parentUrl);
+  }
+
+  propagateDown (url) {
+    const prefix = `${url}.`;
+
+    for (const child of this.sharedState.resources.values()) {
+      if (!child.url.startsWith(prefix)) continue
+
+      child.triggerSubscriptions();
+    }
+  }
+}
+DotPlugin.protocol = 'dot';
+
+export default DotPlugin;
+export { DotResource };

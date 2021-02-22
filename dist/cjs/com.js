@@ -1,1 +1,95 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});class t extends class{constructor(t,s={}){this.url=t,this.cached=s.firstValue,this.defaultValue=s.defaultValue,this.subscriptions=new Map,this.totalSubscriptionsCount=0}setValue(t){this.cached=t,this.triggerSubscriptions()}getValue(){return this.cached??this.defaultValue}triggerSubscriptions(){for(const t of this.subscriptions.values())t(this.value,this)}get value(){return this.getValue()}set value(t){this.setValue(t)}onChange(t){const s=this.totalSubscriptionsCount++;return this.subscriptions.set(s,t),()=>this.subscriptions.delete(s)}}{constructor(t,{computation:s=(()=>{}),urls:e=[],...i}={},o){super(t,i),this.sharedContext=o,this.crossSubcriptions=[],this.addUrls(e),this.addComputation(s)}addUrls(t){this.urls=t,this.crossSubcriptions.forEach(t=>t()),this.crossSubcriptions=this.urls.map(t=>this.sharedContext.onChange(t,this.recompute))}addComputation(t){this.computation=t,this.recompute()}recompute(t,s){const e=this.computation(this.sharedContext.proxy,t,s);return void 0!==e&&(this.value=e),e}removeComputation(){this.computation=()=>{}}}class s{constructor(t){this.sharedContext=t}newResource(s,e){return new t(s,e,this.sharedContext)}}s.protocol="com",exports.ComResource=t,exports.default=s;
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+class VarResource {
+  constructor (url, options = {}) {
+    this.url = url;
+    this.cached = options.firstValue;
+    this.defaultValue = options.defaultValue;
+    this.subscriptions = new Map();
+    this.totalSubscriptionsCount = 0;
+  }
+
+  setValue (value) {
+    this.cached = value;
+    this.triggerSubscriptions();
+  }
+
+  getValue () {
+    return this.cached ?? this.defaultValue
+  }
+
+  triggerSubscriptions () {
+    for (const subscription of this.subscriptions.values()) {
+      subscription(this.value, this);
+    }
+  }
+
+  get value () {
+    return this.getValue()
+  }
+
+  set value (value) {
+    this.setValue(value);
+  }
+
+  onChange (callback) {
+    const key = this.totalSubscriptionsCount++;
+
+    this.subscriptions.set(key, callback);
+    return () => this.subscriptions.delete(key)
+  }
+}
+
+class ComResource extends VarResource {
+  constructor (url, { computation = () => undefined, urls = [], ...options } = {}, sharedContext) {
+    super(url, options);
+    this.sharedContext = sharedContext;
+    this.crossSubcriptions = [];
+
+    this.addUrls(urls);
+    this.addComputation(computation);
+  }
+
+  addUrls (urls) {
+    this.urls = urls;
+
+    this.crossSubcriptions.forEach(subscription => subscription());
+
+    this.crossSubcriptions = this.urls.map(url => this.sharedContext.onChange(url, this.recompute));
+  }
+
+  addComputation (computation) {
+    this.computation = computation;
+    this.recompute();
+  }
+
+  recompute (value, resource) {
+    const newValue = this.computation(this.sharedContext.proxy, value, resource);
+
+    if (newValue !== undefined) {
+      this.value = newValue;
+    }
+
+    return newValue
+  }
+
+  removeComputation () {
+    this.computation = () => {};
+  }
+}
+
+class ComPlugin {
+  constructor (sharedContext) {
+    this.sharedContext = sharedContext;
+  }
+
+  newResource (url, options) {
+    return new ComResource(url, options, this.sharedContext)
+  }
+}
+ComPlugin.protocol = 'com';
+
+exports.ComResource = ComResource;
+exports.default = ComPlugin;
