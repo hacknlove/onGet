@@ -1,0 +1,33 @@
+{
+    "name": "onget",
+    "version": "3.0.0",
+    "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
+    "type": "module",
+    "files": [
+      "./"
+    ],
+    "publishConfig": {
+      "access": "public"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/hacknlove/onGet.git"
+    },
+    "author": "Antonio Fernández-Porrúa <antonio@hacknlove.org> (https://pykiss.com)",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/hacknlove/onGet/issues"
+    },
+    "homepage": "https://github.com/hacknlove/onGet#readme",
+    "dependencies": {},
+    "peerDependencies": {
+      "react": "^17.0.1",
+      "@hacknlove/deepobject": "^1.1.6",
+      "isdifferent": "^2.0.1",
+      "proxy-deep": "^3.1.0"
+    },
+    "devDependencies": {
+    },
+    "sideEffects": []
+  }
+  

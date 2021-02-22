@@ -1,15 +1,8 @@
 {
-  "name": "onget",
+  "name": "onget-dev",
   "version": "3.0.0",
-  "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
-  "files": [
-    "/dist"
-  ],
-  "main": "dist/cjs",
-  "module": "dist/es",
+  "description": "This package is meant just for development purposes",
   "scripts": {
-    "test": "jest --watch ./src",
-    "coverage": "jest --coverage  ./src",
     "build": "./CI/build.sh"
   },
   "publishConfig": {
@@ -25,8 +18,7 @@
     "url": "https://github.com/hacknlove/onGet/issues"
   },
   "homepage": "https://github.com/hacknlove/onGet#readme",
-  "dependencies": {},
-  "peerDependencies": {
+  "dependencies": {
     "react": "^17.0.1",
     "@hacknlove/deepobject": "^1.1.6",
     "isdifferent": "^2.0.1",
@@ -52,6 +44,5 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "tslib": "^2.1.0",
     "typescript": "^4.1.5"
-  },
-  "sideEffects": []
+  }
 }

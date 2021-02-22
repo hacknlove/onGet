@@ -6,6 +6,8 @@ set -e
 echo ------- Building dist -------
 npx rollup -c
 
+cp dist-package.json ./dist/package.json
+
 git add ./dist/*
 
 echo
