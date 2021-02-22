@@ -4,24 +4,13 @@
 	},
 	"extends": [
 		"standard",
-		"plugin:jest/recommended",
-		"plugin:jsdoc/recommended",
-    "eslint:recommended",
-    "plugin:react/recommended"
+	    "plugin:react/recommended"
   ],
-	"globals": {
-		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly"
-	},
 	"parserOptions": {
 		"ecmaVersion": 2018,
 		"sourceType": "module"
   },
-  "plugins": [
-		"jest",
-		"jsdoc"
-  ],
-	"rules": {
+  "rules": {
 		"no-prototype-builtins": 0,
 		"prefer-promise-reject-errors": 0,
 		"react/prop-types": 0

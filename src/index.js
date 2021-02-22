@@ -1,57 +1,75 @@
-import { command } from './lib/command'
-import { conf, resources, plugins } from './lib/conf'
-import { get } from './lib/get'
-import { load } from './lib/load'
-import { once } from './lib/once'
-import { onGet } from './lib/onGet'
-import { refresh } from './lib/refresh'
-import { refreshRegExp } from './lib/refreshRegExp'
-import { registerPlugin } from './lib/registerPlugin'
-import { save } from './lib/save'
-import { set } from './lib/set'
-import { beforeSet } from './lib/beforeSet'
-import { beforeRefetch } from './lib/beforeRefetch'
-import { afterRefetch } from './lib/afterRefetch'
-import { afterSet } from './lib/afterSet'
-import { start } from './lib/start'
-import { end } from './lib/end'
-import { useOnGet } from './lib/useOnGet'
-import { waitUntil } from './lib/waitUntil'
+import VarPlugin from './plugins/var'
 
-import fetch from './plugins/fetch'
-import localStorage from './plugins/localstorage'
-import sessionStorate from './plugins/sessionstorage'
-import history from './plugins/history'
-import dotted from './plugins/dotted'
-import fast from './plugins/fast'
+const defaultConf = {}
 
-registerPlugin(fetch)
-registerPlugin(localStorage)
-registerPlugin(sessionStorate)
-registerPlugin(history)
-registerPlugin(dotted)
-registerPlugin(fast)
+const proxyHandler = {
+  get (target, url) {
+    return target.getValue(url)
+  },
 
-export {
-  afterSet,
-  beforeSet,
-  afterRefetch,
-  beforeRefetch,
-  command,
-  conf,
-  end,
-  get,
-  load,
-  once,
-  onGet,
-  plugins,
-  refresh,
-  refreshRegExp,
-  registerPlugin,
-  resources,
-  save,
-  set,
-  start,
-  useOnGet,
-  waitUntil
+  deleteProperty (target, url) {
+    target.deleteReource(url)
+  },
+
+  set (target, url, value) {
+    target.setValue(url, value)
+    return true
+  }
+}
+
+export default class SharedState {
+  constructor ({ plugins = [], conf = {} }) {
+    this.plugins = new Map(plugins.map(Plugin => [Plugin.protocol, new Plugin(this)]))
+
+    if (!this.plugins.has('var')) {
+      this.plugins.set('var', new VarPlugin(this))
+    }
+
+    this.conf = { ...defaultConf, ...conf }
+    this.resources = new Map()
+
+    this.proxy = new Proxy(this, proxyHandler)
+  }
+
+  findPlugin (url) {
+    return this.plugins.get(url.split(':', 1)) || this.plugins.get('var')
+  }
+
+  getResource (url, options = {}) {
+    let resource = this.resources.get(url)
+
+    if (resource) {
+      return resource
+    }
+
+    const plugin = this.findPlugin(url)
+
+    resource = plugin.newResource(url, options, this)
+
+    this.resources.set(url, resource)
+
+    return resource
+  }
+
+  getValue (url, options = {}) {
+    return this.getResource(url, options).value
+  }
+
+  setValue (url, value, options = {}) {
+    const resource = this.getResource(url, options)
+
+    resource.setValue(value, options)
+  }
+
+  deleteReource (url) {
+    const resource = this.getResource(url)
+
+    resource.delete()
+
+    this.resources.delete(url)
+  }
+
+  onChange (url, callback, options) {
+    return this.getResource(url).onChange(callback, options)
+  }
 }

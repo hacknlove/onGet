@@ -1,17 +1,15 @@
 {
   "name": "onget",
-  "version": "2.3.4",
+  "version": "3.0.0",
   "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
   "files": [
     "/dist"
   ],
-  "main": "dist/onGet.cjs.js",
-  "unpkg": "dist/onGet.umd.js",
-  "module": "dist/onGet.es.js",
+  "main": "dist/cjs",
+  "module": "dist/es",
   "scripts": {
     "test": "jest --watch ./src",
     "coverage": "jest --coverage  ./src",
-    "document": "nodemon --watch ./src --exec ./livejsdocs.sh ",
     "build": "./CI/build.sh"
   },
   "publishConfig": {
@@ -28,42 +26,30 @@
   },
   "homepage": "https://github.com/hacknlove/onGet#readme",
   "dependencies": {
-    "@hacknlove/deepobject": "^1.1.6",
-    "docdown": "^0.7.3",
-    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
-    "isdifferent": "^2.0.1",
-    "path-to-regexp": "^6.2.0"
+
   },
   "peerDependencies": {
-    "react": "^16.9.0"
+    "react": "^17.0.1",
+    "@hacknlove/deepobject": "^1.1.6",
+    "isdifferent": "^2.0.1",
+    "proxy-deep": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
-    "@testing-library/react-hooks": "^3.4.2",
-    "babel-jest": "^26.5.2",
-    "bluebird": "^3.7.2",
-    "eslint": "^7.11.0",
-    "eslint-config-standard": "^14.1.1",
+    "eslint": "^7.20.0",
+    "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.1.0",
-    "eslint-plugin-jsdoc": "^30.6.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.4",
-    "eslint-plugin-standard": "^4.0.1",
-    "jest": "^26.5.2",
-    "jsdoc": "^3.6.6",
-    "nodemon": "^2.0.4",
-    "react": "^16.13.1",
-    "react-test-renderer": "^16.13.1",
-    "rollup": "^2.29.0",
-    "rollup-plugin-babel": "^4.4.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "react": "^17.0.1",
+    "rollup": "^2.39.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "typescript": "^4.1.5"
   },
-  "sideEffects": [
-    "./src/conf"
-  ]
+  "sideEffects": []
 }
