@@ -27,7 +27,10 @@ onGet + nextjs it's a wonderfull combination.
 6. If you do server-side rendering or prerendering, you can use serialize the state and share it with the client.
 7. You can also serialize and deserialize client-side, to store your state in any client-side storage you want, like localstorage or indexedDB
 
-
+## install 
+```
+npm i onget@2
+```
 ## Basic Usage. Examples
 
 ### Set and get the value of a resource
