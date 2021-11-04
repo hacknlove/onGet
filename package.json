@@ -1,5 +1,5 @@
 {
-  "name": "onget-dev",
+  "name": "onget",
   "version": "3.2.0",
   "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
   "type": "module",
@@ -19,13 +19,6 @@
     "url": "https://github.com/hacknlove/onGet/issues"
   },
   "homepage": "https://github.com/hacknlove/onGet#readme",
-  "exports": {
-    "./": "./src/index.js",
-    "./react": "./src/react.mjs",
-    "./src/api": "./src/api.mjs",
-    "./src/com": "./src/com.mjs",
-    "./src/var": "./src/var.mjs"
-  },
   "peerDependencies": {
     "react": "^17.0.1"
   },

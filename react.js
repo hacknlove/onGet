@@ -17,7 +17,7 @@ export function OnGetProvider ({ children, plugins = [], conf = {}, testContextR
     return sharedState
   }, [])
 
-  return <ContextState.Provider value={value}>{children}</ContextState.Provider>
+  return React.createElement(ContextState.Provider, { value }, children)
 }
 
 export function WithOnGetValue ({ url, children }) {
