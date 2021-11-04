@@ -18,7 +18,7 @@ const proxyHandler = {
 }
 
 export default class SharedState {
-  constructor ({ plugins = [], conf = {} }) {
+  constructor ({ plugins = [], conf = {}, initialState = {} } = {}) {
     this.plugins = new Map(plugins.map(Plugin => [Plugin.protocol, new Plugin(this)]))
 
     if (!this.plugins.has('var')) {
@@ -29,6 +29,10 @@ export default class SharedState {
     this.resources = new Map()
 
     this.proxy = new Proxy(this, proxyHandler)
+
+    Object.entries(initialState).forEach(([url, value]) => {
+      this.setValue(url, value)
+    })
   }
 
   findPlugin (url) {

@@ -6,9 +6,17 @@ import SharedState from '.'
 
 export const ContextState = createContext({})
 
-export function OnGetProvider ({ children, plugins = [], conf = {}, testContextRef }) {
+export function OnGetProvider ({ children, plugins = [], conf = {}, initialState, pageProps, testContextRef }) {
+  const initialStateEnhanced = useMemo(() => {
+    return {
+      ...Object.fromEntries(Object.entries(pageProps).map(([key, value]) => [`var://@${key}`, value])),
+      ...initialState,
+    }
+
+  }, [pageProps])
+
   const value = useMemo(() => {
-    const sharedState = new SharedState({ plugins, conf })
+    const sharedState = new SharedState({ plugins, conf, initialState: initialStateEnhanced })
 
     if (testContextRef) {
       testContextRef.sharedState = sharedState
