@@ -9,7 +9,7 @@ export const ContextState = createContext({})
 export function OnGetProvider ({ children, plugins = [], conf = {}, initialState, pageProps, testContextRef }) {
   const initialStateEnhanced = useMemo(() => {
     return {
-      ...Object.fromEntries(Object.entries(pageProps).map(([key, value]) => [`var://@${key}`, value])),
+      ...Object.fromEntries(Object.entries(pageProps).map(([key, value]) => [`var://${key}`, value])),
       ...initialState,
     }
 
