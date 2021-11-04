@@ -1,12 +1,13 @@
 {
   "name": "onget-dev",
-  "version": "3.0.1",
-  "description": "This package is meant just for development purposes",
-  "scripts": {
-    "build": "./CI/build.sh"
-  },
+  "version": "3.2.0",
+  "description": "The KISS, write-less do more, elegant, plugin-extensible way to handle state with diverse origins.",
+  "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build": "./CI/build.sh"
   },
   "repository": {
     "type": "git",
@@ -18,11 +19,15 @@
     "url": "https://github.com/hacknlove/onGet/issues"
   },
   "homepage": "https://github.com/hacknlove/onGet#readme",
-  "dependencies": {
-    "react": "^17.0.1",
-    "@hacknlove/deepobject": "^1.1.6",
-    "isdifferent": "^2.0.1",
-    "proxy-deep": "^3.1.0"
+  "exports": {
+    "./": "./src/index.js",
+    "./react": "./src/react.mjs",
+    "./src/api": "./src/api.mjs",
+    "./src/com": "./src/com.mjs",
+    "./src/var": "./src/var.mjs"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
