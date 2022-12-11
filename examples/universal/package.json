@@ -9,7 +9,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "@babel/register": "^7.6.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "onget": "^2.0.0",
     "qs": "^6.9.0",
     "react": "^16.10.2",
